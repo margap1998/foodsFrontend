@@ -15,21 +15,14 @@ function Select(props){
         </select>
     )
 }
-function Line(props){
-    return(<div>
-        {props.obj['id']+":"+" type:"+props.obj['metric']+" number of repeats:"+props.obj['numberOfRepeat']}
-        <button type="button" onClick={(e) => props.onButton(props.obj)}>
-            Usuń
-        </button>
-    </div>)
-} 
 class DataForm extends React.Component{
     
    constructor(props){
     super(props);
     this.state = {name:null, desc:null, 
-        num_repeats:"", num_series:"", num_features:"",
-        paper:null, private:false, product:"", metric:null, metricGeneral:null, 
+        num_repeats:"", num_series:"", num_features:0,
+        paper:null, private:false, product:"", metric:null,
+        metricGeneral:null, generated:false, file:"", loaded:false,
         categories:[], ingredients:[], sample:1, metricID:"", metrics:[],
         prodBase:[], prodObj:[], metricsGeneral:[], metricsGeneralBase:[], metricsDetailedBase:[],
         metricsDetailed:[], sampleBase:[],recipeBase:[]
@@ -40,6 +33,15 @@ class DataForm extends React.Component{
     this.handleChangeCat = this.handleChangeCat.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
 }
+
+Line = (props) => {
+    return(<div>
+        {props.obj['id']+":"+" type:"+props.obj['metric']+" number of repeats:"+props.obj['numberOfRepeat']}
+        <button type="button" onClick={(e) => props.onButton(props.obj)}>
+            Usuń
+        </button>
+    </div>)
+} 
 componentDidMount = () => {
     this.refresh()
 }
@@ -81,8 +83,8 @@ refresh = ()=> {
         };  
         axios.post("/api/experiment/geneerateXlsx/",req,{ responseType: 'blob'}).then((res)=>{
             download(res.data,experiment_data[0]+"_"+experiment_data[3]+'.xlsx','application/vnd.openxmlformats-');
-        }).catch((e)=>{console.log("Something's wrong download of file")})
-        event.preventDefault();
+            this.setState({generated:true});
+        }).catch((e)=>{console.log("Something's wrong with download of file")})
     }
 
     handleChangeName(event) {    this.setState({name: event.target.value});}
@@ -122,82 +124,107 @@ refresh = ()=> {
         if (v === ""){
             this.setState({dialog: null, metric:null, metricID:""})
         }else{
-            var obj = {}
+            var obj = null
             this.state.metricsDetailedBase.forEach((lv) => {if (v==lv.id){obj = lv}})
             
             this.setState({metric: obj, metricID:v, dialog: (
-            <textarea class="line" value={
-                "number of repeat: "+obj.numberOfRepeat+
+            <textarea className="line" value={
+                "number of repeats: "+obj.numberOfRepeat+
                 "\nnumber of series: " + obj.numberOfSeries+
                 "\nsample: "+ obj.sample}/>
             )})
         }
     }
-
     handleAddDM = (e)=>{
         var arr = this.state.metricsDetailedBase;
         var arr2 = this.state.metrics;
         var obj;
         arr.forEach((v,i,a)=>{if( v.id == this.state.metricID) obj = v})
+        if (!arr2.includes(obj)){
         arr2.push(obj);
         this.setState({num_features: (this.state.num_features+1),metrics:arr2});
-
+        }
     }
     handleDelDM = (obj)=>{
-        let pred = (v,i,a)=>{return v.id != obj.id};
+        let pred = (v,i,a)=>{return (v.id !== obj.id  && obj.type!==v.type)};
         var arr2 = this.state.metrics;
         this.setState({num_features: (this.state.num_features-1),metrics:arr2.filter(pred)});
     }
+    handleLoadXLSX = (e)=>{
+        
+        let fr = new FileReader()
+
+        fr.onload = (evt)=>{
+            this.setState({ filename: e.target.files[0].name, file: evt.target.result, loaded:true });
+        };
+        fr.readAsBinaryString(e.target.files[0])
+    }
+    handleSubmitXLSX = (e)=>{
+        axios.post("/api/experiment/readXlsx/",
+        {
+            title: this.state.filename,
+            file: this.state.file
+        })
+        .then((res)=>{alert(res.data)})
+        .catch((a)=>{console.log("Something's wrong with file uploading");})
+    }
     render(){
     return(
-        <form class="box" id="dataform">
+        <form className="box" id="dataform" onSubmit={this.handleSubmit}>
             <DjangoCSRFToken/>
-                <label class="line2">
+                <label className="line2">
                     Nazwa:
-                    <input class="line" type="text" value={this.state.name} onChange={this.handleChangeName} />
+                    <input className="line" type="text" value={this.state.name} onChange={this.handleChangeName} />
                 </label>
-                <label class="line2">
+                <label className="line2">
                     Opis:
-                    <textarea class="line" type="text" value={this.state.desc} onChange={this.handleChangeDesc} />
+                    <textarea className="line" type="text" value={this.state.desc} onChange={this.handleChangeDesc} />
                 </label>
-                <label class="line2">
+                <label className="line2">
                     URL pracy:
-                    <input class="line" type="text" value={this.state.paper} onChange={this.handleChangePaper} />
+                    <input className="line" type="text" value={this.state.paper} onChange={this.handleChangePaper} />
                 </label>
-                <label class="line2">
+                <label className="line2">
                     Kategoria:
-                    <Select onChange={this.handleChangeCat} array={this.state.categories}/>
+                    <Select value={this.state.category} onChange={this.handleChangeCat} array={this.state.categories}/>
                 </label>
-                <label class="line2">
+                <label className="line2">
                     Produkt:
                     <Select onChange={this.handleChangeProd} array={this.state.prodBase}/>
                 </label>
-                <label class="line2">
+                <label className="line2">
                     Liczba cech:
-                    <input class="line" type="text" value={this.state.num_features}/>
+                    <input className="line" type="text" defaultValue={this.state.num_features} />
                 </label>
-                <label class="line2">
+                <label className="line2">
                     Liczba serii:
                     <input class="line" type="text" value={this.state.num_series} onChange={this.handleChangeSeries} />
                 </label>
-                <label class="line2">
+                <label className="line2">
                     Prywatny
                     <input type="checkbox" value={this.state.private} onChange={this.handlePrivate}/>
                 </label>
-                <label class="line2">
+                <label className="line2">
                     Metryka:
                     <Select onChange={this.handleChangeMetric} array={this.state.metricsGeneral}/>
                 </label>
-                <label class="line2">
+                <label className="line2">
                     Metryka szczegółowa:
                     <Select value={this.state.metricID} onChange={this.handleChangeDetailedMetric} array={this.state.metricsDetailed}/>
                     <button type="button" onClick={this.handleAddDM}>
-                        Dodaj
-                    </button>
+                            Dodaj
+                        </button>
                 </label>
                 {this.state.dialog}
-                {this.state.metrics.map((obj,n,a)=>{return <Line obj={obj} onButton={this.handleDelDM}></Line>})}
-                 <button type="input" onClick={this.handleSubmit}>Generuj</button>
+                {this.state.metrics.map((obj,n,a)=>{return <this.Line obj={obj} onButton={this.handleDelDM}/>})}
+                 <button type="button" onClick={this.handleSubmit}>Generuj</button>
+                 <div>
+                        <input className={"visible"+this.state.generated.toString()} type="file"
+                            id="XLSXFileChoose" name="XLSXChoose"
+                            accept=".xlsx" onChange ={this.handleLoadXLSX}/>
+                        <button className={"visible"+this.state.loaded.toString()} onClick={this.handleSubmitXLSX} type="button" >Załaduj</button>
+                    </div>
+                 
         </form>
     )
     //return <Line obj={obj} onButton={this.handleDelDM}></Line>})}
