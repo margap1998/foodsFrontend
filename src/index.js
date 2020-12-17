@@ -20,10 +20,10 @@ class DataForm extends React.Component{
    constructor(props){
     super(props);
     this.state = {name:null, desc:null, 
-        num_repeats:"", num_series:"", num_features:0,
+        num_repeats:"", num_features:0, sample:1, metricID:"",
         paper:null, private:false, product:"", metric:null,
         metricGeneral:null, generated:false, file:"", loaded:false,
-        categories:[], ingredients:[], sample:1, metricID:"", metrics:[],
+        categories:[], ingredients:[], metrics:[],
         prodBase:[], prodObj:[], metricsGeneral:[], metricsGeneralBase:[], metricsDetailedBase:[],
         metricsDetailed:[], sampleBase:[],recipeBase:[]
     }
@@ -68,11 +68,12 @@ refresh = ()=> {
         var metrics = [];
         this.state.metrics.forEach((obj)=>{
             metrics.push(
-                [obj.id,obj.numberOfSeries, obj.numberOfRepeat,obj.sample.toString(),"1",["120"],obj.metric])
+                [obj.metric, obj.numberOfSeries, obj.numberOfRepeat, obj.sample, "3", ["120","140","150"],obj.id])
         })
-        var experiment_data = [this.state.name, this.state.desc,this.state.paper, "Hardcoded", now.getDate()+"."+now.getMonth()+"."+now.getFullYear()]
+        alert(metrics.length)
+        var experiment_data = [this.state.name, this.state.desc,this.state.paper, 1, now.getDate()+"."+(now.getMonth()+1)+"."+now.getFullYear()]
         //var i = 0
-        /*this.state.features.forEach((f)=>{
+        /*this.state.features.forEach((f)=>{ metrics.map((v)=>{v.id})
             var head = [i.toString(),parseInt(this.state.num_series),
                 parseInt(this.state.num_repeats),1,['120'],f.name]
             metrices.push(head)
@@ -80,13 +81,28 @@ refresh = ()=> {
         var req = {
             experiment_data : experiment_data,
             metrics : metrics
-        };  
+        };
+        let a = metrics.map((v)=>{alert(v); return v[6]})
+        var exp_head = {
+            "name": this.state.name,
+            "description": this.state.desc,
+            "link": this.state.paper,
+            "numberOfMeasuredProperties": this.state.num_features,
+            "publicView": this.state.private,
+            "author": 1,
+            "product": this.state.product,
+            "detailedMetrics": a
+        }
+        axios.post("/api/experiment/Experiment/",exp_head).then((res)=>{
+            alert(res.statusText);
+        }).catch((e)=>{console.log("Something's wrong with inserting experiment");})
+
         axios.post("/api/experiment/geneerateXlsx/",req,{ responseType: 'blob'}).then((res)=>{
             download(res.data,experiment_data[0]+"_"+experiment_data[3]+'.xlsx','application/vnd.openxmlformats-');
             this.setState({generated:true});
         }).catch((e)=>{console.log("Something's wrong with download of file")})
     }
-
+// /api/experiment/Experiment/
     handleChangeName(event) {    this.setState({name: event.target.value});}
     handleChangeDesc(event) {    this.setState({desc: event.target.value});}
     handleChangePaper(event) {    this.setState({paper: event.target.value});}
@@ -94,17 +110,7 @@ refresh = ()=> {
         this.setState({category: v});
         var arr = []
         this.state.prodObj.forEach((lv,i,a)=>{if(lv.category === v){arr.push(lv.name)}})
-        this.setState({prodBase:arr})
-    }
-    handleChangeSeries = (event)=>{    
-        const regExp = /^[0-9]*$/;
-        const a = event.target.value;
-        let test = regExp.test(a)
-        if(test){
-            this.setState({num_series: a});
-        }else{
-            this.setState({num_series: this.state.num_series})
-        }
+        this.setState({prodBase:arr, product:""})
     }
     handlePrivate =(e)=>{
         this.setState({private:!this.state.private})
@@ -117,7 +123,8 @@ refresh = ()=> {
         this.state.metricsDetailedBase.forEach((lv,i,a)=>{ if(v===lv.metric){arr.push(lv.id)}})
         this.setState({
             metricsDetailed : arr,
-            metricGeneral: v
+            metricGeneral: v,
+            metricID:""
         })
     }
     handleChangeDetailedMetric = (v)=>{
@@ -141,31 +148,28 @@ refresh = ()=> {
         var obj;
         arr.forEach((v,i,a)=>{if( v.id == this.state.metricID) obj = v})
         if (!arr2.includes(obj)){
-        arr2.push(obj);
-        this.setState({num_features: (this.state.num_features+1),metrics:arr2});
+            arr2.push(obj)
+            this.setState({num_features: (this.state.num_features+1),metrics:arr2});
         }
     }
     handleDelDM = (obj)=>{
-        let pred = (v,i,a)=>{return (v.id !== obj.id  && obj.type!==v.type)};
+        let pred = (v,i,a)=>{return !(v.id == obj.id  && obj.type==v.type)};
         var arr2 = this.state.metrics;
         this.setState({num_features: (this.state.num_features-1),metrics:arr2.filter(pred)});
     }
     handleLoadXLSX = (e)=>{
-        
-        let fr = new FileReader()
-
-        fr.onload = (evt)=>{
-            this.setState({ filename: e.target.files[0].name, file: evt.target.result, loaded:true });
-        };
-        fr.readAsBinaryString(e.target.files[0])
+        this.setState({ file: e.target.files[0], loaded:true });
     }
     handleSubmitXLSX = (e)=>{
-        axios.post("/api/experiment/readXlsx/",
-        {
-            title: this.state.filename,
-            file: this.state.file
+        var formData = new FormData();
+        formData.append("file", this.state.file);
+        formData.append("title", this.state.file.name);
+        axios.post('/api/experiment/readXlsx/', formData, {
+            headers: {
+            'Content-Type': 'multipart/form-data'
+            }
         })
-        .then((res)=>{alert(res.data)})
+        .then((res)=>{alert(res.statusText)})
         .catch((a)=>{console.log("Something's wrong with file uploading");})
     }
     render(){
@@ -194,11 +198,7 @@ refresh = ()=> {
                 </label>
                 <label className="line2">
                     Liczba cech:
-                    <input className="line" type="text" defaultValue={this.state.num_features} />
-                </label>
-                <label className="line2">
-                    Liczba serii:
-                    <input class="line" type="text" value={this.state.num_series} onChange={this.handleChangeSeries} />
+                    <input className="line" type="text" value={this.state.num_features} />
                 </label>
                 <label className="line2">
                     Prywatny
@@ -216,15 +216,16 @@ refresh = ()=> {
                         </button>
                 </label>
                 {this.state.dialog}
-                {this.state.metrics.map((obj,n,a)=>{return <this.Line obj={obj} onButton={this.handleDelDM}/>})}
+                {this.state.metrics.map((obj,n,a)=>{ return <this.Line obj={obj} onButton={this.handleDelDM}/>})}
                  <button type="button" onClick={this.handleSubmit}>Generuj</button>
-                 <div>
-                        <input className={"visible"+this.state.generated.toString()} type="file"
+                 <form id="uploadForm" role="form"enctype="multipart/form-data"
+                        //className={"visible"+this.state.generated.toString()}
+                 >
+                        <input type="file"
                             id="XLSXFileChoose" name="XLSXChoose"
                             accept=".xlsx" onChange ={this.handleLoadXLSX}/>
                         <button className={"visible"+this.state.loaded.toString()} onClick={this.handleSubmitXLSX} type="button" >Załaduj</button>
-                    </div>
-                 
+                </form>
         </form>
     )
     //return <Line obj={obj} onButton={this.handleDelDM}></Line>})}
