@@ -107,7 +107,7 @@ refresh = ()=> {
 
     }
     else{
-        alert("Uzupełnij wszystko")
+        alert("Uzupełnij")
         }
     }
 // /api/experiment/Experiment/
