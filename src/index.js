@@ -69,7 +69,6 @@ refresh = ()=> {
         var now = new Date();
         var metrics = [];
         var a = null;
-        if (this.state.metrics.length>0){
         this.state.metrics.forEach((obj)=>{
             metrics.push(
                 [obj.metric, obj.numberOfSeries, obj.numberOfRepeat, obj.sample, "3", ["120","140","150"],obj.id])
@@ -106,7 +105,11 @@ refresh = ()=> {
             this.setState({generated:true});
         }).catch((e)=>{console.log("Something's wrong with download of file")})
 
-    }else{alert("Uzupełnij wszystko")}}
+    }
+    else{
+        alert("Uzupełnij wszystko")
+        }
+    }
 // /api/experiment/Experiment/
     handleChangeName(event) {    this.setState({name: event.target.value});}
     handleChangeDesc(event) {    this.setState({desc: event.target.value});}
