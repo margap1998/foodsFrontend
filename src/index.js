@@ -5,35 +5,38 @@ import axios from "axios";
 import download from 'downloadjs';
 import {getCSRFToken} from './csrftoken'
 
+//komponent funk. przekształcający tablicę 1-D z wartościami w listę rozwijaną z elementem "pustym"
 function Select(props){
     var q =[""]
-    q = q.concat(props.array)
-    var op = q.map(value =>{return(<option value={value}>{value}</option>)})
+    q = q.concat(props.array)//tablica z wartościami
+    var op = q.map(value =>{return(<option value={value}>{value}</option>)}) // zrobienie opcji
     return(
-        <select value={props.value} onChange={e => props.onChange(e.target.value)}>
-            {op}
+        <select value={props.value} onChange={e => props.onChange(e.target.value) /* element typu select z listą rozwijaną*/}> 
+            {op /* tablica z mapowanymymi wartościami na elementy typu option*/}
         </select>
     )
 }
+
+//Komponenet odpowiedzialny za formularz eksperymentu
 class DataForm extends React.Component{
-    
    constructor(props){
     super(props);
+    //inicjalizacja stanu komponentu
+    //TODO: przerobić tak by wykorzystać jeszcze do edycji istniejącego eksperymentu
+    //if (props.obj === undefined || props.obj === null){
     this.state = {name:null, desc:null, 
         num_repeats:"", num_features:0, sample:1, metricID:"",
-        paper:"", private:false, product:"", metric:"",
+        paper:"", private:false, product:"", metric:"", filename:"",
         metricGeneral:"", generated:false, file:"", loaded:false,
         categories:[], ingredients:[], metrics:[],
         prodBase:[], prodObj:[], metricsGeneral:[], metricsGeneralBase:[], metricsDetailedBase:[],
         metricsDetailed:[], sampleBase:[],recipeBase:[]
     }
-    this.handleChangeName = this.handleChangeName.bind(this);
-    this.handleChangeDesc = this.handleChangeDesc.bind(this);
-    this.handleChangePaper = this.handleChangePaper.bind(this);
-    this.handleChangeCat = this.handleChangeCat.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
+    
 }
-
+//komponent odpowiedzialny za usuwalną linijkę z metryką szczegółową
+//props.obj - metryka szczegółowa do obskoczenia
+// props.onButton - funkcja do wywołania dla przycisku usuń
 Line = (props) => {
     return(<div>
         {props.obj['id']+":"+" type:"+props.obj['metric']+" number of repeats:"+props.obj['numberOfRepeat']}
@@ -46,9 +49,12 @@ componentDidMount = () => {
     this.refresh()
 }
 refresh = ()=> {
+    //żądania typu get do API
     axios.get("/api/experiment/Category/").then((res)=>{
         var arr = [];
+        //wyłuskanie nazw kategorii
         res.data.forEach((obj)=>{arr.push(obj.name);});
+
         this.setState({categories:arr});
     }).catch(console.log("Categories failure \n"));
     axios.get("/api/experiment/DetailedMetrics/").then((res)=>{
@@ -56,6 +62,7 @@ refresh = ()=> {
     }).catch(console.log("Metric failure \n"));
     axios.get("/api/experiment/Metrics/").then((res)=>{
         var arr = [];
+        //wyłuskanie nazw metryk
         res.data.forEach((obj)=>{arr.push(obj.name);});
         this.setState({metricsGeneral:arr});
     }).catch(console.log("Metric failure \n"));
@@ -63,64 +70,18 @@ refresh = ()=> {
         this.setState({prodObj:res.data});
     }).catch(console.log("Product failure \n"));
 }
-    handleSubmit(event){ if (! ( this.state.metrics.length<1 && this.state.name == "" && this.state.desc == "" && this.state.paper=="" && this.state.product=="")){
-        let token = getCSRFToken()
-        const headers = {"X-CSRFTOKEN": token}
-        var now = new Date();
-        var metrics = [];
-        var a = null;
-        this.state.metrics.forEach((obj)=>{
-            metrics.push(
-                [obj.metric, obj.numberOfSeries, obj.numberOfRepeat, obj.sample, "3", ["120","140","150"],obj.id])
-        })
-        
-        a = metrics.map((v)=>{ return v[6]})
-        var experiment_data = [this.state.name, this.state.desc,this.state.paper, 1, now.getDate()+"."+(now.getMonth()+1)+"."+now.getFullYear()]
-        //var i = 0
-        /*this.state.features.forEach((f)=>{ metrics.map((v)=>{v.id})
-            var head = [i.toString(),parseInt(this.state.num_series),
-                parseInt(this.state.num_repeats),1,['120'],f.name]
-            metrices.push(head)
-        })*/
-        var req = {
-            experiment_data : experiment_data,
-            metrics : metrics
-        };
-        var exp_head = {
-            "name": this.state.name,
-            "description": this.state.desc,
-            "link": this.state.paper,
-            "numberOfMeasuredProperties": this.state.num_features,
-            "publicView": this.state.private,
-            "author": 1,
-            "product": this.state.product,
-            "detailedMetrics": a
-        }
-        axios.post("/api/experiment/Experiment/",exp_head,{ headers:headers }).then((res)=>{
-            alert(res.statusText);
-        }).catch((e)=>{console.log("Something's wrong with inserting experiment");})
 
-        axios.post("/api/experiment/geneerateXlsx/",req,{ headers:headers, responseType: 'blob'}).then((res)=>{
-            download(res.data,experiment_data[0]+"_"+experiment_data[3]+'.xlsx','application/vnd.openxmlformats-');
-            this.setState({generated:true});
-        }).catch((e)=>{console.log("Something's wrong with download of file")})
-
-    }
-    else{
-        alert("Uzupełnij")
-        }
-    }
 // /api/experiment/Experiment/
-    handleChangeName(event) {    this.setState({name: event.target.value});}
-    handleChangeDesc(event) {    this.setState({desc: event.target.value});}
-    handleChangePaper(event) {    this.setState({paper: event.target.value});}
-    handleChangeCat(v) {    
+    handleChangeName = (event) => {    this.setState({name: event.target.value});}
+    handleChangeDesc = (event) => {    this.setState({desc: event.target.value});}
+    handleChangePaper = (event) => {    this.setState({paper: event.target.value});}
+    handleChangeCat = (v) => {    
         this.setState({category: v});
         var arr = []
         this.state.prodObj.forEach((lv,i,a)=>{if(lv.category === v){arr.push(lv.name)}})
         this.setState({prodBase:arr, product:""})
     }
-    handlePrivate =(e)=>{
+    handlePrivate = (e) => {
         this.setState({private:!this.state.private})
     }
     handleChangeProd = (v)=>{
@@ -141,7 +102,7 @@ refresh = ()=> {
         }else{
             var obj = null
             this.state.metricsDetailedBase.forEach((lv) => {if (v==lv.id){obj = lv}})
-            
+            //zmiana stanu i dałożenie okienka z właściwościami
             this.setState({metric: obj, metricID:v, dialog: (
             <textarea className="line" value={
                 "number of repeats: "+obj.numberOfRepeat+
@@ -166,14 +127,23 @@ refresh = ()=> {
         this.setState({num_features: (this.state.num_features-1),metrics:arr2.filter(pred)});
     }
     handleLoadXLSX = (e)=>{
-        this.setState({ file: e.target.files[0], loaded:true });
-    }
+        this.setState({ filename: e.target.files[0].name, loaded:true, file:e.target.files[0]});
+    /*
+        var myFile = e.target.files[0];
+        var reader = new FileReader();
+        reader.addEventListener('load', (evt) => {
+            this.setState({ file: evt.target.result,loaded:true});
+        });
+        reader.readAsText(myFile);
+    */
+        }
     handleSubmitXLSX = (e)=>{
         if (this.state.file !=null){
+
             let token = getCSRFToken()
             var formData = new FormData();
             formData.append("file", this.state.file);
-            formData.append("title", this.state.file.name);
+            formData.append("title", this.state.filename);
             axios.post('/api/experiment/readXlsx/', formData, {
                 headers: {
                 'Content-Type': 'multipart/form-data',
@@ -182,6 +152,99 @@ refresh = ()=> {
             })
             .then((res)=>{alert(res.statusText)})
             .catch((a)=>{console.log("Something's wrong with file uploading");})
+            this.setState({file:null,filename:"", loaded:false})
+        }
+    }
+    handleInsert =(e) =>{if (! ( this.state.metrics.length<1 && this.state.name == "" && this.state.desc == "" && this.state.paper == "" && this.state.product == "")){
+            //pobranie znacznika CSRF z ciasteczka 
+            let token = getCSRFToken()
+            //stworzenie odpowiedniego nagłówka zapytania
+            const headers = {"X-CSRFTOKEN": token}
+            //obiekt z danymi do bazy
+       
+            let arr = []
+            this.state.metrics.forEach((v)=>{arr.push(v.id)})
+            var exp_head = {
+                "name": this.state.name,
+                "description": this.state.desc,
+                "link": this.state.paper,
+                "numberOfMeasuredProperties": this.state.num_features,
+                "publicView": this.state.private,
+                "author": 1,
+                "product": this.state.product,
+                "detailedMetrics": arr
+            }
+
+            axios.post("/api/experiment/Experiment/",exp_head,{ headers:headers }).then((res)=>{
+                alert(res.statusText);
+            }).catch((e)=>{console.log("Something's wrong with inserting experiment");})
+        }else{
+            alert("Uzupełnij")
+            }
+    }
+
+    handleChange =(e) =>{if (! ( this.state.metrics.length<1 && this.state.name == "" && this.state.desc == "" && this.state.paper=="" && this.state.product=="")){
+            //pobranie znacznika CSRF z ciasteczka 
+            let token = getCSRFToken()
+            //stworzenie odpowiedniego nagłówka zapytania
+            const headers = {"X-CSRFTOKEN": token}
+            //obiekt z danymi do bazy
+            let arr = []
+            this.state.metrics.forEach((v)=>{arr.push(v.id)})
+            var exp_head = {
+                "name": this.state.name,
+                "description": this.state.desc,
+                "link": this.state.paper,
+                "numberOfMeasuredProperties": this.state.num_features,
+                "publicView": this.state.private,
+                "author": 1,
+                "product": this.state.product,
+                "detailedMetrics": arr
+            }
+
+            axios.put("/api/experiment/Experiment/",exp_head,{ headers:headers }).then((res)=>{
+                alert(res.statusText);
+            }).catch((e)=>{console.log("Something's wrong with inserting experiment");})
+        }else{
+            alert("Uzupełnij")
+        }
+    }
+    handleSubmit = (event) => { if (! ( this.state.metrics.length<1 && this.state.name == "" && this.state.desc == "" && this.state.paper=="" && this.state.product=="")){
+        //pobranie znacznika CSRF z ciasteczka 
+        let token = getCSRFToken()
+        //stworzenie odpowiedniego nagłówka zapytania
+        const headers = {"X-CSRFTOKEN": token}
+        var now = new Date();//Pobranie daty .getMonth() zwraca int<0,11>, zatem trzeba dodać 1 XD
+        var metrics = [];
+        //zmapowanie metryk z bazy na metryki do wygenerowania excela w nieładny sposób
+        this.state.metrics.forEach((obj)=>{
+            metrics.push(
+                [obj.metric, obj.numberOfSeries, obj.numberOfRepeat, obj.sample, "3", ["120","140","150"],obj.id])
+        })
+        //wyłuskanie wartości id
+        //nagłówek eksperymentu
+        var experiment_data = [this.state.name, this.state.desc,this.state.paper, 1, now.getDate()+"."+(now.getMonth()+1)+"."+now.getFullYear()]
+        //var i = 0
+        /*this.state.features.forEach((f)=>{ metrics.map((v)=>{v.id})
+            var head = [i.toString(),parseInt(this.state.num_series),
+                parseInt(this.state.num_repeats),1,['120'],f.name]
+            metrices.push(head)
+        })*/
+        //obiekt z żądaniem
+        var req = {
+            experiment_data : experiment_data,
+            metrics : metrics
+        };
+        //wysłanie żądania do generowania excela
+        axios.post("/api/experiment/geneerateXlsx/",req,{ headers:headers, responseType: 'blob'}).then((res)=>{
+            //sprytna funkcja do pobrania danych wzięta z repozytorium npm
+            download(res.data,experiment_data[0]+"_"+experiment_data[3]+'.xlsx')
+            this.setState({generated:true});
+        }).catch((e)=>{console.log("Something's wrong with download of file")})
+
+    }
+    else{
+        alert("Uzupełnij")
         }
     }
     render(){
@@ -228,10 +291,14 @@ refresh = ()=> {
                 </label>
                 {this.state.dialog}
                 {this.state.metrics.map((obj,n,a)=>{ return <this.Line obj={obj} onButton={this.handleDelDM}/>})}
-                 <button type="button" onClick={this.handleSubmit}>Generuj</button>
-                 <form id="uploadForm" role="form"enctype="multipart/form-data"
+                <div>
+                    <button type="button" onClick={this.handleInsert}>Dodaj</button>
+                    <button type="button" onClick={this.handleChange}>Zmień</button>
+                    <button type="button" onClick={this.handleSubmit}>Generuj</button>
+                </div>
+                <form id="uploadForm" role="form"enctype="multipart/form-data"
                         //className={"visible"+this.state.generated.toString()}
-                 >
+                >
                         <input type="file"
                             id="XLSXFileChoose" name="XLSXChoose"
                             accept=".xlsx" onChange ={this.handleLoadXLSX}/>
