@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import './style.css';
 import axios from "axios";
 import download from 'downloadjs';
+import {getCSRFToken} from './csrftoken'
 
 function Select(props){
     var q =[""]
@@ -20,8 +21,8 @@ class DataForm extends React.Component{
     super(props);
     this.state = {name:null, desc:null, 
         num_repeats:"", num_features:0, sample:1, metricID:"",
-        paper:null, private:false, product:"", metric:null,
-        metricGeneral:null, generated:false, file:"", loaded:false,
+        paper:"", private:false, product:"", metric:"",
+        metricGeneral:"", generated:false, file:"", loaded:false,
         categories:[], ingredients:[], metrics:[],
         prodBase:[], prodObj:[], metricsGeneral:[], metricsGeneralBase:[], metricsDetailedBase:[],
         metricsDetailed:[], sampleBase:[],recipeBase:[]
@@ -62,14 +63,19 @@ refresh = ()=> {
         this.setState({prodObj:res.data});
     }).catch(console.log("Product failure \n"));
 }
-    handleSubmit(event){
+    handleSubmit(event){ if (! ( this.state.metrics.length<1 && this.state.name == "" && this.state.desc == "" && this.state.paper=="" && this.state.product=="")){
+        let token = getCSRFToken()
+        const headers = {"X-CSRFTOKEN": token}
         var now = new Date();
         var metrics = [];
+        var a = null;
+        if (this.state.metrics.length>0){
         this.state.metrics.forEach((obj)=>{
             metrics.push(
                 [obj.metric, obj.numberOfSeries, obj.numberOfRepeat, obj.sample, "3", ["120","140","150"],obj.id])
         })
-        alert(metrics.length)
+        
+        a = metrics.map((v)=>{ return v[6]})
         var experiment_data = [this.state.name, this.state.desc,this.state.paper, 1, now.getDate()+"."+(now.getMonth()+1)+"."+now.getFullYear()]
         //var i = 0
         /*this.state.features.forEach((f)=>{ metrics.map((v)=>{v.id})
@@ -81,7 +87,6 @@ refresh = ()=> {
             experiment_data : experiment_data,
             metrics : metrics
         };
-        let a = metrics.map((v)=>{alert(v); return v[6]})
         var exp_head = {
             "name": this.state.name,
             "description": this.state.desc,
@@ -92,15 +97,16 @@ refresh = ()=> {
             "product": this.state.product,
             "detailedMetrics": a
         }
-        axios.post("/api/experiment/Experiment/",exp_head).then((res)=>{
+        axios.post("/api/experiment/Experiment/",exp_head,{ headers:headers }).then((res)=>{
             alert(res.statusText);
         }).catch((e)=>{console.log("Something's wrong with inserting experiment");})
 
-        axios.post("/api/experiment/geneerateXlsx/",req,{ responseType: 'blob'}).then((res)=>{
+        axios.post("/api/experiment/geneerateXlsx/",req,{ headers:headers, responseType: 'blob'}).then((res)=>{
             download(res.data,experiment_data[0]+"_"+experiment_data[3]+'.xlsx','application/vnd.openxmlformats-');
             this.setState({generated:true});
         }).catch((e)=>{console.log("Something's wrong with download of file")})
-    }
+
+    }else{alert("Uzupełnij wszystko")}}
 // /api/experiment/Experiment/
     handleChangeName(event) {    this.setState({name: event.target.value});}
     handleChangeDesc(event) {    this.setState({desc: event.target.value});}
@@ -160,16 +166,20 @@ refresh = ()=> {
         this.setState({ file: e.target.files[0], loaded:true });
     }
     handleSubmitXLSX = (e)=>{
-        var formData = new FormData();
-        formData.append("file", this.state.file);
-        formData.append("title", this.state.file.name);
-        axios.post('/api/experiment/readXlsx/', formData, {
-            headers: {
-            'Content-Type': 'multipart/form-data'
-            }
-        })
-        .then((res)=>{alert(res.statusText)})
-        .catch((a)=>{console.log("Something's wrong with file uploading");})
+        if (this.state.file !=null){
+            let token = getCSRFToken()
+            var formData = new FormData();
+            formData.append("file", this.state.file);
+            formData.append("title", this.state.file.name);
+            axios.post('/api/experiment/readXlsx/', formData, {
+                headers: {
+                'Content-Type': 'multipart/form-data',
+                "X-CSRFTOKEN": token
+                }
+            })
+            .then((res)=>{alert(res.statusText)})
+            .catch((a)=>{console.log("Something's wrong with file uploading");})
+        }
     }
     render(){
     return(
