@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom';
 import './style.css';
 import axios from "axios";
 import download from 'downloadjs';
-import DjangoCSRFToken from 'django-react-csrftoken'
 
 function Select(props){
     var q =[""]
@@ -175,7 +174,6 @@ refresh = ()=> {
     render(){
     return(
         <form className="box" id="dataform" onSubmit={this.handleSubmit}>
-            <DjangoCSRFToken/>
                 <label className="line2">
                     Nazwa:
                     <input className="line" type="text" value={this.state.name} onChange={this.handleChangeName} />
