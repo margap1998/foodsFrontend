@@ -1,7 +1,8 @@
 import React from 'react';
 import download from 'downloadjs';
-import { getCSRFToken } from './csrftoken'
-import { Select } from "./funcComponents";
+import axios from "axios";
+import { getCSRFToken } from './csrftoken.js'
+import { Select } from "./funcComponents.js";
 //Komponenet odpowiedzialny za formularz eksperymentu
 class DataForm extends React.Component{
     constructor(props){
@@ -38,7 +39,7 @@ class DataForm extends React.Component{
      axios.get("/api/experiment/Category/").then((res)=>{
          var arr = [];
          //wyłuskanie nazw kategorii
-         res.data.forEach((obj)=>{arr.push(obj.name);});
+         res.data.forEach((obj)=>{arr.push([obj.name,obj.name]);});
  
          this.setState({categories:arr});
      }).catch(console.log("Categories failure \n"));
@@ -48,7 +49,7 @@ class DataForm extends React.Component{
      axios.get("/api/experiment/Metrics/").then((res)=>{
          var arr = [];
          //wyłuskanie nazw metryk
-         res.data.forEach((obj)=>{arr.push(obj.name);});
+         res.data.forEach((obj)=>{arr.push([obj.name,obj.name]);});
          this.setState({metricsGeneral:arr});
      }).catch(console.log("Metric failure \n"));
      axios.get("/api/experiment/Product/").then((res)=>{
@@ -63,7 +64,7 @@ class DataForm extends React.Component{
      handleChangeCat = (v) => {    
          this.setState({category: v});
          var arr = []
-         this.state.prodObj.forEach((lv,i,a)=>{if(lv.category === v){arr.push(lv.name)}})
+         this.state.prodObj.forEach((lv,i,a)=>{if(lv.category === v){arr.push([lv.name,lv.name+" - "+lv.description])}})
          this.setState({prodBase:arr, product:""})
      }
      handlePrivate = (e) => {
@@ -74,7 +75,8 @@ class DataForm extends React.Component{
      }
      handleChangeMetric = (v)=>{
          var arr = []
-         this.state.metricsDetailedBase.forEach((lv,i,a)=>{ if(v===lv.metric){arr.push(lv.id)}})
+         this.state.metricsDetailedBase.forEach((lv,i,a)=>{ if(v===lv.metric){arr.push(
+             [lv.id,"Serii-"+lv.numberOfSeries+" Powtórzeń-"+lv.numberOfRepeat+" Próbka: "+lv.sample])}})
          this.setState({
              metricsDetailed : arr,
              metricGeneral: v,
@@ -89,7 +91,7 @@ class DataForm extends React.Component{
              this.state.metricsDetailedBase.forEach((lv) => {if (v==lv.id){obj = lv}})
              //zmiana stanu i dałożenie okienka z właściwościami
              this.setState({metric: obj, metricID:v, dialog: (
-             <textarea className="line" value={
+             <textarea className="line" readOnly value={
                  "number of repeats: "+obj.numberOfRepeat+
                  "\nnumber of series: " + obj.numberOfSeries+
                  "\nsample: "+ obj.sample}/>
@@ -257,7 +259,7 @@ class DataForm extends React.Component{
                  </label>
                  <label className="line2">
                      Liczba cech:
-                     <input className="line" type="text" value={this.state.num_features} />
+                     <textarea readOnly className="line" value={this.state.num_features} />
                  </label>
                  <label className="line2">
                      Prywatny
@@ -281,14 +283,14 @@ class DataForm extends React.Component{
                      <button type="button" onClick={this.handleChange}>Zmień</button>
                      <button type="button" onClick={this.handleSubmit}>Generuj</button>
                  </div>
-                 <form id="uploadForm" role="form"enctype="multipart/form-data"
+                 <div id="uploadForm" role="form"enctype="multipart/form-data"
                          //className={"visible"+this.state.generated.toString()}
                  >
                          <input type="file"
                              id="XLSXFileChoose" name="XLSXChoose"
                              accept=".xlsx" onChange ={this.handleLoadXLSX}/>
                          <button className={"visible"+this.state.loaded.toString()} onClick={this.handleSubmitXLSX} type="button" >Załaduj</button>
-                 </form>
+                 </div>
          </form>
      )
      //return <Line obj={obj} onButton={this.handleDelDM}></Line>})}
