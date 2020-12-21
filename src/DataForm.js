@@ -214,7 +214,7 @@ class DataForm extends React.Component{
              metrics : metrics
          };
          //wysłanie żądania do generowania excela
-         axios.post("/api/experiment/geneerateXlsx/",req,{ headers:headers, withCredentials:true, responseType: 'blob', withCredentials:'true'}).then((res)=>{
+         axios.post("/api/experiment/geneerateXlsx/",req,{ headers:headers, withCredentials:true, responseType: 'blob'}).then((res)=>{
              //sprytna funkcja do pobrania danych wzięta z repozytorium npm
              download(res.data,experiment_data[0]+"_"+experiment_data[3]+'.xlsx')
              this.setState({generated:true});
@@ -286,4 +286,4 @@ class DataForm extends React.Component{
      }
  }
  
- export default DataForm;
+ export default DataForm
