@@ -17,9 +17,9 @@ class DataForm extends React.Component{
          categories:[], ingredients:[], metrics:[],
          prodBase:[], prodObj:[], metricsGeneral:[], metricsGeneralBase:[], metricsDetailedBase:[],
          metricsDetailed:[], sampleBase:[],recipeBase:[]
-        }
-        setInterval(this.refresh, 1000);
-    }
+     }
+     
+ }
  //komponent odpowiedzialny za usuwalną linijkę z metryką szczegółową
  //props.obj - metryka szczegółowa do obskoczenia
  // props.onButton - funkcja do wywołania dla przycisku usuń
@@ -49,7 +49,7 @@ class DataForm extends React.Component{
      axios.get("/api/experiment/Metrics/").then((res)=>{
          var arr = [];
          //wyłuskanie nazw metryk
-        res.data.forEach((obj)=>{arr.push([obj.name,obj.name+" - "+obj.unit]);});
+         res.data.forEach((obj)=>{arr.push([obj.name,obj.name]);});
          this.setState({metricsGeneral:arr});
      }).catch(console.log("Metric failure \n"));
      axios.get("/api/experiment/Product/").then((res)=>{
@@ -115,6 +115,14 @@ class DataForm extends React.Component{
      }
      handleLoadXLSX = (e)=>{
          this.setState({ filename: e.target.files[0].name, loaded:true, file:e.target.files[0]});
+     /*
+         var myFile = e.target.files[0];
+         var reader = new FileReader();
+         reader.addEventListener('load', (evt) => {
+             this.setState({ file: evt.target.result,loaded:true});
+         });
+         reader.readAsText(myFile);
+     */
          }
      handleSubmitXLSX = (e)=>{
          if (this.state.file !=null){

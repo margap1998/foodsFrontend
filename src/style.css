@@ -34,7 +34,6 @@ h1{
 }
 
 .line2{
-	border-bottom: 0.2mm solid rgb(139, 139, 139);
 	flex-wrap:wrap;
 	display:flex;
 	align-items:center;
