@@ -1,4 +1,3 @@
-
 import React from 'react';
 import DataForm from "./DataForm";
 import axios from "axios";
@@ -19,13 +18,13 @@ class SampleForm extends React.Component{
     }
     refresh = ()=> {
         //żądania typu get do API
-     axios.get("http://localhost:8000/api/experiment/Supplement/").then((res)=>{
+     axios.get("/api/experiment/Supplement/").then((res)=>{
         var arr = [];
         //wyłuskanie nazw metryk
         res.data.forEach((obj)=>{arr.push([obj.name,obj.name+" - "+obj.percentage+"%"]);});
         this.setState({supplementsBase:arr});
     }).catch(console.log("Metric failure \n"));
-        axios.get("http://localhost:8000/api/experiment/ExternalFactor/").then((res)=>{
+        axios.get("/api/experiment/ExternalFactor/").then((res)=>{
             var arr = []
             res.data.forEach((obj)=>{arr.push([obj.name, obj.name+" ["+obj.values+"]"+" "+obj.unit])})
             this.setState({externalFactors:arr});
@@ -39,7 +38,7 @@ class SampleForm extends React.Component{
             "supplement": this.state.supplements
         }
         
-        axios.post("http://localhost:8000/api/experiment/Sample/",data,{ headers:headers })
+        axios.post("/api/experiment/Sample/",data,{ headers:headers })
             .then((res)=>{
                 this.componentWillUnmount();
                 alert("Wstawiono");

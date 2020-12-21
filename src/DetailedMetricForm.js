@@ -21,13 +21,13 @@ class DetailedMetricForm extends React.Component{
     }
     refresh = ()=> {
         //żądania typu get do API
-     axios.get("http://localhost:8000/api/experiment/Metrics/").then((res)=>{
+     axios.get("/api/experiment/Metrics/").then((res)=>{
         var arr = [];
         //wyłuskanie nazw metryk
         res.data.forEach((obj)=>{arr.push([obj.name,obj.name+" - "+obj.unit]);});
         this.setState({metricsGeneral:arr});
     }).catch(console.log("Metric failure \n"));
-        axios.get("http://localhost:8000/api/experiment/Sample/").then((res)=>{
+        axios.get("/api/experiment/Sample/").then((res)=>{
             var arr = []
             res.data.forEach((obj)=>{arr.push([obj.id,obj.supplement.reduce((pV,cV)=>{return pV+" "+cV})])})
             this.setState({samplesBase:arr});
@@ -70,7 +70,7 @@ class DetailedMetricForm extends React.Component{
                 "sample": this.state.sample
             }
         
-        axios.post("http://localhost:8000/api/experiment/DetailedMetrics/",data,{ headers:headers })
+        axios.post("/api/experiment/DetailedMetrics/",data,{ headers:headers })
             .then((res)=>{
                 this.componentWillUnmount()
                 alert("Wstawiono");

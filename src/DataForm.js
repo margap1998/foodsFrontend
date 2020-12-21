@@ -35,23 +35,23 @@ class DataForm extends React.Component{
  }
  refresh = ()=> {
      //żądania typu get do API
-     axios.get("http://localhost:8000/api/experiment/Category/").then((res)=>{
+     axios.get("/api/experiment/Category/").then((res)=>{
          var arr = [];
          //wyłuskanie nazw kategorii
          res.data.forEach((obj)=>{arr.push([obj.name,obj.name]);});
  
          this.setState({categories:arr});
      }).catch(console.log("Categories failure \n"));
-     axios.get("http://localhost:8000/api/experiment/DetailedMetrics/").then((res)=>{
+     axios.get("/api/experiment/DetailedMetrics/").then((res)=>{
          this.setState({metricsDetailedBase:res.data});
      }).catch(console.log("Metric failure \n"));
-     axios.get("http://localhost:8000/api/experiment/Metrics/").then((res)=>{
+     axios.get("/api/experiment/Metrics/").then((res)=>{
          var arr = [];
          //wyłuskanie nazw metryk
         res.data.forEach((obj)=>{arr.push([obj.name,obj.name+" - "+obj.unit]);});
          this.setState({metricsGeneral:arr});
      }).catch(console.log("Metric failure \n"));
-     axios.get("http://localhost:8000/api/experiment/Product/").then((res)=>{
+     axios.get("/api/experiment/Product/").then((res)=>{
          this.setState({prodObj:res.data});
      }).catch(console.log("Product failure \n"));
  }
@@ -122,7 +122,7 @@ class DataForm extends React.Component{
              var formData = new FormData();
              formData.append("file", this.state.file);
              formData.append("title", this.state.filename);
-             axios.post('http://localhost:8000/api/experiment/readXlsx/', formData, {
+             axios.post('/api/experiment/readXlsx/', formData, {
                  headers: {
                  'Content-Type': 'multipart/form-data',
                  "X-CSRFTOKEN": token
@@ -153,7 +153,7 @@ class DataForm extends React.Component{
                  "detailedMetrics": arr
              }
  
-             axios.post("http://localhost:8000/api/experiment/Experiment/",exp_head,{ headers:headers }).then((res)=>{
+             axios.post("/api/experiment/Experiment/",exp_head,{ headers:headers }).then((res)=>{
                  alert(res.statusText);
              }).catch((e)=>{console.log("Something's wrong with inserting experiment");})
          }else{
@@ -180,7 +180,7 @@ class DataForm extends React.Component{
                  "detailedMetrics": arr
              }
  
-             axios.put("http://localhost:8000/api/experiment/Experiment/",exp_head,{ headers:headers }).then((res)=>{
+             axios.put("/api/experiment/Experiment/",exp_head,{ headers:headers }).then((res)=>{
                  alert(res.statusText);
              }).catch((e)=>{console.log("Something's wrong with inserting experiment");})
          }else{
@@ -214,7 +214,7 @@ class DataForm extends React.Component{
              metrics : metrics
          };
          //wysłanie żądania do generowania excela
-         axios.post("http://localhost:8000/api/experiment/geneerateXlsx/",req,{ headers:headers, responseType: 'blob'}).then((res)=>{
+         axios.post("/api/experiment/geneerateXlsx/",req,{ headers:headers, withCredentials:true, responseType: 'blob', withCredentials:'true'}).then((res)=>{
              //sprytna funkcja do pobrania danych wzięta z repozytorium npm
              download(res.data,experiment_data[0]+"_"+experiment_data[3]+'.xlsx')
              this.setState({generated:true});
@@ -274,9 +274,7 @@ class DataForm extends React.Component{
                      <button type="button" onClick={this.handleChange}>Zmień</button>
                      <button type="button" onClick={this.handleSubmit}>Generuj</button>
                  </div>
-                 <div id="uploadForm" role="form"enctype="multipart/form-data"
-                         //className={"visible"+this.state.generated.toString()}
-                 >
+                 <div>
                          <input type="file"
                              id="XLSXFileChoose" name="XLSXChoose"
                              accept=".xlsx" onChange ={this.handleLoadXLSX}/>
