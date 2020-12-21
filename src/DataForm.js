@@ -17,9 +17,8 @@ class DataForm extends React.Component{
          categories:[], ingredients:[], metrics:[],
          prodBase:[], prodObj:[], metricsGeneral:[], metricsGeneralBase:[], metricsDetailedBase:[],
          metricsDetailed:[], sampleBase:[],recipeBase:[]
-     }
-     
- }
+        }
+    }
  //komponent odpowiedzialny za usuwalną linijkę z metryką szczegółową
  //props.obj - metryka szczegółowa do obskoczenia
  // props.onButton - funkcja do wywołania dla przycisku usuń
@@ -36,23 +35,23 @@ class DataForm extends React.Component{
  }
  refresh = ()=> {
      //żądania typu get do API
-     axios.get("/api/experiment/Category/").then((res)=>{
+     axios.get("http://localhost:8000/api/experiment/Category/").then((res)=>{
          var arr = [];
          //wyłuskanie nazw kategorii
          res.data.forEach((obj)=>{arr.push([obj.name,obj.name]);});
  
          this.setState({categories:arr});
      }).catch(console.log("Categories failure \n"));
-     axios.get("/api/experiment/DetailedMetrics/").then((res)=>{
+     axios.get("http://localhost:8000/api/experiment/DetailedMetrics/").then((res)=>{
          this.setState({metricsDetailedBase:res.data});
      }).catch(console.log("Metric failure \n"));
-     axios.get("/api/experiment/Metrics/").then((res)=>{
+     axios.get("http://localhost:8000/api/experiment/Metrics/").then((res)=>{
          var arr = [];
          //wyłuskanie nazw metryk
-         res.data.forEach((obj)=>{arr.push([obj.name,obj.name]);});
+        res.data.forEach((obj)=>{arr.push([obj.name,obj.name+" - "+obj.unit]);});
          this.setState({metricsGeneral:arr});
      }).catch(console.log("Metric failure \n"));
-     axios.get("/api/experiment/Product/").then((res)=>{
+     axios.get("http://localhost:8000/api/experiment/Product/").then((res)=>{
          this.setState({prodObj:res.data});
      }).catch(console.log("Product failure \n"));
  }
@@ -115,14 +114,6 @@ class DataForm extends React.Component{
      }
      handleLoadXLSX = (e)=>{
          this.setState({ filename: e.target.files[0].name, loaded:true, file:e.target.files[0]});
-     /*
-         var myFile = e.target.files[0];
-         var reader = new FileReader();
-         reader.addEventListener('load', (evt) => {
-             this.setState({ file: evt.target.result,loaded:true});
-         });
-         reader.readAsText(myFile);
-     */
          }
      handleSubmitXLSX = (e)=>{
          if (this.state.file !=null){
@@ -131,7 +122,7 @@ class DataForm extends React.Component{
              var formData = new FormData();
              formData.append("file", this.state.file);
              formData.append("title", this.state.filename);
-             axios.post('/api/experiment/readXlsx/', formData, {
+             axios.post('http://localhost:8000/api/experiment/readXlsx/', formData, {
                  headers: {
                  'Content-Type': 'multipart/form-data',
                  "X-CSRFTOKEN": token
@@ -162,7 +153,7 @@ class DataForm extends React.Component{
                  "detailedMetrics": arr
              }
  
-             axios.post("/api/experiment/Experiment/",exp_head,{ headers:headers }).then((res)=>{
+             axios.post("http://localhost:8000/api/experiment/Experiment/",exp_head,{ headers:headers }).then((res)=>{
                  alert(res.statusText);
              }).catch((e)=>{console.log("Something's wrong with inserting experiment");})
          }else{
@@ -189,7 +180,7 @@ class DataForm extends React.Component{
                  "detailedMetrics": arr
              }
  
-             axios.put("/api/experiment/Experiment/",exp_head,{ headers:headers }).then((res)=>{
+             axios.put("http://localhost:8000/api/experiment/Experiment/",exp_head,{ headers:headers }).then((res)=>{
                  alert(res.statusText);
              }).catch((e)=>{console.log("Something's wrong with inserting experiment");})
          }else{
@@ -223,7 +214,7 @@ class DataForm extends React.Component{
              metrics : metrics
          };
          //wysłanie żądania do generowania excela
-         axios.post("/api/experiment/geneerateXlsx/",req,{ headers:headers, responseType: 'blob'}).then((res)=>{
+         axios.post("http://localhost:8000/api/experiment/geneerateXlsx/",req,{ headers:headers, responseType: 'blob'}).then((res)=>{
              //sprytna funkcja do pobrania danych wzięta z repozytorium npm
              download(res.data,experiment_data[0]+"_"+experiment_data[3]+'.xlsx')
              this.setState({generated:true});
