@@ -6,7 +6,7 @@ class SampleForm extends React.Component{
     constructor(props){
         super(props)
         this.state={
-            supplementsBase:[], supplements:[], supplement:"",
+            supplementsBase:[], supplement:"",
             externalFactors:[], externalFactor:""
         }
     }
@@ -32,7 +32,7 @@ class SampleForm extends React.Component{
         let headers = {"X-CSRFTOKEN": token}
         let data = {
             "externalFactor": this.state.externalFactor,
-            "supplement": this.state.supplements
+            "supplement": [this.state.supplement]
         }
         
         axios.post("/api/experiment/Sample/",data,{ headers:headers })
@@ -51,18 +51,7 @@ class SampleForm extends React.Component{
     handleChangeEF = (v)=>{ this.setState({externalFactor:v}) }
     handleChangeSupplements = (v) =>{
         this.setState({supplement:v})
-    }
-    handleAddSupplement = () =>{
-        let v = this.state.supplement
-        if(v!==""){
-            var arr = this.state.supplements
-            if (!(v == "" || this.state.supplements.includes(v))){
-                arr.push(v)
-            }
-            this.setState({supplements:arr, supplement:""})
-        }
-    }
-    
+    }    
 
     Line = (props) => {
         let deleter = (v)=>{
@@ -97,12 +86,7 @@ class SampleForm extends React.Component{
                         onChange={this.handleChangeSupplements}
                         value={this.state.supplement}
                 ></Select>
-                <button type="button"
-                        onClick={this.handleAddSupplement}>
-                        Dodaj dodatek
-                </button>
             </label>
-            {this.state.supplements.map((v,n,a)=>{ return this.makeLine(this.state.supplementsBase,v)})}
             <button type="button" onClick={this.handleInsert}>Dodaj próbkę</button>
         </div>
     }

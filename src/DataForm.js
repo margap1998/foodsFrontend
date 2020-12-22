@@ -264,7 +264,10 @@ class DataForm extends React.Component{
                      Metryka szczegółowa:
                      <Select value={this.state.metricID} onChange={this.handleChangeDetailedMetric} array={this.state.metricsDetailed}/>
                      <button type="button" onClick={this.handleAddDM}>
-                             Dodaj
+                             Przypisz
+                         </button>
+                     <button type="button">
+                             Nowa
                          </button>
                  </label>
                  {this.state.dialog}
