@@ -6,7 +6,7 @@ class SampleForm extends React.Component{
     constructor(props){
         super(props)
         this.state={
-            supplementsBase:[], supplement:"",
+            supplementsBase:[], supplements:[], supplement:"",
             externalFactors:[], externalFactor:""
         }
     }
@@ -32,12 +32,13 @@ class SampleForm extends React.Component{
         let headers = {"X-CSRFTOKEN": token}
         let data = {
             "externalFactor": this.state.externalFactor,
-            "supplement": [this.state.supplement]
+            "supplement": this.state.supplements
         }
         
         axios.post("/api/experiment/Sample/",data,{ headers:headers })
             .then((res)=>{
                 this.componentWillUnmount();
+                this.props.refreshDB()
                 alert("Wstawiono");
             })
             .catch((e)=>{
@@ -46,16 +47,27 @@ class SampleForm extends React.Component{
             })
     }
     componentWillUnmount = ()=>{
-        this.props.closeProc(0)
+        this.props.closeProc()
     }
     handleChangeEF = (v)=>{ this.setState({externalFactor:v}) }
     handleChangeSupplements = (v) =>{
         this.setState({supplement:v})
-    }    
+    }
+    handleAddSupplement = () =>{
+        let v = this.state.supplement
+        if(v!==""){
+            var arr = this.state.supplements
+            if (!(v == "" || this.state.supplements.includes(v))){
+                arr.push(v)
+            }
+            this.setState({supplements:arr, supplement:""})
+        }
+    }
+    
 
     Line = (props) => {
         let deleter = (v)=>{
-            let pred = (vP,i,a)=>{return vP !==v};
+            let pred = (vP)=>{return vP !==v};
             var arr2 = this.state.supplements;
             this.setState({supplements:arr2.filter(pred)});
         }
@@ -86,7 +98,12 @@ class SampleForm extends React.Component{
                         onChange={this.handleChangeSupplements}
                         value={this.state.supplement}
                 ></Select>
+                <button type="button"
+                        onClick={this.handleAddSupplement}>
+                        Dodaj dodatek
+                </button>
             </label>
+            {this.state.supplements.map((v,n,a)=>{ return this.makeLine(this.state.supplementsBase,v)})}
             <button type="button" onClick={this.handleInsert}>Dodaj próbkę</button>
         </div>
     }

@@ -1,35 +1,9 @@
-import DetailedMetricForm from "./DetailedMetricForm";
-import SampleForm from "./SampleForm";
 import DataForm from "./DataForm";
 import {getCSRFToken} from "./csrftoken"
 import './style.css';
 import React from 'react';
 import Axios from "axios";
 
-class SupplementAdminForm extends React.Component{
-    constructor(props){
-        super(props)
-        this.state ={
-
-        }
-    }
-    render = ()=>{
-        return(<div className="box">
-
-        </div>)
-    }
-}
-
-class ProductAdminForm extends React.Component{
-    constructor(props){
-        super(props)
-    }
-    render = ()=>{
-        return(<div className="box">
-
-        </div>)
-    }
-}
 class CategoryAdminForm extends React.Component{
     constructor(props){
         super(props)
@@ -38,7 +12,7 @@ class CategoryAdminForm extends React.Component{
         }
     }
     componentWillUnmount = ()=>{
-        this.props.closeProc(3)
+        this.props.closeProc(this.props.index)
     }
     handleSubmit = ()=>{
         let token = getCSRFToken()
@@ -77,10 +51,8 @@ class AdminPanel extends React.Component{
                 break;
             case 1://"IngredientAdminForm":
                 break;
-            case 2://"ProductAdminForm":
-                break;
-            case 3://"CategoryAdminForm"
-                arr[f] = <CategoryAdminForm closeProc={this.closeWindow}/>
+            case 2://"CategoryAdminForm"
+                arr[f] = <CategoryAdminForm index={f} closeProc={this.closeWindow}/>
                 break;
         }
         this.setState({sections:arr})
@@ -97,7 +69,7 @@ class AdminPanel extends React.Component{
                 <button>Dodatki bazowe</button>
                 <button>Składniki podstawowe</button>
                 <button>Produkty</button>
-                <button onClick={()=>{this.selectSection(3)}}>Kategorie</button>
+                <button onClick={()=>{this.selectSection(2)}}>Kategorie</button>
             </div></nav>
             {this.state.sections.map((v)=>{return v})}
         </div>
@@ -108,19 +80,7 @@ class AdminPanel extends React.Component{
 class App extends React.Component{
     constructor(props){
         super(props)
-        this.state={experiment_data:{},section:[null,null],main:<DataForm/>, admin:true, adminMode:false};
-    }
-
-    closeWindow = (ind)=>{
-        var arr = this.state.section
-        arr[ind] = null
-        this.setState({section:arr})
-    }
-
-    addSection = (obj,ind)=>{
-        var arr = this.state.section
-        arr[ind] = obj
-        this.setState({section:arr})
+        this.state={main:<DataForm/>, admin:true, adminMode:false};
     }
     setMode(){
         if(this.state.adminMode) {
@@ -132,15 +92,8 @@ class App extends React.Component{
     }
     render = ()=>{
         return <div id ="App">
-            <nav className="box">
-                <div>
-                <button onClick={(e)=>{ this.addSection(<SampleForm closeProc={this.closeWindow}/>,0) }}>Nowa próbka</button>
-                <button onClick={(e)=>{ this.addSection(<DetailedMetricForm closeProc={this.closeWindow} />,1) } }>Nowa metryka szczegółowa</button>
-                <button onClick={()=>{ this.setMode() }}>{this.state.adminMode ? "Formularz eksperymemtu" : "Panel administracyjny" }</button>
-                </div>
-            </nav>
-            {this.state.section.map((v)=>{return v})}
-            {this.state.main}
+        <button onClick={()=>{ this.setMode() }}>{this.state.adminMode ? "Formularz eksperymemtu" : "Panel administracyjny" }</button>
+        {this.state.main}
         </div>
     }
 }

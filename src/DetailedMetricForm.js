@@ -3,6 +3,7 @@ import axios from "axios";
 import { Select } from "./funcComponents";
 import { getCSRFToken } from './csrftoken.js'
 import './style.css';
+import SampleForm from './SampleForm';
 
 
 class DetailedMetricForm extends React.Component{
@@ -12,21 +13,14 @@ class DetailedMetricForm extends React.Component{
             num_repeats:0,
             num_series:0,
             samplesBase:[], metricsGeneral:[],
-            metric:"",
-            sample:""
+            sample:"",
+            window:undefined
         }
     }
     componentDidMount = () => {
-        this.refresh()
+        this.refreshBase()
     }
-    refresh = ()=> {
-        //żądania typu get do API
-     axios.get("/api/experiment/Metrics/").then((res)=>{
-        var arr = [];
-        //wyłuskanie nazw metryk
-        res.data.forEach((obj)=>{arr.push([obj.name,obj.name+" - "+obj.unit]);});
-        this.setState({metricsGeneral:arr});
-    }).catch(console.log("Metric failure \n"));
+    refreshBase = ()=> {
         axios.get("/api/experiment/Sample/").then((res)=>{
             var arr = []
             res.data.forEach((obj)=>{arr.push([obj.id,obj.supplement.reduce((pV,cV)=>{return pV+" "+cV})])})
@@ -45,7 +39,7 @@ class DetailedMetricForm extends React.Component{
 
     }
     componentWillUnmount = ()=>{
-        this.props.closeProc(1)
+        this.props.closeProc()
     }
     handleChangeSeries = (event)=>{    
         const regExp = /^[0-9]*$/;
@@ -57,7 +51,6 @@ class DetailedMetricForm extends React.Component{
             this.setState({num_series: this.state.num_series})
         }
     }
-    handleChangeMetric = (v)=>{ this.setState({ metric:v }) }
     handleChangeSample = (v)=>{ this.setState({ sample:v }) }
     handleInsert = ()=>{
         let token = getCSRFToken()
@@ -66,12 +59,13 @@ class DetailedMetricForm extends React.Component{
         let data = {
                 "numberOfRepeat": this.state.num_repeats,
                 "numberOfSeries": this.state.num_series,
-                "metric": this.state.metric,
+                "metric": this.props.metric,
                 "sample": this.state.sample
             }
         
         axios.post("/api/experiment/DetailedMetrics/",data,{ headers:headers })
             .then((res)=>{
+                this.props.refreshDB()
                 this.componentWillUnmount()
                 alert("Wstawiono");
             })
@@ -85,26 +79,24 @@ class DetailedMetricForm extends React.Component{
         return <div className="box">
             <button type="button" onClick={this.componentWillUnmount}>X</button>
             <label className="line2">
+                    Metryka: {this.props.metric}
+            </label>
+            <label className="line2">
+                            Próbka:
+                <Select array={this.state.samplesBase}
+                        onChange={this.handleChangeSample}
+                        value={this.state.sample}
+                ></Select>
+                <button onClick={ (e)=>{ this.setState({window:<SampleForm refreshDB={this.refreshBase} closeProc={()=>{this.setState({window:undefined})}}/>}) } }>Nowa próbka</button>
+            </label>
+            {this.state.window}
+            <label className="line2">
                 Liczba powtórzeń:
                 <input className="line" type="text" value={this.state.num_repeats} onChange={this.handleChangeRepeats} />
             </label>
             <label className="line2">
                 Liczba serii:
                 <input className="line" type="text" value={this.state.num_series} onChange={this.handleChangeSeries} />
-            </label>
-            <label className="line2">
-                Metryka ogólna:
-                <Select array={this.state.metricsGeneral}  
-                        onChange={this.handleChangeMetric}
-                        value={this.state.metric}
-                ></Select>
-            </label>
-            <label className="line2">
-                Próbka:
-                <Select array={this.state.samplesBase}
-                        onChange={this.handleChangeSample}
-                        value={this.state.sample}
-                ></Select>
             </label>
             <button type="button" onClick={this.handleInsert}>Dodaj</button>
         </div>

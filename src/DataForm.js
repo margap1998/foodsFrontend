@@ -3,6 +3,7 @@ import download from 'downloadjs';
 import axios from "axios";
 import { getCSRFToken } from './csrftoken.js'
 import { Select } from "./funcComponents.js";
+import DetailedMetricForm from './DetailedMetricForm.js';
 //Komponenet odpowiedzialny za formularz eksperymentu
 class DataForm extends React.Component{
     constructor(props){
@@ -10,7 +11,7 @@ class DataForm extends React.Component{
      //inicjalizacja stanu komponentu
      //TODO: przerobić tak by wykorzystać jeszcze do edycji istniejącego eksperymentu
      //if (props.obj === undefined || props.obj === null){
-     this.state = {name:null, desc:null, 
+     this.state = {name:null, desc:null, window:null,
          num_repeats:"", num_features:0, sample:1, metricID:"",
          paper:"", private:false, product:"", metric:"", filename:"",
          metricGeneral:"", generated:false, file:"", loaded:false,
@@ -74,8 +75,9 @@ class DataForm extends React.Component{
      }
      handleChangeMetric = (v)=>{
          var arr = []
+
          this.state.metricsDetailedBase.forEach((lv,i,a)=>{ if(v===lv.metric){arr.push(
-             [lv.id,"Serii-"+lv.numberOfSeries+" Powtórzeń-"+lv.numberOfRepeat+" Próbka: "+lv.sample])}})
+             [lv.id,"Serii-"+lv.numberOfSeries+" Powtórzeń-"+lv.numberOfRepeat])}})
          this.setState({
              metricsDetailed : arr,
              metricGeneral: v,
@@ -89,23 +91,18 @@ class DataForm extends React.Component{
              var obj = null
              this.state.metricsDetailedBase.forEach((lv) => {if (v==lv.id){obj = lv}})
              //zmiana stanu i dałożenie okienka z właściwościami
-             this.setState({metric: obj, metricID:v, dialog: (
-             <textarea className="line" readOnly value={
-                 "number of repeats: "+obj.numberOfRepeat+
-                 "\nnumber of series: " + obj.numberOfSeries+
-                 "\nsample: "+ obj.sample}/>
-             )})
+             this.setState({metric: obj, metricID:v})
          }
      }
-     handleAddDM = (e)=>{
+     handleAddDM = (e)=>{if (this.state.metricID !=""){
          var arr = this.state.metricsDetailedBase;
          var arr2 = this.state.metrics;
          var obj;
          arr.forEach((v,i,a)=>{if( v.id == this.state.metricID) obj = v})
-         if (!arr2.includes(obj)){
-             arr2.push(obj)
-             this.setState({num_features: (this.state.num_features+1),metrics:arr2});
-         }
+         
+         arr2.push(obj)
+         this.setState({num_features: (this.state.num_features+1),metrics:arr2});
+        }
      }
      handleDelDM = (obj)=>{
          let pred = (v,i,a)=>{return !(v.id == obj.id  && obj.type==v.type)};
@@ -202,12 +199,6 @@ class DataForm extends React.Component{
          //wyłuskanie wartości id
          //nagłówek eksperymentu
          var experiment_data = [this.state.name, this.state.desc,this.state.paper, 1, now.getDate()+"."+(now.getMonth()+1)+"."+now.getFullYear()]
-         //var i = 0
-         /*this.state.features.forEach((f)=>{ metrics.map((v)=>{v.id})
-             var head = [i.toString(),parseInt(this.state.num_series),
-                 parseInt(this.state.num_repeats),1,['120'],f.name]
-             metrices.push(head)
-         })*/
          //obiekt z żądaniem
          var req = {
              experiment_data : experiment_data,
@@ -225,9 +216,19 @@ class DataForm extends React.Component{
          alert("Uzupełnij")
          }
      }
+     openWindow = ()=>{
+         let refDM = ()=>{       
+            axios.get("/api/experiment/DetailedMetrics/").then((res)=>{
+                this.setState({metricsDetailedBase:res.data});
+                this.handleChangeMetric(this.state.metricGeneral)
+            }).catch(console.log("Metric failure \n"));
+         }
+        this.setState({window:<DetailedMetricForm refreshDB={refDM} closeProc={this.closeWindow} metric ={this.state.metricGeneral}/>})
+     }
+     closeWindow =()=>{ this.setState({window:null}) }
      render(){
      return(
-         <form className="box" id="dataform" onSubmit={this.handleSubmit}>
+         <div className="box" id="dataform">
                  <label className="line2">
                      Nazwa:
                      <input className="line" type="text" value={this.state.name} onChange={this.handleChangeName} />
@@ -249,41 +250,36 @@ class DataForm extends React.Component{
                      <Select onChange={this.handleChangeProd} array={this.state.prodBase}/>
                  </label>
                  <label className="line2">
-                     Liczba cech:
-                     <textarea readOnly className="line" value={this.state.num_features} />
-                 </label>
-                 <label className="line2">
                      Prywatny
                      <input type="checkbox" value={this.state.private} onChange={this.handlePrivate}/>
                  </label>
                  <label className="line2">
                      Metryka:
                      <Select onChange={this.handleChangeMetric} array={this.state.metricsGeneral}/>
-                 </label>
-                 <label className="line2">
                      Metryka szczegółowa:
                      <Select value={this.state.metricID} onChange={this.handleChangeDetailedMetric} array={this.state.metricsDetailed}/>
                      <button type="button" onClick={this.handleAddDM}>
                              Przypisz
                          </button>
-                     <button type="button">
+                     <button type="button" onClick={ this.openWindow}>
                              Nowa
                          </button>
                  </label>
                  {this.state.dialog}
+                 {this.state.window}
                  {this.state.metrics.map((obj,n,a)=>{ return <this.Line obj={obj} onButton={this.handleDelDM}/>})}
-                 <div>
+                 <div className="box2">
                      <button type="button" onClick={this.handleInsert}>Dodaj</button>
                      <button type="button" onClick={this.handleChange}>Zmień</button>
                      <button type="button" onClick={this.handleSubmit}>Generuj</button>
                  </div>
-                 <div>
+                 <div className="box2">
                          <input type="file"
                              id="XLSXFileChoose" name="XLSXChoose"
                              accept=".xlsx" onChange ={this.handleLoadXLSX}/>
                          <button className={"visible"+this.state.loaded.toString()} onClick={this.handleSubmitXLSX} type="button" >Załaduj</button>
                  </div>
-         </form>
+         </div>
      )
      //return <Line obj={obj} onButton={this.handleDelDM}></Line>})}
      }
