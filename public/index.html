@@ -25,11 +25,15 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <title>React App</title>
-    <script>
-      import axios from "axios";
-      axios.defaults.xsrfCookieName = 'csrftoken'
-      axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
-    </script>
+    <script type="text/javascript" >
+    //dodanie na koniec? nowej pozycji w historii kierującym na aktualną stronę
+      history.pushState(null, document.title, location.href);
+      //dodanie obsługi zdarzenia dla
+      window.addEventListener('popstate', function (event)
+      {
+        history.pushState(null, document.title, location.href);
+      });
+</script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>

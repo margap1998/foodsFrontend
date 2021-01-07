@@ -1,8 +1,8 @@
 import React from 'react';
 import axios from "axios";
-import { Select } from "./funcComponents";
-import { getCSRFToken } from './csrftoken.js'
-import './style.css';
+import { Select } from "../funcComponents";
+import { getCSRFToken } from '../csrftoken.js'
+import '../style.css';
 import SampleForm from './SampleForm';
 
 

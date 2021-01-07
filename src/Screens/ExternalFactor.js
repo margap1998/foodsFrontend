@@ -1,24 +1,10 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import './style.css';
+import '../style.css';
 import axios from "axios";
-import download from 'downloadjs';
-import {getCSRFToken} from './csrftoken'
-
-//komponent funk. przekształcający tablicę 1-D z wartościami w listę rozwijaną z elementem "pustym"
-function Select(props){
-    var q =[""]
-    q = q.concat(props.array)//tablica z wartościami
-    var op = q.map(value =>{return(<option value={value}>{value}</option>)}) // zrobienie opcji
-    return(
-        <select value={props.value} onChange={e => props.onChange(e.target.value) /* element typu select z listą rozwijaną*/}> 
-            {op /* tablica z mapowanymymi wartościami na elementy typu option*/}
-        </select>
-    )
-}
+import {getCSRFToken} from '../csrftoken'
 
 //Komponenet odpowiedzialny za formularz eksperymentu
-class DataForm extends React.Component{
+class ExternalFactor extends React.Component{
    constructor(props){
     super(props);
     //inicjalizacja stanu komponentu
@@ -45,12 +31,6 @@ Line = (props) => {
         </button>
     </div>)
 } 
-componentDidMount = () => {
-    this.refresh()
-}
-refresh = ()=> {
- 
-}
 
 // /api/experiment/Experiment/
 //name:null, numberOfVal:1, unit:null, values:null,
@@ -97,7 +77,8 @@ refresh = ()=> {
 
     render(){
     return(
-        <form className="box" id="dataform" onSubmit={this.handleSubmit}>
+        <form className="box" id="externalFactorForm">
+                <button type="button" onClick={this.props.closeProc}>X</button>
 				<label className="line3">
                     Dodawanie czynnika zewnetrznego:
                 </label>
@@ -122,36 +103,8 @@ refresh = ()=> {
                 </div>
                 
         </form>
-    )
-    //return <Line obj={obj} onButton={this.handleDelDM}></Line>})}
+        )
     }
 }
 
-
-class App extends React.Component{
-    constructor(props){
-        super(props)
-        this.state={experiment_data:{},section:"form"}
-    }
-    render(){
-        var section = (<div>Coś się popsuło</div>);
-        switch(this.state.section){
-            case "form":
-                section = <DataForm/>
-            break;
-            default:
-            break;
-        }
-        return <div id ="App">
-            {section}
-        </div>
-    }
-}
-
-axios.defaults.xsrfCookieName = 'csrftoken'
-axios.defaults.xsrfHeaderName = 'X-CSRFTOKEN'
-  ReactDOM.render(
-    <App/>,
-    document.getElementById('root')
-  );
-  
+export default ExternalFactor

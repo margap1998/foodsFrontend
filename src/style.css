@@ -11,10 +11,10 @@ h1{
 	align-items:center;
 	flex-direction:column;
 	align-items:center;
-	margin-left: 12.5%;
-	margin-right: 12.5%;
+	margin-left: 8%;
+	margin-right: 8%;
 	border:2px solid black;
-	width:75%;
+	width:84%;
 }
 .box2{
 	display:flex;

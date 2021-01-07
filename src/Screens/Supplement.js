@@ -1,24 +1,11 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import './style.css';
+import '../style.css';
 import axios from "axios";
-import download from 'downloadjs';
-import {getCSRFToken} from './csrftoken'
-
-//komponent funk. przekształcający tablicę 1-D z wartościami w listę rozwijaną z elementem "pustym"
-function Select(props){
-    var q =[""]
-    q = q.concat(props.array)//tablica z wartościami
-    var op = q.map(value =>{return(<option value={value}>{value}</option>)}) // zrobienie opcji
-    return(
-        <select value={props.value} onChange={e => props.onChange(e.target.value) /* element typu select z listą rozwijaną*/}> 
-            {op /* tablica z mapowanymymi wartościami na elementy typu option*/}
-        </select>
-    )
-}
+import { Select } from "../funcComponents";
+import {getCSRFToken} from '../csrftoken'
 
 //Komponenet odpowiedzialny za formularz eksperymentu
-class DataForm extends React.Component{
+class Supplement extends React.Component{
    constructor(props){
     super(props);
     //inicjalizacja stanu komponentu
@@ -31,17 +18,11 @@ class DataForm extends React.Component{
     }
     
 }
-//komponent odpowiedzialny za usuwalną linijkę z metryką szczegółową
-//props.obj - metryka szczegółowa do obskoczenia
-// props.onButton - funkcja do wywołania dla przycisku usuń
-Line = (props) => {
-    return(<div>
-        {props.obj['id']+":"+" type:"+props.obj['metric']+" number of repeats:"+props.obj['numberOfRepeat']}
-        <button type="button" onClick={(e) => props.onButton(props.obj)}>
-            Usuń
-        </button>
-    </div>)
-} 
+componentWillUnmount = ()=>{
+    this.props.closeProc(this.props.index)
+}
+
+
 componentDidMount = () => {
     this.refresh()
 }
@@ -50,7 +31,7 @@ refresh = ()=> {
 	axios.get("/api/experiment/BasicIngredientBase/").then((res)=>{
         var arr = [];
         //wyłuskanie nazw podstawowego składnika
-        res.data.forEach((obj)=>{arr.push(obj.name);});
+        res.data.forEach((obj)=>{arr.push([obj.name,obj.name]);});
 
         this.setState({basic_ingredient_base:arr});
     }).catch(console.log("BasicIngredientBase \n"));
@@ -58,7 +39,7 @@ refresh = ()=> {
 	axios.get("/api/experiment/SupplementBase/").then((res)=>{
         var arr = [];
         //wyłuskanie nazw podstawowego dodatku
-        res.data.forEach((obj)=>{arr.push(obj.name);});
+        res.data.forEach((obj)=>{arr.push([obj.name,obj.name]);});
 
         this.setState({supplement_base:arr});
     }).catch(console.log("SupplementBase \n"));
@@ -106,6 +87,7 @@ refresh = ()=> {
     render(){
     return(
         <form className="box" id="dataform" onSubmit={this.handleSubmit}>
+                <button type="button" onClick={this.componentWillUnmount}>X</button>
 				<label className="line3">
                     Dodawanie dodatku:
                 </label>
@@ -136,31 +118,4 @@ refresh = ()=> {
     }
 }
 
-
-class App extends React.Component{
-    constructor(props){
-        super(props)
-        this.state={experiment_data:{},section:"form"}
-    }
-    render(){
-        var section = (<div>Coś się popsuło</div>);
-        switch(this.state.section){
-            case "form":
-                section = <DataForm/>
-            break;
-            default:
-            break;
-        }
-        return <div id ="App">
-            {section}
-        </div>
-    }
-}
-
-axios.defaults.xsrfCookieName = 'csrftoken'
-axios.defaults.xsrfHeaderName = 'X-CSRFTOKEN'
-  ReactDOM.render(
-    <App/>,
-    document.getElementById('root')
-  );
-  
+export default Supplement

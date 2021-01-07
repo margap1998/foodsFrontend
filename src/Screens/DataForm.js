@@ -1,8 +1,8 @@
 import React from 'react';
 import download from 'downloadjs';
 import axios from "axios";
-import { getCSRFToken } from './csrftoken.js'
-import { Select } from "./funcComponents.js";
+import { getCSRFToken } from '../csrftoken.js'
+import { Select } from "../funcComponents.js";
 import DetailedMetricForm from './DetailedMetricForm.js';
 //Komponenet odpowiedzialny za formularz eksperymentu
 class DataForm extends React.Component{
@@ -34,6 +34,8 @@ class DataForm extends React.Component{
  componentDidMount = () => {
      this.refresh()
  }
+ componentWillUnmount = () => {
+}
  refresh = ()=> {
      //żądania typu get do API
      axios.get("/api/experiment/Category/").then((res)=>{
@@ -229,6 +231,7 @@ class DataForm extends React.Component{
      render(){
      return(
          <div className="box" id="dataform">
+                <button type="button" onClick={this.props.closeProc}>X</button>
                  <label className="line2">
                      Nazwa:
                      <input className="line" type="text" value={this.state.name} onChange={this.handleChangeName} />

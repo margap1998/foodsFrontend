@@ -1,13 +1,14 @@
 import React from 'react';
 import axios from "axios";
-import { Select } from "./funcComponents";
-import { getCSRFToken } from './csrftoken.js'
+import { Select } from "../funcComponents";
+import { getCSRFToken } from '../csrftoken.js'
+import ExternalFactor from './ExternalFactor';
 class SampleForm extends React.Component{
     constructor(props){
         super(props)
         this.state={
             supplementsBase:[], supplements:[], supplement:"",
-            externalFactors:[], externalFactor:""
+            externalFactors:[], externalFactor:"", window:undefined
         }
     }
     componentDidMount = () => {
@@ -82,7 +83,15 @@ class SampleForm extends React.Component{
         let t = arr.filter((pair)=>{return v===pair[0]})[0][1]
         return <this.Line text={t} value={v} onButton={this.handleDelDM}/>
     }
+
+    newExternalFactor = (e)=>{
+        let closeProc = ()=>{
+            this.setState({window:undefined})
+        }
+        this.setState({window:<ExternalFactor closeProc={closeProc}/>})
+    }
     render(){
+        
         return <div className="box">
             <button type="button" onClick={this.componentWillUnmount}>X</button>
             <label className="line2">
@@ -91,7 +100,9 @@ class SampleForm extends React.Component{
                         onChange={this.handleChangeEF}
                         value={this.state.externalFactor}
                 ></Select>
+                <button type="button" onClick={this.newExternalFactor}>Nowy</button>
             </label>
+            {this.state.window}
             <label className="line2">
                 Dodatek:
                 <Select array={this.state.supplementsBase}
