@@ -86,7 +86,7 @@ refresh = ()=> {
     
     render(){
     return(
-        <form className="box" id="dataform" onSubmit={this.handleSubmit}>
+        <form className="box0" id="dataform" onSubmit={this.handleSubmit}>
                 <button type="button" onClick={this.componentWillUnmount}>X</button>
 				<label className="line3">
                     Dodawanie dodatku:

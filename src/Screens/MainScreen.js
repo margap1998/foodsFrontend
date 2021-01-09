@@ -4,7 +4,8 @@ import '../style.css';
 import axios from "axios";
 import DataForm from './DataForm';
 import AdminPanel from './AdminPanel';
-
+import Product from "./Product";
+import { Button, FormLabel, AppBar } from "@material-ui/core";
 
 class MainScreen extends React.Component{
    constructor(props){
@@ -36,25 +37,28 @@ class MainScreen extends React.Component{
     render = ()=>{
         let backToMS = ()=>{this.setState({screen:0})}
         var res = (
-            <form className="box" id="dataform" >
-                <label className="line3">
-                        Ekran Stratowy:
-                    </label>
-                    <label className="line2">
+            <div className="box0" id="dataform" >
+                    <FormLabel ><h3>Ekran Startowy:</h3>
+                    </FormLabel>
+                    <FormLabel className="line2">
                         Moje eksperymenty:
                         <Select onChange={this.handleChangeExp} array={this.state.experiments}/>
-                    </label>
-                    <div>
-                        <button type="button" >Usuń</button>
-                        <button type="button" value={1} onClick={(e)=>{this.setState({screen:1})}}>Nowy eksperyment</button>
+                    </FormLabel>
+                    <div className="line2">
+                        <Button variant="contained" color="primary" type="button" >Usuń</Button>
+                        <Button variant="contained" color="primary" type="button" onClick={(e)=>{this.setState({screen:4})}}>Edytuj eksperyment</Button>
+                        <Button variant="contained" color="primary" type="button" onClick={(e)=>{this.setState({screen:5})}}>Przeglądaj eksperyment</Button>
                     </div>
-                    <label className="line2">
+                    <FormLabel className="line2">
                         Udostępnione dla mnie:
                         <Select onChange={this.handleChangeExpPublic} array={this.state.prodBase}/>
-                    </label>
-                <button type="button" onClick={(e)=>{this.setState({screen:2})}}>Panel administracyjny</button>
+                        <Button variant="contained" color="primary" type="button" onClick={(e)=>{this.setState({screen:5})}}>Przeglądaj eksperyment</Button>
+                    </FormLabel>
+                <Button className="line2" variant="contained" color="primary" type="button" onClick={(e)=>{this.setState({screen:1})}}>Nowy eksperyment</Button>
+                <Button className="line2" variant="contained" color="primary" type="button" onClick={(e)=>{this.setState({screen:2})}}>Panel administracyjny</Button>
+                <Button className="line2" variant="contained" color="primary" type="button" onClick={(e)=>{this.setState({screen:3})}}>Produkty</Button>
                     
-            </form>
+            </div>
         );
         switch (this.state.screen) {
             case 1:
@@ -62,6 +66,9 @@ class MainScreen extends React.Component{
                 break;
             case 2:
                 res = <AdminPanel closeProc={backToMS}/>
+                break;
+            case 3:
+                res = <Product closeProc={backToMS}/>
                 break;
             default:
                 break;

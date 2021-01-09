@@ -3,7 +3,7 @@ import '../style.css';
 import React from 'react';
 import Axios from "axios";
 
-class CategoryAdminForm extends React.Component{
+class BasicIngredientBase extends React.Component{
     constructor(props){
         super(props)
         this.state = {
@@ -19,7 +19,7 @@ class CategoryAdminForm extends React.Component{
         let data = {
             "name": this.state.name 
             }
-        Axios.post("/api/experiment/Category/",data,{headers:headers, withCredentials:true}).then((e)=>{ alert("Wstawiono"); this.componentWillUnmount() ;}).catch((e)=>{alert("Nie wstawiono")})
+        Axios.post("/api/experiment/BasicIngredientBase/",data,{headers:headers, withCredentials:true}).then((e)=>{ alert("Wstawiono"); this.componentWillUnmount() ;}).catch((e)=>{alert("Nie wstawiono")})
     }
     render = ()=>{
         return(
@@ -35,4 +35,4 @@ class CategoryAdminForm extends React.Component{
 }
 }
 
-export default CategoryAdminForm
+export default BasicIngredientBase

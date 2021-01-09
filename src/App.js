@@ -1,16 +1,16 @@
 import './style.css';
 import React from 'react';
 import MainScreen from "./Screens/MainScreen";
-
+import { Paper } from "@material-ui/core";
 class App extends React.Component{
     constructor(props){
         super(props)
     }
     render = ()=>{
         
-        return <div id ="App">
+        return <Paper id ="App">
             <MainScreen/>
-        </div>
+        </Paper>
     }
 }
 

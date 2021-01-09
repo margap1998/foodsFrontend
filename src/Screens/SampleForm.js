@@ -93,14 +93,14 @@ class SampleForm extends React.Component{
     render(){
         
         return <div className="box">
-            <button type="button" onClick={this.componentWillUnmount}>X</button>
+            <button type="button" onClick={()=>{this.componentWillUnmount()}}>X</button>
             <label className="line2">
                 Czynnik zewnętrzny:
                 <Select array={this.state.externalFactors}
                         onChange={this.handleChangeEF}
                         value={this.state.externalFactor}
                 ></Select>
-                <button type="button" onClick={this.newExternalFactor}>Nowy</button>
+                <button type="button" onClick={()=>{this.newExternalFactor()}}>Nowy</button>
             </label>
             {this.state.window}
             <label className="line2">

@@ -4,6 +4,7 @@ import axios from "axios";
 import { getCSRFToken } from '../csrftoken.js'
 import { Select } from "../funcComponents.js";
 import DetailedMetricForm from './DetailedMetricForm.js';
+import { Button, InputLabel, Input, TextareaAutosize,TextField } from "@material-ui/core";
 //Komponenet odpowiedzialny za formularz eksperymentu
 class DataForm extends React.Component{
     constructor(props){
@@ -26,9 +27,9 @@ class DataForm extends React.Component{
  Line = (props) => {
      return(<div>
          {props.obj['id']+":"+" type:"+props.obj['metric']+" number of repeats:"+props.obj['numberOfRepeat']}
-         <button type="button" onClick={(e) => props.onButton(props.obj)}>
+         <Button type="button" onClick={(e) => props.onButton(props.obj)}>
              Usuń
-         </button>
+         </Button>
      </div>)
  } 
  componentDidMount = () => {
@@ -230,62 +231,62 @@ class DataForm extends React.Component{
      closeWindow =()=>{ this.setState({window:null}) }
      render(){
      return(
-         <div className="box" id="dataform">
-                <button type="button" onClick={this.props.closeProc}>X</button>
-                 <label className="line2">
+         <div className="box0" id="dataform">
+                <Button variant="contained" className="line2" type="button" onClick={this.props.closeProc}>X</Button>
+                 <InputLabel className="line2">
                      Nazwa:
-                     <input className="line" type="text" value={this.state.name} onChange={this.handleChangeName} />
-                 </label>
-                 <label className="line2">
+                     <Input className="line" type="text" value={this.state.name} onChange={this.handleChangeName} />
+                 </InputLabel>
+                 <InputLabel className="line2">
                      Opis:
-                     <textarea className="line" type="text" value={this.state.desc} onChange={this.handleChangeDesc} />
-                 </label>
-                 <label className="line2">
+                     <TextareaAutosize className="line" type="text" value={this.state.desc} onChange={this.handleChangeDesc} />
+                 </InputLabel>
+                 <InputLabel className="line2">
                      URL pracy:
-                     <input className="line" type="text" value={this.state.paper} onChange={this.handleChangePaper} />
-                 </label>
-                 <label className="line2">
+                     <Input className="line" type="text" value={this.state.paper} onChange={this.handleChangePaper} />
+                 </InputLabel>
+                 <InputLabel className="line2">
                      Kategoria:
                      <Select value={this.state.category} onChange={this.handleChangeCat} array={this.state.categories}/>
-                 </label>
-                 <label className="line2">
+                 </InputLabel>
+                 <InputLabel className="line2">
                      Produkt:
                      <Select onChange={this.handleChangeProd} array={this.state.prodBase}/>
-                 </label>
-                 <label className="line2">
+                 </InputLabel>
+                 <InputLabel className="line2">
                      Prywatny
-                     <input type="checkbox" value={this.state.private} onChange={this.handlePrivate}/>
-                 </label>
-                 <label className="line2">
+                     <Input type="checkbox" value={this.state.private} onChange={this.handlePrivate}/>
+                 </InputLabel>
+                 <InputLabel className="line2">
                      Metryka:
                      <Select onChange={this.handleChangeMetric} array={this.state.metricsGeneral}/>
                      Metryka szczegółowa:
                      <Select value={this.state.metricID} onChange={this.handleChangeDetailedMetric} array={this.state.metricsDetailed}/>
-                     <button type="button" onClick={this.handleAddDM}>
+                     <Button variant="contained" color="primary" type="button" onClick={this.handleAddDM}>
                              Przypisz
-                         </button>
-                     <button type="button" onClick={ this.openWindow}>
+                         </Button>
+                     <Button variant="contained" color="primary" type="button" onClick={ this.openWindow}>
                              Nowa
-                         </button>
-                 </label>
+                         </Button>
+                 </InputLabel>
                  {this.state.dialog}
                  {this.state.window}
                  {this.state.metrics.map((obj,n,a)=>{ return <this.Line obj={obj} onButton={this.handleDelDM}/>})}
                  <div className="box2">
-                     <button type="button" onClick={this.handleInsert}>Dodaj</button>
-                     <button type="button" onClick={this.handleChange}>Zmień</button>
-                     <button type="button" onClick={this.handleSubmit}>Generuj</button>
+                     <Button variant="contained" color="primary" type="button" onClick={this.handleInsert}>Dodaj</Button>
+                     <Button variant="contained" color="primary" type="button" onClick={this.handleChange}>Zmień</Button>
+                     <Button variant="contained" color="primary" type="button" onClick={this.handleSubmit}>Generuj</Button>
                  </div>
                  <div className="box2">
-                         <input type="file"
+                         <Input type="file"
                              id="XLSXFileChoose" name="XLSXChoose"
                              accept=".xlsx" onChange ={this.handleLoadXLSX}/>
-                         <button className={"visible"+this.state.loaded.toString()} onClick={this.handleSubmitXLSX} type="button" >Załaduj</button>
+                         <Button variant="contained" color="primary" className={"visible"+this.state.loaded.toString()} onClick={this.handleSubmitXLSX} type="button" >Załaduj</Button>
                  </div>
          </div>
      )
      //return <Line obj={obj} onButton={this.handleDelDM}></Line>})}
      }
  }
- 
+
  export default DataForm

@@ -1,4 +1,5 @@
 *{
+	font-family: 'Roboto';
 	font-size:21px;
 	flex-grow:1;
 }
@@ -16,12 +17,20 @@ h1{
 	border:2px solid black;
 	width:84%;
 }
+.box0{
+	display:flex;
+	align-items:center;
+	flex-direction:column;
+	align-items:center;
+	margin-left: 8%;
+	margin-right: 8%;
+	width:84%;
+}
 .box2{
 	display:flex;
 	align-items:center;
 	flex-direction:row;
 	align-items:center;
-	border:2px solid black;
 	width:100%;
 }
 .line{
@@ -33,7 +42,15 @@ h1{
 	font-size: 21px;
 	height: 30px;
 }
-
+.lineR{
+	flex-wrap:wrap;
+	display:flex;
+	align-items:flex-end;
+	flex-direction:row;
+	width:100%;
+	font-size: 21px;
+	height: 30px;
+}
 .line2{
 	margin-top: 5px;
 	margin-bottom: 5px;

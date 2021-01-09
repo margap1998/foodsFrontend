@@ -1,6 +1,7 @@
 import React from 'react';
+import {Select} from "@material-ui/core"
 //komponent funk. przekształcający tablicę zawierającą pary (wartość, opis) na listę rozwijaną
-function Select(props){
+function SelectArrayElement(props){
    
     var q =[["",""]]
     q = q.concat(props.array)//tablica z wartościami
@@ -10,12 +11,12 @@ function Select(props){
                 </option>)}) // zrobienie opcji
     return(
         /* element typu select z listą rozwijaną*/
-        <select value={props.value} 
+        <Select value={props.value}  label={props.label} labelWidth={30}
         onChange={e => props.onChange(e.target.value) }
         className={props.className}> 
             {op /* tablica z mapowanymymi wartościami na elementy typu option*/}
-        </select>
+        </Select>
     )
 }
 
-export {Select};
+export {SelectArrayElement as Select, SelectArrayElement};
