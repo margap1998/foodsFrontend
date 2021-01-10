@@ -4,6 +4,7 @@ import React from 'react';
 import CategoryAdminForm from "./CategoryAdminForm";
 import SupplementBase from "./SupplementBase"
 import BasicIngredientBase from "./BasicIngredientBase"
+import { Accordion, AccordionSummary, AccordionDetails, Button} from "@material-ui/core";
 class AdminPanel extends React.Component{
     constructor(props){
         super(props)
@@ -32,24 +33,47 @@ class AdminPanel extends React.Component{
         this.setState({sections:arr})
     }
     closeWindow = (ind)=>{
-        var arr = this.state.sections
-        arr[ind] = null
-        this.setState({sections:arr})
     }
 
     render = ()=>{
-        return <div id="AdminPanel">
-            <nav className="box0">
-                <button type="button" onClick={this.props.closeProc}>X</button>
-                <div>
-                    <button onClick={()=>{this.selectSection(0)}}>Dodatki bazowe</button>
-                    <button onClick={()=>{this.selectSection(1)}}>Dodatki</button>
-                    <button onClick={()=>{this.selectSection(2)}}>Kategorie</button>
-                    <button>Składniki podstawowe</button>
-                </div>
-            </nav>
-            {this.state.sections.map((v)=>{return v})}
-        </div>
+        let f = 0
+        return(<div>
+            <Button type="button" className="line2" onClick={this.props.closeProc}>X</Button>
+            <Accordion>
+                <AccordionSummary>
+                    Dodatki bazowe
+                </AccordionSummary>
+                <AccordionDetails>
+                    <SupplementBase/>
+                </AccordionDetails>
+            </Accordion>
+            <Accordion>
+                <AccordionSummary>
+                    Dodatki
+                </AccordionSummary>
+                <AccordionDetails>
+                    <Supplement/>
+                </AccordionDetails>
+            </Accordion>
+            <Accordion>
+                <AccordionSummary>
+                    Kategorie
+                </AccordionSummary>
+                <AccordionDetails>
+                    <CategoryAdminForm/>
+                </AccordionDetails>
+            </Accordion>
+            <Accordion>
+                <AccordionSummary>
+                    Składniki bazowe
+                </AccordionSummary>
+                <AccordionDetails>
+                    <BasicIngredientBase/>
+                </AccordionDetails>
+            </Accordion>
+            </div>
+        )
+        
     }
 }
 export default AdminPanel

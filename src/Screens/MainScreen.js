@@ -10,7 +10,9 @@ import { Button, FormLabel, AppBar } from "@material-ui/core";
 class MainScreen extends React.Component{
    constructor(props){
         super(props);
-        this.state = {experimentsBase:[], experiments:[], screen:0, product:"",prodBase:[]};
+        this.state = {experimentsBase:[], experiments:[], screen:0, product:"",prodBase:[],
+        experiment:null
+    };
     }
 
 
@@ -30,10 +32,13 @@ class MainScreen extends React.Component{
     }
 
 // /api/experiment/Experiment/
-    handleChangeExp = (v) => {    
+    handleChangeExp = (v) => {
+        this.setState({experiment:this.state.experimentsBase.find((obj)=>{return (obj.name == v)})})
     }
     
-    handleChangeExpPublic = ()=>{}
+    handleChangeExpPublic = (v)=>{{
+        this.setState({experiment:this.state.experimentsBase.find((obj)=>{return (obj.name == v)})})
+    }}
     render = ()=>{
         let backToMS = ()=>{this.setState({screen:0})}
         var res = (
@@ -69,6 +74,9 @@ class MainScreen extends React.Component{
                 break;
             case 3:
                 res = <Product closeProc={backToMS}/>
+                break;
+            case 4:
+                res = <DataForm obj={this.state.experiment} closeProc={backToMS}/>
                 break;
             default:
                 break;

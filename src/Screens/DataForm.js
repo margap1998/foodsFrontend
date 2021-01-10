@@ -4,22 +4,34 @@ import axios from "axios";
 import { getCSRFToken } from '../csrftoken.js'
 import { Select } from "../funcComponents.js";
 import DetailedMetricForm from './DetailedMetricForm.js';
-import { Button, InputLabel, Input, TextareaAutosize,TextField } from "@material-ui/core";
+import { Button, InputLabel, Input, TextareaAutosize, Checkbox} from "@material-ui/core";
 //Komponenet odpowiedzialny za formularz eksperymentu
 class DataForm extends React.Component{
     constructor(props){
      super(props);
      //inicjalizacja stanu komponentu
      //TODO: przerobić tak by wykorzystać jeszcze do edycji istniejącego eksperymentu
-     //if (props.obj === undefined || props.obj === null){
-     this.state = {name:null, desc:null, window:null,
-         num_repeats:"", num_features:0, sample:1, metricID:"",
-         paper:"", private:false, product:"", metric:"", filename:"",
-         metricGeneral:"", generated:false, file:"", loaded:false,
-         categories:[], ingredients:[], metrics:[],
-         prodBase:[], prodObj:[], metricsGeneral:[], metricsGeneralBase:[], metricsDetailedBase:[],
-         metricsDetailed:[], sampleBase:[],recipeBase:[]
+     if (props.obj === undefined || props.obj === null){
+        this.state = {name:null, desc:null, window:null,
+            num_repeats:"", num_features:0, sample:1, metricID:"",
+            paper:"", private:false, product:"", metric:"", filename:"",
+            metricGeneral:"", generated:false, file:"", loaded:false,
+            categories:[], ingredients:[], metrics:[],
+            prodBase:[], prodObj:[], metricsGeneral:[], metricsGeneralBase:[], metricsDetailedBase:[],
+            metricsDetailed:[], sampleBase:[],recipeBase:[],exp:undefined
+            }
+        }else{
+            this.state = {
+                name:props.obj.name, desc:props.obj.description, window:null,
+                num_repeats:"", num_features:props.obj.numberOfMeasuredProperties, sample:1, metricID:"",
+                paper:props.obj.link, private:props.obj.publicView, product:props.obj.product, metric:"",
+                filename:"",metricGeneral:"", generated:false, file:"", loaded:false,
+                categories:[], ingredients:[], metrics:[],
+                prodBase:[], prodObj:[], metricsGeneral:[], metricsGeneralBase:[], metricsDetailedBase:[],
+                metricsDetailed:[], sampleBase:[],recipeBase:[]
+                }
         }
+        this.exp = props.obj
     }
  //komponent odpowiedzialny za usuwalną linijkę z metryką szczegółową
  //props.obj - metryka szczegółowa do obskoczenia
@@ -38,13 +50,22 @@ class DataForm extends React.Component{
  componentWillUnmount = () => {
 }
  refresh = ()=> {
-     //żądania typu get do API
+    //żądania typu get do API
      axios.get("/api/experiment/Category/").then((res)=>{
          var arr = [];
          //wyłuskanie nazw kategorii
          res.data.forEach((obj)=>{arr.push([obj.name,obj.name]);});
- 
          this.setState({categories:arr});
+         axios.get("/api/experiment/Product/").then((resP)=>{
+            this.setState({prodObj:resP.data});
+            if(this.exp !=undefined){
+               let o = resP.data.find((v)=>{
+                   return(v.name==this.exp.product)
+               })
+               this.handleChangeCat(o.category)
+               this.handleChangeProd(o.name)
+           }
+        }).catch(console.log("Product failure \n"));
      }).catch(console.log("Categories failure \n"));
      axios.get("/api/experiment/DetailedMetrics/").then((res)=>{
          this.setState({metricsDetailedBase:res.data});
@@ -55,9 +76,7 @@ class DataForm extends React.Component{
         res.data.forEach((obj)=>{arr.push([obj.name,obj.name+" - "+obj.unit]);});
          this.setState({metricsGeneral:arr});
      }).catch(console.log("Metric failure \n"));
-     axios.get("/api/experiment/Product/").then((res)=>{
-         this.setState({prodObj:res.data});
-     }).catch(console.log("Product failure \n"));
+     
  }
  
  // /api/experiment/Experiment/
@@ -65,10 +84,9 @@ class DataForm extends React.Component{
      handleChangeDesc = (event) => {    this.setState({desc: event.target.value});}
      handleChangePaper = (event) => {    this.setState({paper: event.target.value});}
      handleChangeCat = (v) => {    
-         this.setState({category: v});
          var arr = []
          this.state.prodObj.forEach((lv,i,a)=>{if(lv.category === v){arr.push([lv.name,lv.name+" - "+lv.description])}})
-         this.setState({prodBase:arr, product:""})
+         this.setState({prodBase:arr, category: v, product:""})
      }
      handlePrivate = (e) => {
          this.setState({private:!this.state.private})
@@ -182,7 +200,7 @@ class DataForm extends React.Component{
  
              axios.put("/api/experiment/Experiment/",exp_head,{ headers:headers }).then((res)=>{
                  alert(res.statusText);
-             }).catch((e)=>{console.log("Something's wrong with inserting experiment");})
+             }).catch((e)=>{console.log("Something's wrong with changing experiment"); alert("Nie dokonano zmian!")})
          }else{
              alert("Uzupełnij")
          }
@@ -212,7 +230,7 @@ class DataForm extends React.Component{
              //sprytna funkcja do pobrania danych wzięta z repozytorium npm
              download(res.data,experiment_data[0]+"_"+experiment_data[3]+'.xlsx')
              this.setState({generated:true});
-         }).catch((e)=>{console.log("Something's wrong with download of file")})
+         }).catch((e)=>{console.log("Something's wrong with file download")})
  
      }
      else{
@@ -247,17 +265,19 @@ class DataForm extends React.Component{
                  </InputLabel>
                  <InputLabel className="line2">
                      Kategoria:
-                     <Select value={this.state.category} onChange={this.handleChangeCat} array={this.state.categories}/>
+                     <Select className="line" value={this.state.category} onChange={this.handleChangeCat} array={this.state.categories}/>
                  </InputLabel>
                  <InputLabel className="line2">
                      Produkt:
-                     <Select onChange={this.handleChangeProd} array={this.state.prodBase}/>
+                     <Select className="line" value={this.state.product} onChange={this.handleChangeProd} array={this.state.prodBase}/>
                  </InputLabel>
                  <InputLabel className="line2">
                      Prywatny
-                     <Input type="checkbox" value={this.state.private} onChange={this.handlePrivate}/>
+                     <Checkbox className="line"  checked={this.state.private}  onChange={this.handlePrivate}/>
+                     
                  </InputLabel>
                  <InputLabel className="line2">
+                     <span className="line2">
                      Metryka:
                      <Select onChange={this.handleChangeMetric} array={this.state.metricsGeneral}/>
                      Metryka szczegółowa:
@@ -267,7 +287,8 @@ class DataForm extends React.Component{
                          </Button>
                      <Button variant="contained" color="primary" type="button" onClick={ this.openWindow}>
                              Nowa
-                         </Button>
+                     </Button>
+                     </span>
                  </InputLabel>
                  {this.state.dialog}
                  {this.state.window}

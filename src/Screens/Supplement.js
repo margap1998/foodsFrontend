@@ -19,7 +19,6 @@ class Supplement extends React.Component{
     
 }
 componentWillUnmount = ()=>{
-    this.props.closeProc(this.props.index)
 }
 
 
@@ -48,7 +47,8 @@ refresh = ()=> {
 
 // /api/experiment/Experiment/
     handleChangeNumOfVal = (event) => {    this.setState({numberOfVal: event.target.value});}
-	handleChangePercentVal = (event) => {    this.setState({perecent_val: event.target.value});}
+	handleChangePercentVal = (event) => {    this.setState({perecent_val: event.target.value});
+    this.setState({name: this.state.s_b +" "+ event.target.value +"%"}); }
 	handleChangeBIB = (v) => {    
         this.setState({b_i_b: v});
     }
@@ -87,7 +87,6 @@ refresh = ()=> {
     render(){
     return(
         <form className="box0" id="dataform" onSubmit={this.handleSubmit}>
-                <button type="button" onClick={this.componentWillUnmount}>X</button>
 				<label className="line3">
                     Dodawanie dodatku:
                 </label>

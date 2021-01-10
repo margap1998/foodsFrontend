@@ -3,6 +3,7 @@ import axios from "axios";
 import { Select } from "../funcComponents";
 import { getCSRFToken } from '../csrftoken.js'
 import ExternalFactor from './ExternalFactor';
+import { Button, InputLabel, Paper} from "@material-ui/core";
 class SampleForm extends React.Component{
     constructor(props){
         super(props)
@@ -74,9 +75,9 @@ class SampleForm extends React.Component{
         }
         return(<div>
             {props.text}
-            <button type="button" onClick={() => deleter(props.value)}>
+            <Button type="button" onClick={() => deleter(props.value)}>
                 Usuń dodatek
-            </button>
+            </Button>
         </div>)
     } 
     makeLine = (arr,v)=>{
@@ -92,31 +93,33 @@ class SampleForm extends React.Component{
     }
     render(){
         
-        return <div className="box">
-            <button type="button" onClick={()=>{this.componentWillUnmount()}}>X</button>
-            <label className="line2">
+        return  <div className="box0"><Paper className="line2">
+            <Button type="button" onClick={()=>{this.componentWillUnmount()}}>X</Button>
+            <InputLabel className="line2">
                 Czynnik zewnętrzny:
-                <Select array={this.state.externalFactors}
+                <span className="line2"><Select array={this.state.externalFactors}
                         onChange={this.handleChangeEF}
                         value={this.state.externalFactor}
                 ></Select>
-                <button type="button" onClick={()=>{this.newExternalFactor()}}>Nowy</button>
-            </label>
+                <Button type="button" onClick={()=>{this.newExternalFactor()}}>Nowy</Button></span>
+            </InputLabel>
             {this.state.window}
-            <label className="line2">
+            <InputLabel className="line2">
                 Dodatek:
+                <span className="line2">
                 <Select array={this.state.supplementsBase}
                         onChange={this.handleChangeSupplements}
                         value={this.state.supplement}
                 ></Select>
-                <button type="button"
+                <Button type="button"
                         onClick={this.handleAddSupplement}>
                         Dodaj dodatek
-                </button>
-            </label>
+                </Button>
+                </span>
+            </InputLabel>
             {this.state.supplements.map((v,n,a)=>{ return this.makeLine(this.state.supplementsBase,v)})}
-            <button type="button" onClick={this.handleInsert}>Dodaj próbkę</button>
-        </div>
+            <Button type="button" onClick={this.handleInsert}>Dodaj próbkę</Button>
+            </Paper></div>
     }
 }
 

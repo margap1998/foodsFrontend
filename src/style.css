@@ -42,24 +42,13 @@ h1{
 	font-size: 21px;
 	height: 30px;
 }
-.lineR{
-	flex-wrap:wrap;
-	display:flex;
-	align-items:flex-end;
-	flex-direction:row;
-	width:100%;
-	font-size: 21px;
-	height: 30px;
-}
 .line2{
 	margin-top: 5px;
-	margin-bottom: 5px;
+	margin-bottom: 0.5%;
 	flex-wrap:wrap;
 	display:flex;
 	align-items:center;
 	flex-direction:row;
-	font-size: 23px;
-	font-weight: bold;
 	width:100%;
 }
 

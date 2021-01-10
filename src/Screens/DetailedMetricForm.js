@@ -4,6 +4,7 @@ import { Select } from "../funcComponents";
 import { getCSRFToken } from '../csrftoken.js'
 import '../style.css';
 import SampleForm from './SampleForm';
+import { Paper, Button, InputLabel, Input, TextareaAutosize} from "@material-ui/core";
 
 
 class DetailedMetricForm extends React.Component{
@@ -76,30 +77,32 @@ class DetailedMetricForm extends React.Component{
     }
 
     render(){
-        return <div className="box">
-            <button type="button" onClick={this.componentWillUnmount}>X</button>
-            <label className="line2">
+        return <div className="box0" className="line2"><Paper>
+            <Button className="line2" type="button" onClick={this.componentWillUnmount}>X</Button>
+            <InputLabel className="line2">
                     Metryka: {this.props.metric}
-            </label>
-            <label className="line2">
-                            Próbka:
-                <Select array={this.state.samplesBase}
-                        onChange={this.handleChangeSample}
-                        value={this.state.sample}
-                ></Select>
-                <button onClick={ (e)=>{ this.setState({window:<SampleForm refreshDB={this.refreshBase} closeProc={()=>{this.setState({window:undefined})}}/>}) } }>Nowa próbka</button>
-            </label>
+            </InputLabel>
+            <InputLabel className="line2">
+                Próbka:
+                <div className="line2">
+                    <Select array={this.state.samplesBase}
+                            onChange={this.handleChangeSample}
+                            value={this.state.sample}
+                    ></Select>
+                    <Button onClick={ (e)=>{ this.setState({window:<SampleForm refreshDB={this.refreshBase} closeProc={()=>{this.setState({window:undefined})}}/>}) } }>Nowa próbka</Button>
+                </div>
+            </InputLabel>
             {this.state.window}
-            <label className="line2">
+            <InputLabel className="line2">
                 Liczba powtórzeń:
-                <input className="line" type="text" value={this.state.num_repeats} onChange={this.handleChangeRepeats} />
-            </label>
-            <label className="line2">
+                <Input className="line" type="text" value={this.state.num_repeats} onChange={this.handleChangeRepeats} />
+            </InputLabel>
+            <InputLabel className="line2">
                 Liczba serii:
-                <input className="line" type="text" value={this.state.num_series} onChange={this.handleChangeSeries} />
-            </label>
-            <button type="button" onClick={this.handleInsert}>Dodaj</button>
-        </div>
+                <Input className="line" type="text" value={this.state.num_series} onChange={this.handleChangeSeries} />
+            </InputLabel>
+            <Button className="line2" type="button" onClick={this.handleInsert}>Dodaj</Button>
+        </Paper></div>
     }
 
 }
