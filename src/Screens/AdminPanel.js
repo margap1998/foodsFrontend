@@ -32,13 +32,10 @@ class AdminPanel extends React.Component{
         }
         this.setState({sections:arr})
     }
-    closeWindow = (ind)=>{
-    }
 
     render = ()=>{
         let f = 0
         return(<div>
-            <Button type="button" className="line2" onClick={this.props.closeProc}>X</Button>
             <Accordion>
                 <AccordionSummary>
                     Dodatki bazowe

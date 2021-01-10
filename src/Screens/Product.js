@@ -185,7 +185,7 @@ class ProductForm extends React.Component{
     }
 
     handleSubmit = ()=>{
-
+        axios.post("/api/experiment")
     }
 
     handleCategory = (v)=>{

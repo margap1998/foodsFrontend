@@ -94,7 +94,7 @@ class SampleForm extends React.Component{
     render(){
         
         return  <div className="box0"><Paper className="line2">
-            <Button type="button" onClick={()=>{this.componentWillUnmount()}}>X</Button>
+            <Button variant="contained" className="line2" type="button" onClick={()=>{this.componentWillUnmount()}}>X</Button>
             <InputLabel className="line2">
                 Czynnik zewnętrzny:
                 <span className="line2"><Select array={this.state.externalFactors}

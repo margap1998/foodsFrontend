@@ -18,7 +18,7 @@ class DataForm extends React.Component{
             metricGeneral:"", generated:false, file:"", loaded:false,
             categories:[], ingredients:[], metrics:[],
             prodBase:[], prodObj:[], metricsGeneral:[], metricsGeneralBase:[], metricsDetailedBase:[],
-            metricsDetailed:[], sampleBase:[],recipeBase:[],exp:undefined
+            metricsDetailed:[], sampleBase:[],recipeBase:[]
             }
         }else{
             this.state = {
@@ -51,22 +51,6 @@ class DataForm extends React.Component{
 }
  refresh = ()=> {
     //żądania typu get do API
-     axios.get("/api/experiment/Category/").then((res)=>{
-         var arr = [];
-         //wyłuskanie nazw kategorii
-         res.data.forEach((obj)=>{arr.push([obj.name,obj.name]);});
-         this.setState({categories:arr});
-         axios.get("/api/experiment/Product/").then((resP)=>{
-            this.setState({prodObj:resP.data});
-            if(this.exp !=undefined){
-               let o = resP.data.find((v)=>{
-                   return(v.name==this.exp.product)
-               })
-               this.handleChangeCat(o.category)
-               this.handleChangeProd(o.name)
-           }
-        }).catch(console.log("Product failure \n"));
-     }).catch(console.log("Categories failure \n"));
      axios.get("/api/experiment/DetailedMetrics/").then((res)=>{
          this.setState({metricsDetailedBase:res.data});
      }).catch(console.log("Metric failure \n"));
@@ -90,9 +74,6 @@ class DataForm extends React.Component{
      }
      handlePrivate = (e) => {
          this.setState({private:!this.state.private})
-     }
-     handleChangeProd = (v)=>{
-         this.setState({product: v});
      }
      handleChangeMetric = (v)=>{
          var arr = []
@@ -264,12 +245,11 @@ class DataForm extends React.Component{
                      <Input className="line" type="text" value={this.state.paper} onChange={this.handleChangePaper} />
                  </InputLabel>
                  <InputLabel className="line2">
-                     Kategoria:
-                     <Select className="line" value={this.state.category} onChange={this.handleChangeCat} array={this.state.categories}/>
-                 </InputLabel>
-                 <InputLabel className="line2">
                      Produkt:
-                     <Select className="line" value={this.state.product} onChange={this.handleChangeProd} array={this.state.prodBase}/>
+                     <div className="line">
+                        <Input readonly value={this.state.product}/>
+                        {(this.props.obj == undefined)? <Button size="medium">Nowy</Button> : <Button size="medium">Zmień</Button>}
+                     </div>
                  </InputLabel>
                  <InputLabel className="line2">
                      Prywatny
@@ -296,7 +276,7 @@ class DataForm extends React.Component{
                  <div className="box2">
                      <Button variant="contained" color="primary" type="button" onClick={this.handleInsert}>Dodaj</Button>
                      <Button variant="contained" color="primary" type="button" onClick={this.handleChange}>Zmień</Button>
-                     <Button variant="contained" color="primary" type="button" onClick={this.handleSubmit}>Generuj</Button>
+                     <Button variant="contained" color="primary" type="button" onClick={this.handleSubmit}>Pobierz arkusz eksperymentu</Button>
                  </div>
                  <div className="box2">
                          <Input type="file"

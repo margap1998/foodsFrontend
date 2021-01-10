@@ -1,14 +1,14 @@
 import React from 'react';
-import {Select} from "@material-ui/core"
+import {Select, MenuItem} from "@material-ui/core"
 //komponent funk. przekształcający tablicę zawierającą pary (wartość, opis) na listę rozwijaną
 function SelectArrayElement(props){
    
     var q =[["",""]]
     q = q.concat(props.array)//tablica z wartościami
     var op = q.map(value =>{
-        return(<option value={value[0]}>
+        return(<MenuItem value={value[0]}>
                 {value[1]}
-                </option>)}) // zrobienie opcji
+                </MenuItem>)}) // zrobienie opcji
     return(
         /* element typu select z listą rozwijaną*/
         <Select value={props.value}  label={props.label} labelWidth={30}

@@ -57,23 +57,15 @@ class MainScreen extends React.Component{
                     <FormLabel className="line2">
                         Udostępnione dla mnie:
                         <Select onChange={this.handleChangeExpPublic} array={this.state.prodBase}/>
-                        <Button variant="contained" color="primary" type="button" onClick={(e)=>{this.setState({screen:5})}}>Przeglądaj eksperyment</Button>
+                        <Button variant="contained" color="primary" type="button" onClick={(e)=>{this.setState({screen:6})}}>Przeglądaj eksperyment</Button>
                     </FormLabel>
                 <Button className="line2" variant="contained" color="primary" type="button" onClick={(e)=>{this.setState({screen:1})}}>Nowy eksperyment</Button>
-                <Button className="line2" variant="contained" color="primary" type="button" onClick={(e)=>{this.setState({screen:2})}}>Panel administracyjny</Button>
-                <Button className="line2" variant="contained" color="primary" type="button" onClick={(e)=>{this.setState({screen:3})}}>Produkty</Button>
                     
             </div>
         );
         switch (this.state.screen) {
             case 1:
                 res = <DataForm closeProc={backToMS}/>
-                break;
-            case 2:
-                res = <AdminPanel closeProc={backToMS}/>
-                break;
-            case 3:
-                res = <Product closeProc={backToMS}/>
                 break;
             case 4:
                 res = <DataForm obj={this.state.experiment} closeProc={backToMS}/>
