@@ -93,7 +93,7 @@ class SampleForm extends React.Component{
     }
     render(){
         
-        return  <div className="box0"><Paper className="line2">
+        return  <Paper className="line2"><div className="box0">
             <Button variant="contained" className="line2" type="button" onClick={()=>{this.componentWillUnmount()}}>X</Button>
             <InputLabel className="line2">
                 Czynnik zewnętrzny:
@@ -119,7 +119,7 @@ class SampleForm extends React.Component{
             </InputLabel>
             {this.state.supplements.map((v,n,a)=>{ return this.makeLine(this.state.supplementsBase,v)})}
             <Button type="button" onClick={this.handleInsert}>Dodaj próbkę</Button>
-            </Paper></div>
+            </div></Paper>
     }
 }
 

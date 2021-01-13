@@ -24,7 +24,7 @@ class DetailedMetricForm extends React.Component{
     refreshBase = ()=> {
         axios.get("/api/experiment/Sample/").then((res)=>{
             var arr = []
-            res.data.forEach((obj)=>{arr.push([obj.id,obj.supplement.reduce((pV,cV)=>{return pV+" "+cV})])})
+            res.data.forEach((obj)=>{arr.push([obj.id,JSON.stringify(obj)])})
             this.setState({samplesBase:arr});
         }).catch(console.log("Samples failure \n"));
     }
@@ -77,8 +77,8 @@ class DetailedMetricForm extends React.Component{
     }
 
     render(){
-        return <div className="box0" className="line2"><Paper>
-            <Button className="line2" type="button" onClick={this.componentWillUnmount}>X</Button>
+        return <Paper className="line2"><div className="box0">
+            <Button  variant="contained"  className="line2" type="button" onClick={this.componentWillUnmount}>X</Button>
             <InputLabel className="line2">
                     Metryka: {this.props.metric}
             </InputLabel>
@@ -102,7 +102,7 @@ class DetailedMetricForm extends React.Component{
                 <Input className="line" type="text" value={this.state.num_series} onChange={this.handleChangeSeries} />
             </InputLabel>
             <Button className="line2" type="button" onClick={this.handleInsert}>Dodaj</Button>
-        </Paper></div>
+            </div></Paper>
     }
 
 }

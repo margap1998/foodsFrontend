@@ -43,17 +43,15 @@ class CategoryAdminForm extends React.Component{
     }
     handleUpdate = ()=>{
         let token = getCSRFToken()
-        let headers = {"X-CSRFTOKEN": token}
+        let headers = {"X-CSRFTOKEN": token, name:this.state.category}
         let data = {
             "name": this.state.newName
             }
         let a = this.state.categories.find((v)=>{return v[0]==this.state.newName})
         if( a==undefined){
-            Axios.delete("/api/experiment/Category/"+this.state.category,{headers:headers, withCredentials:true}).then((e)=>{
-                Axios.post("/api/experiment/Category/",data,{headers:headers, withCredentials:true}).then((e)=>{ alert("Zmieniono");
-                    this.refreshDB()
-                }).catch(()=>{alert("Nie zmieniono")})
-            }).catch((e)=>{})
+            Axios.put("/api/experiment/Category/"+this.state.category+"/",data,{headers:headers, withCredentials:true}).then((e)=>{
+                this.refreshDB()
+            }).catch((e)=>{alert("Nie zmieniono")})
         }else{alert("Nie zmieniono")}
     }
     render = ()=>{

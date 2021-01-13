@@ -3,15 +3,13 @@ import {Select} from "../funcComponents"
 import '../style.css';
 import axios from "axios";
 import DataForm from './DataForm';
-import AdminPanel from './AdminPanel';
-import Product from "./Product";
 import { Button, FormLabel, AppBar } from "@material-ui/core";
 
 class MainScreen extends React.Component{
    constructor(props){
         super(props);
         this.state = {experimentsBase:[], experiments:[], screen:0, product:"",prodBase:[],
-        experiment:null
+        experiment:undefined, expName:""
     };
     }
 
@@ -33,21 +31,21 @@ class MainScreen extends React.Component{
 
 // /api/experiment/Experiment/
     handleChangeExp = (v) => {
-        this.setState({experiment:this.state.experimentsBase.find((obj)=>{return (obj.name == v)})})
+        this.setState({experiment:this.state.experimentsBase.find((obj)=>{return (obj.name == v)}),expName:v})
     }
     
     handleChangeExpPublic = (v)=>{{
         this.setState({experiment:this.state.experimentsBase.find((obj)=>{return (obj.name == v)})})
     }}
     render = ()=>{
-        let backToMS = ()=>{this.setState({screen:0})}
+        let backToMS = ()=>{this.setState({screen:0}); this.refresh()}
         var res = (
             <div className="box0" id="dataform" >
                     <FormLabel ><h3>Ekran Startowy:</h3>
                     </FormLabel>
                     <FormLabel className="line2">
                         Moje eksperymenty:
-                        <Select onChange={this.handleChangeExp} array={this.state.experiments}/>
+                        <Select onChange={this.handleChangeExp} value={this.state.expName} array={this.state.experiments}/>
                     </FormLabel>
                     <div className="line2">
                         <Button variant="contained" color="primary" type="button" >Usuń</Button>

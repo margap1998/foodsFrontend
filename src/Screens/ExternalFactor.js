@@ -78,7 +78,7 @@ Line = (props) => {
     render(){
     return(
         <form className="box" id="externalFactorForm">
-                <button type="button" onClick={this.props.closeProc}>X</button>
+                <button variant="contained"  type="button" onClick={this.props.closeProc}>X</button>
 				<label className="line3">
                     Dodawanie czynnika zewnetrznego:
                 </label>
