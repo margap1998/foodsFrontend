@@ -114,12 +114,10 @@ class RecipeForm extends React.Component{
             this.props.changeRecipe(rec)
         }
 
-        return <div className="line2">
-        <FormLabel>
-            {props.obj.name}
+        return <FormLabel  className="line2">
+            <div>{props.obj.name}</div>
             <Button type="button"  onClick={_=>{onClick(props.obj.name)}}> Usuń składnik</Button>
         </FormLabel>
-        </div>
     }
     render = ()=>{
         return <div className="box0" className="line2"><Paper>
@@ -130,16 +128,20 @@ class RecipeForm extends React.Component{
             <FormLabel className="line2">
                 Składnik:
                 <SelectArrayElement array={this.state.ingredientsTypeBase} onChange={this.handleIngredientBase}/>
+            </FormLabel>    
+            <FormLabel className="line2">
                 Procent:
                 <Input type="number" value={this.state.ingredient.percentage} onChange={this.handleIngredientPercent}/>
+            </FormLabel>    
+            <FormLabel className="line2">
                 Nazwa :
                 <Input type="text" readOnly value={this.state.ingredient.name}/>
             </FormLabel>
+                <Button variant="contained" className="line" onClick={this.handleIngredient}> Dodaj składnik</Button>
             <FormLabel className="line2">
-            <Button variant="contained" color="primary" className="line2"  onClick={this.handleIngredient}> Dodaj składnik</Button>
                 <div className="line">Pozostało {100-this.state.percent}% składników</div>
-                {this.state.ingredients.map(obj =>{return <this.Line obj={obj}></this.Line>})}
             </FormLabel>
+            {this.state.ingredients.map(obj =>{return <this.Line obj={obj}></this.Line>})}
         </Paper></div>
     }
 }
@@ -153,13 +155,13 @@ class ProductForm extends React.Component{
             "descriptionProduct": "",
             "categoryProduct": null,
             "recipeProduct": null,
-            rf:undefined,
             categories:[], categoriesBase:[],
             recipe:{
                 id:"-1",
                 "basicWeight": null,
                 "ingredients": []
-            }
+            },
+            rf:undefined
         }
     }
     componentDidMount = () => {
@@ -213,8 +215,8 @@ class ProductForm extends React.Component{
             axios.post("/api/experiment/Product/",product,{headers:headers, withCredentials:true}).then(res2=>{
                 this.props.changeProductName(product.name)
                 this.props.closeProc()
-            })
-        })
+            }).catch(e => alert("Nie dodano produktu, skontaktuj się z administratorem w celu usunięcia receptury"))
+        }).catch(e => alert("Nie dodano"))
     }
     handleDelete = ()=>{
         let token = getCSRFToken()
@@ -228,8 +230,9 @@ class ProductForm extends React.Component{
                 "recipeProduct": null,
             })
             this.props.changeProductName("")
+        }).catch(e=>{
+            alert("Nie usunięto")
         })
-        
     }
     handleCategory = (v)=>{
         this.setState({
@@ -237,33 +240,31 @@ class ProductForm extends React.Component{
         })
     }
     render = ()=> {
-        return(<Paper className="line2">
-        <div id="ProductForm" className="box0">
-            <Button className="line2" variant="contained" onClick={this.props.closeProc}>X</Button>
-            <FormLabel className="line2">
+        return(<div>
+            <FormLabel className="line">
                 Nazwa:
                 <Input className="line" type="text" value={this.state.nameProduct} 
                         onChange={(e)=>{ this.setState({nameProduct:e.target.value})}}
                 />
             </FormLabel>
-            <FormLabel className="line2">
+            <FormLabel className="line">
                 Opis:
                 <Input className="line" type="text" value={this.state.descriptionProduct} 
                         onChange={(e)=>{ this.setState({descriptionProduct:e.target.value})}}
                 />
             </FormLabel>
-            <FormLabel className="line2">
+            <FormLabel className="line">
                 Kategoria:
                 <SelectArrayElement value={this.state.categoryProduct} className="line" array={this.state.categories} onChange={this.handleCategory} label="Kategoria"></SelectArrayElement>
             </FormLabel>
-            <FormLabel className="line2">
+            <FormLabel className="line">
                 Receptura:
                 {this.state.rf}
             </FormLabel>
-            <Button variant="contained" color="primary" className="line2" type="submit"  onClick={this.handleSubmit}>Dodaj</Button>
-            <Button variant="contained" color="primary" className="line2" type="submit"  onClick={this.handleDelete}>Usuń</Button>
+            <Button variant="contained" color="primary"  className={["line2","margin"]} type="button"  onClick={this.handleSubmit}>Dodaj</Button>
+            <span className="line2"></span>
+            <Button variant="contained" color="secondary"  className={["line2","margin"]}  type="button"  onClick={this.handleDelete}>Usuń</Button>
         </div>
-        </Paper>
         )
     }
 }

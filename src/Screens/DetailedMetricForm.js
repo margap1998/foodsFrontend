@@ -4,29 +4,33 @@ import { Select } from "../funcComponents";
 import { getCSRFToken } from '../csrftoken.js'
 import '../style.css';
 import SampleForm from './SampleForm';
-import { Paper, Button, InputLabel, Input, TextareaAutosize} from "@material-ui/core";
+import { Button, InputLabel, Input } from "@material-ui/core";
+import { Accordion, AccordionSummary, AccordionDetails } from "@material-ui/core";
 
 
 class DetailedMetricForm extends React.Component{
     constructor(props){
         super(props)
-        this.state={
-            num_repeats:0,
-            num_series:0,
-            samplesBase:[], metricsGeneral:[],
-            sample:"",
-            window:undefined
-        }
+            this.state={
+                num_repeats:0,
+                num_series:0,
+                sample:"",
+                id:0,
+                window:undefined
+            }
     }
     componentDidMount = () => {
-        this.refreshBase()
     }
-    refreshBase = ()=> {
-        axios.get("/api/experiment/Sample/").then((res)=>{
-            var arr = []
-            res.data.forEach((obj)=>{arr.push([obj.id,JSON.stringify(obj)])})
-            this.setState({samplesBase:arr});
-        }).catch(console.log("Samples failure \n"));
+    componentDidUpdate = ()=>{
+        if (this.state.id != this.props.metricObj.id){
+            this.setState({
+                sample :        this.props.metricObj.sample,
+                num_repeats :   this.props.metricObj.numberOfRepeat,
+                num_series :    this.props.metricObj.numberOfSeries,
+                id :            this.props.metricObj.id
+
+            })
+        }
     }
     handleChangeRepeats = (event)=>{    
         const regExp = /^[0-9]*$/;
@@ -38,9 +42,6 @@ class DetailedMetricForm extends React.Component{
             this.setState({num_repeats: this.state.num_repeats})
         }
 
-    }
-    componentWillUnmount = ()=>{
-        this.props.closeProc()
     }
     handleChangeSeries = (event)=>{    
         const regExp = /^[0-9]*$/;
@@ -67,7 +68,7 @@ class DetailedMetricForm extends React.Component{
         axios.post("/api/experiment/DetailedMetrics/",data,{ headers:headers })
             .then((res)=>{
                 this.props.refreshDB()
-                this.componentWillUnmount()
+                this.setState({id:res.id})
                 alert("Wstawiono");
             })
             .catch((e)=>{
@@ -75,24 +76,53 @@ class DetailedMetricForm extends React.Component{
                 alert("Nie wstawiono")
             })
     }
-
-    render(){
-        return <Paper className="line2"><div className="box0">
-            <Button  variant="contained"  className="line2" type="button" onClick={this.componentWillUnmount}>X</Button>
+    handleDelete = ()=>{
+        let token = getCSRFToken()
+             //stworzenie odpowiedniego nagłówka zapytania
+        let headers = {"X-CSRFTOKEN": token}
+        axios.delete("/api/experiment/DetailedMetrics/"+this.state.id+"/",{headers:headers, withCredentials:true}).then(_=>{
+            alert("Usunięto")
+            this.props.refreshDB()
+        }).catch(()=>{alert("Nie usunięto")})
+    }
+    handleUpdate = ()=>{
+        let token = getCSRFToken()
+             //stworzenie odpowiedniego nagłówka zapytania
+        let headers = {"X-CSRFTOKEN": token}
+        let data = {
+            "numberOfRepeat": this.state.num_repeats,
+            "numberOfSeries": this.state.num_series,
+            "metric": this.props.metric,
+            "sample": this.state.sample
+        }
+        axios.put("/api/experiment/DetailedMetrics/"+this.state.id+"/",data,{headers:headers, withCredentials:true}).then(_=>{
+            alert("zmieniono")
+            this.props.refreshDB()
+        }).catch((e)=>{alert("Nie zmieniono")})
+    }
+    render = ()=>{
+        return <div className="line">
             <InputLabel className="line2">
                     Metryka: {this.props.metric}
             </InputLabel>
             <InputLabel className="line2">
                 Próbka:
                 <div className="line2">
-                    <Select array={this.state.samplesBase}
+                    <Select array={this.props.sampleBase}
                             onChange={this.handleChangeSample}
                             value={this.state.sample}
+                            className="line"
                     ></Select>
-                    <Button onClick={ (e)=>{ this.setState({window:<SampleForm refreshDB={this.refreshBase} closeProc={()=>{this.setState({window:undefined})}}/>}) } }>Nowa próbka</Button>
                 </div>
             </InputLabel>
-            {this.state.window}
+            <Accordion className="line">
+                <AccordionSummary className="line">
+                    Edycja próbki
+                </AccordionSummary>
+                <AccordionDetails className="line">
+                    <SampleForm refreshDB={this.refreshBase} sampleID={this.state.sample} closeProc={()=>{this.setState({window:undefined})}}/>
+                </AccordionDetails>
+            </Accordion>
             <InputLabel className="line2">
                 Liczba powtórzeń:
                 <Input className="line" type="text" value={this.state.num_repeats} onChange={this.handleChangeRepeats} />
@@ -101,8 +131,12 @@ class DetailedMetricForm extends React.Component{
                 Liczba serii:
                 <Input className="line" type="text" value={this.state.num_series} onChange={this.handleChangeSeries} />
             </InputLabel>
-            <Button className="line2" type="button" onClick={this.handleInsert}>Dodaj</Button>
-            </div></Paper>
+            <Button className="line2" type="button" onClick={this.handleInsert}>Dodaj nową metrykę szczegółową</Button>
+            <span className="line2"></span>
+            <Button className="line2" type="button" onClick={this.handleDelete}>Usuń metrykę szczegółową</Button>
+            <span className="line2"></span>
+            <Button className="line2" type="button" onClick={this.handleUpdate}>Zmień dane metryki szczegółowej</Button>
+        </div>
     }
 
 }

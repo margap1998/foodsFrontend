@@ -5,7 +5,8 @@ import { getCSRFToken } from '../csrftoken.js'
 import { Select } from "../funcComponents.js";
 import DetailedMetricForm from './DetailedMetricForm.js';
 import { Button, InputLabel, Input, TextareaAutosize, Checkbox,
-        Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@material-ui/core";
+        Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, ButtonGroup,
+        Accordion, AccordionDetails, AccordionSummary } from "@material-ui/core";
 import ProductForm from './Product.js';
 //Komponenet odpowiedzialny za formularz eksperymentu
 class DataForm extends React.Component{
@@ -17,9 +18,9 @@ class DataForm extends React.Component{
         this.state = {name:null, desc:null, window:null, metricID:"",
             paper:"", private:false, product:"", metric:"", filename:"",
             metricGeneral:"", generated:false, file:"", loaded:false,
-            categories:[], ingredients:[], metrics:[],
+            samples:[], ingredients:[], metrics:[],
             prodBase:[], prodObj:[], metricsGeneral:[], metricsGeneralBase:[], metricsDetailedBase:[],
-            metricsDetailed:[], sampleBase:[],recipeBase:[], idExp:undefined,
+            metricsDetailed:[], sampleBase:[], idExp:undefined,
             productWindow:undefined, new:true, openDialog:false
             }
         }else{
@@ -27,9 +28,9 @@ class DataForm extends React.Component{
                 name:props.obj.name, desc:props.obj.description, window:null, metricID:"",
                 paper:props.obj.link, private:props.obj.publicView, product:props.obj.product, metric:"",
                 filename:"",metricGeneral:"", generated:false, file:"", loaded:false,
-                categories:[], ingredients:[], metrics:[], openDialog:false,
+                samples:[], ingredients:[], metrics:[], openDialog:false,
                 prodBase:[], prodObj:[], metricsGeneral:[], metricsGeneralBase:[], metricsDetailedBase:[],
-                metricsDetailed:[], sampleBase:[],recipeBase:[],
+                metricsDetailed:[], sampleBase:[],
                 productWindow:null, new:false, idExp:props.obj.id
                 }        
             axios.get("api/experiment/Result/").then((res)=>{
@@ -44,8 +45,10 @@ class DataForm extends React.Component{
  //props.obj - metryka szczegółowa do obskoczenia
  // props.onButton - funkcja do wywołania dla przycisku usuń
  Line = (props) => {
-     return(<div>
-         {props.obj['id']+":"+" type:"+props.obj['metric']+" number of repeats:"+props.obj['numberOfRepeat']}
+     let lv = props.obj
+     let s = this.state.sampleBase.find((samp)=>{return samp.id === lv.sample})
+     return(<div className="line">
+         {"(serii:  "+lv.numberOfSeries+"; powtórzeń:  "+lv.numberOfRepeat+")"+" Dodatki: "+ JSON.stringify(s.supplement)+" Czynnik:"+s.externalFactor}
          <Button type="button" onClick={(e) => props.onButton(props.obj)}>
              Usuń
          </Button>
@@ -59,17 +62,22 @@ class DataForm extends React.Component{
  refresh = ()=> {
     //żądania typu get do API
      axios.get("/api/experiment/DetailedMetrics/").then((res)=>{
-        if(this.props.obj.detailedMetrics !== undefined) {
+        if(this.props.obj !==undefined && this.props.obj.detailedMetrics !== undefined) {
             let arr = res.data.filter((dm =>{return this.props.obj.detailedMetrics.includes(dm.id)}))
             this.setState({metrics:arr})
         }
         this.setState({metricsDetailedBase:res.data});
-        
+        axios.get("/api/experiment/Sample/").then((resS)=>{
+            let arr =resS.data.map((s)=>{
+                return [s.id,"Dodatki: "+ JSON.stringify(s.supplement)+" Czynnik:"+s.externalFactor]
+            })
+            this.setState({sampleBase:resS.data, samples:arr})
+        })
     }).catch(console.log("Metric failure \n"));
      axios.get("/api/experiment/Metrics/").then((res)=>{
          var arr = [];
          //wyłuskanie nazw metryk
-        res.data.forEach((obj)=>{arr.push([obj.name,obj.name+" - "+obj.unit]);});
+        res.data.forEach((obj)=>{arr.push([obj.name,obj.name,obj.unit]);});
          this.setState({metricsGeneral:arr});
      }).catch(console.log("Metric failure \n"));
  }
@@ -89,8 +97,9 @@ class DataForm extends React.Component{
      handleChangeMetric = (v)=>{
          var arr = []
 
-         this.state.metricsDetailedBase.forEach((lv,i,a)=>{ if(v===lv.metric){arr.push(
-             [lv.id,"Serii-"+lv.numberOfSeries+" Powtórzeń-"+lv.numberOfRepeat])}})
+         this.state.metricsDetailedBase.forEach((lv,i,a)=>{ if(v===lv.metric){
+             let s = this.state.sampleBase.find((samp)=>{return samp.id === lv.sample})
+             arr.push([lv.id,"(serii:  "+lv.numberOfSeries+"; powtórzeń:  "+lv.numberOfRepeat+")"," Dodatki: "+ JSON.stringify(s.supplement)+" Czynnik:"+s.externalFactor])}})
          this.setState({
              metricsDetailed : arr,
              metricGeneral: v,
@@ -267,73 +276,88 @@ class DataForm extends React.Component{
          alert("Uzupełnij")
          }
      }
-     openWindow = ()=>{
-         let refDM = ()=>{       
-            axios.get("/api/experiment/DetailedMetrics/").then((res)=>{
-                this.setState({metricsDetailedBase:res.data});
-                this.handleChangeMetric(this.state.metricGeneral)
-            }).catch(console.log("Metric failure \n"));
-         }
-        this.setState({window:<DetailedMetricForm refreshDB={refDM} closeProc={this.closeWindow} metric ={this.state.metricGeneral}/>})
+     refDM = ()=>{       
+        axios.get("/api/experiment/DetailedMetrics/").then((res)=>{
+            this.setState({metricsDetailedBase:res.data});
+            this.handleChangeMetric(this.state.metricGeneral)
+        }).catch(console.log("Metric failure \n"));
      }
+
      closeWindow =()=>{ this.setState({window:null}) }
-     newProduct = ()=>{
-         this.setState({productWindow:<ProductForm changeProductName={(v)=>{this.setState({product:v})}} 
-            name={(this.props.obj=== undefined)? "":this.props.obj.product} 
-            closeProc={()=>{this.setState({productWindow:undefined})}}/>})
-     }
      render(){
      return(
-         <div className="box0" id="dataform">
-                <Button variant="contained" className="line2" type="button" onClick={this.props.closeProc}>X</Button>
-                 <InputLabel className="line2">
+         <div id="dataform">
+                <Button variant="contained" className="line" type="button" onClick={this.props.closeProc}>X</Button>
+                 <InputLabel className="line">
                      Nazwa:
                      <Input className="line" type="text" value={this.state.name} onChange={this.handleChangeName} />
                  </InputLabel>
-                 <InputLabel className="line2">
+                 <InputLabel className="line">
                      Opis:
                      <TextareaAutosize className="line" type="text" value={this.state.desc} onChange={this.handleChangeDesc} />
                  </InputLabel>
-                 <InputLabel className="line2">
+                 <InputLabel className="line">
                      URL pracy:
                      <Input className="line" type="text" value={this.state.paper} onChange={this.handleChangePaper} />
                  </InputLabel>
-                 <InputLabel className="line2">
+                 <InputLabel className="line">
                      Produkt:
-                     <div className="line">
-                        <Input readonly value={this.state.product}/>
-                        {(this.props.obj == undefined)? <Button  variant="contained" color="primary"  size="medium" onClick={this.newProduct}>Nowy</Button> : <Button variant="contained" color="primary"  onClick={this.newProduct} size="medium">Zmień</Button>}
-                     </div>
+                     <Input className="line" readonly value={this.state.product}/>
+                     <Accordion>
+                         <AccordionSummary>
+                             Zdefiniuj produkt
+                         </AccordionSummary>
+                         <AccordionDetails>
+                            <ProductForm changeProductName={(v)=>{this.setState({product:v})}} 
+                                name={(this.props.obj=== undefined)? "":this.props.obj.product} 
+                                closeProc={()=>{this.setState({productWindow:undefined})}}/>
+                         </AccordionDetails>
+                     </Accordion>
                  </InputLabel>
-                 {this.state.productWindow}
-                 <InputLabel className="line2">
+                 <InputLabel className="line">
                      Prywatny
                      <Checkbox className="line"  checked={this.state.private}  onChange={this.handlePrivate}/>
                      
                  </InputLabel>
-                 <InputLabel className="line2">
-                     <span className="line2">
+                 <InputLabel className="line">
+                     <span className="line">
+                     <InputLabel className="margin">
                      Metryka:
-                     <Select onChange={this.handleChangeMetric} array={this.state.metricsGeneral}/>
+                     <Select className="line" onChange={this.handleChangeMetric} array={this.state.metricsGeneral}/>
+                     </InputLabel>
+                     <InputLabel className="margin">
                      Metryka szczegółowa:
-                     <Select value={this.state.metricID} onChange={this.handleChangeDetailedMetric} array={this.state.metricsDetailed}/>
-                     <Button variant="contained" color="primary" type="button" onClick={this.handleAddDM}>
+                     <Select className="line" value={this.state.metricID} onChange={this.handleChangeDetailedMetric} array={this.state.metricsDetailed}/>
+                     </InputLabel>
+                     <span className="margin" ><Button className="line" variant="contained" type="button" onClick={this.handleAddDM}>
                              Przypisz
                          </Button>
-                     <Button variant="contained" color="primary" type="button" onClick={ this.openWindow}>
-                             Nowa
-                     </Button>
+                     </span>
                      </span>
                  </InputLabel>
                  {this.state.dialog}
-                 {this.state.window}
-                 {this.state.metrics.map((obj,n,a)=>{ return <this.Line obj={obj} onButton={this.handleDelDM}/>})}
-                 <div className="line2">
-                     <Button variant="contained" color="primary" type="button" onClick={this.handleInsert}>Dodaj</Button>
-                     <span hidden={this.state.idExp == undefined}><Button variant="contained" color="primary"  className="line2" type="button" onClick={this.handleChange}>Zmień</Button></span>
-                     <span hidden={!this.state.new}><Button variant="contained" color="primary"  className="line2" type="button" onClick={this.handleSubmit}>Pobierz arkusz eksperymentu</Button></span>
-                 </div>
-                 <div hidden={!this.state.new}><div className="line2">
+                 <Accordion className="line">
+                     <AccordionSummary>
+                        Właściwości metryki szczegółowej
+                     </AccordionSummary>
+                     <AccordionDetails>
+                         <DetailedMetricForm metricObj={this.state.metric} metric={this.state.metricGeneral} sampleBase={this.state.samples}/>
+                     </AccordionDetails>
+                 </Accordion>
+                 <Accordion className="line">
+                    <AccordionSummary className="line">
+                        Dodane metryki szczegółowe
+                    </AccordionSummary>
+                    <AccordionDetails className="line">
+                        {this.state.metrics.map((obj,n,a)=>{ return <this.Line obj={obj} onButton={this.handleDelDM}/>})}
+                    </AccordionDetails>
+                 </Accordion>
+                 <ButtonGroup className="line">
+                     <span  className="margin"><Button className="line" color="primary" variant="contained" type="button" onClick={this.handleInsert}>Dodaj</Button></span>
+                     <span className="margin" hidden={!this.state.new}><Button className="line" variant="contained" type="button" onClick={this.handleSubmit}>Pobierz arkusz eksperymentu</Button></span>
+                     <span className="margin" hidden={this.state.idExp == undefined}><Button className="line" variant="contained" type="button" onClick={this.handleChange}>Zmień</Button></span>
+                 </ButtonGroup>
+                 <div hidden={!this.state.new}><div className="line">
                          <Input type="file"
                              id="XLSXFileChoose" name="XLSXChoose"
                              accept=".xlsx" onChange ={this.handleLoadXLSX}/>

@@ -3,17 +3,30 @@ import axios from "axios";
 import { Select } from "../funcComponents";
 import { getCSRFToken } from '../csrftoken.js'
 import ExternalFactor from './ExternalFactor';
-import { Button, InputLabel, Paper} from "@material-ui/core";
+import Supplement from './Supplement'
+import { Button, InputLabel, Paper, Accordion, AccordionDetails, AccordionSummary} from "@material-ui/core";
 class SampleForm extends React.Component{
     constructor(props){
         super(props)
         this.state={
             supplementsBase:[], supplements:[], supplement:"",
-            externalFactors:[], externalFactor:"", window:undefined
+            externalFactors:[], externalFactor:"", window:undefined,
+            sampleID:props.sampleID
         }
     }
     componentDidMount = () => {
         this.refresh()
+    }
+    componentDidUpdate = () => {
+        if (this.state.sampleID !== this.props.sampleID){
+            axios.get("/api/experiment/Sample/"+this.props.sampleID+"/").then(res=>{
+                this.setState({
+                    externalFactor:res.data.externalFactor,
+                    supplements: res.data.supplement,
+                    sampleID:res.data.id
+                })
+            })
+        }
     }
     refresh = ()=> {
         //żądania typu get do API
@@ -93,7 +106,7 @@ class SampleForm extends React.Component{
     }
     render(){
         
-        return  <Paper className="line2"><div className="box0">
+        return  <div>
             <Button variant="contained" className="line2" type="button" onClick={()=>{this.componentWillUnmount()}}>X</Button>
             <InputLabel className="line2">
                 Czynnik zewnętrzny:
@@ -101,25 +114,40 @@ class SampleForm extends React.Component{
                         onChange={this.handleChangeEF}
                         value={this.state.externalFactor}
                 ></Select>
-                <Button type="button" onClick={()=>{this.newExternalFactor()}}>Nowy</Button></span>
+                </span>
             </InputLabel>
-            {this.state.window}
+            <Accordion className="line">
+                    <AccordionSummary className="line">
+                        Edytuj czynnik zewnętrzny
+                    </AccordionSummary>
+                    <AccordionDetails className="line">
+                        <ExternalFactor name={this.state.externalFactor}/>
+                    </AccordionDetails>
+            </Accordion>
             <InputLabel className="line2">
                 Dodatek:
-                <span className="line2">
-                <Select array={this.state.supplementsBase}
+                <Select  className="line2"
+                        array={this.state.supplementsBase}
                         onChange={this.handleChangeSupplements}
                         value={this.state.supplement}
                 ></Select>
-                <Button type="button"
+                <Button className="margin"
+                        type="button"
                         onClick={this.handleAddSupplement}>
                         Dodaj dodatek
                 </Button>
-                </span>
             </InputLabel>
+            <Accordion className="line">
+                <AccordionSummary className="line">
+                    Edytuj dodatek
+                </AccordionSummary>
+                <AccordionDetails>
+                    <Supplement name={this.state.supplement}/>
+                </AccordionDetails>
+            </Accordion>
             {this.state.supplements.map((v,n,a)=>{ return this.makeLine(this.state.supplementsBase,v)})}
-            <Button type="button" onClick={this.handleInsert}>Dodaj próbkę</Button>
-            </div></Paper>
+            <Button color="primary" className="line2" type="button" onClick={this.handleInsert}>Dodaj próbkę</Button>
+        </div>
     }
 }
 

@@ -3,6 +3,7 @@ import '../style.css';
 import axios from "axios";
 import { Select } from "../funcComponents";
 import {getCSRFToken} from '../csrftoken'
+import { Button, InputLabel, Input } from "@material-ui/core";
 
 //Komponenet odpowiedzialny za formularz eksperymentu
 class Supplement extends React.Component{
@@ -11,14 +12,23 @@ class Supplement extends React.Component{
     //inicjalizacja stanu komponentu
     //TODO: przerobić tak by wykorzystać jeszcze do edycji istniejącego eksperymentu
     //if (props.obj === undefined || props.obj === null){
-    this.state = {name:null, perecent_val:null,
+    this.state = {name:props.name, perecent_val:null,
         b_i_b:"",s_b:"",
         metricGeneral:"", generated:false, file:"", loaded:false,
         metrics:[],basic_ingredient_base:[], supplement_base:[],
     }
     
 }
-componentWillUnmount = ()=>{
+componentDidUpdate = ()=>{
+    if(this.props.name !== this.state.nameOld){
+        axios.get("/api/experiment/Supplement/"+this.props.name+"/").then((res)=>{
+            this.setState({nameOld:this.props.name,name:res.data.name,
+            perecent_val:res.data.percentage,
+            b_i_b:res.data.basicIngredientBase,
+            s_b: res.data.supplementBase
+        });
+        }).catch(console.log("SupplementBase \n"));
+    }
 }
 
 
@@ -86,32 +96,36 @@ refresh = ()=> {
     
     render(){
     return(
-        <form className="box0" id="dataform" onSubmit={this.handleSubmit}>
-				<label className="line3">
-                    Dodawanie dodatku:
-                </label>
-                <label className="line2">
-                    Nazwa:
-                    <input className="line" type="text" value={this.state.name} onChange={this.handleChangeName} readonly />
-                </label>
-				
-                <label className="line2">
+        <div>
+                <InputLabel className="line2">
+                    Nazwa starego dodatku:
+                    <Input className="line" type="text" value={this.state.nameOld} readonly />
+                </InputLabel>
+                <InputLabel className="line2">
                     Zawartość procentowa:
-                    <input className="line" type="text" value={this.state.perecent_val} onChange={this.handleChangePercentVal} />
-                </label>
-                <label className="line2">
+                    <Input className="line" type="text" value={this.state.perecent_val} onChange={this.handleChangePercentVal} />
+                </InputLabel>
+                <InputLabel className="line2">
                     Bazowy składnik zmniejszany na rzecz dodatku:
-                    <Select onChange={this.handleChangeBIB} array={this.state.basic_ingredient_base}/>
-                </label>
-                <label className="line2">
+                    <Select className="line" value={this.state.b_i_b} onChange={this.handleChangeBIB} array={this.state.basic_ingredient_base}/>
+                </InputLabel>
+                <InputLabel className="line2">
                     Dodatek:
-                    <Select onChange={this.handleChangeSupBase} array={this.state.supplement_base}/>
-                </label>
+                    <Select className="line" value={this.state.s_b} onChange={this.handleChangeSupBase} array={this.state.supplement_base}/>
+                </InputLabel>
+                    <Button className="line" type="button" onClick={this.handleInsert}>Zmodyfikuj dodatek pod starą nazwą</Button>
+                    <span className="line"/>
+                    <Button className="line" type="button" onClick={this.handleInsert}>Usuń dodatek</Button>
+
                 <div>
-                    <button type="button" onClick={this.handleInsert}>Dodaj</button>
+                    <InputLabel className="line2">
+                        Nazwa nowego dodatku:
+                        <Input className="line" type="text" value={this.state.name} readonly />
+                    </InputLabel>
+                    <Button className="line" type="button" onClick={this.handleInsert}>Dodaj nowy dodatek</Button>
                 </div>
                 
-        </form>
+        </div>
     )
     //return <Line obj={obj} onButton={this.handleDelDM}></Line>})}
     }

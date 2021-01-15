@@ -2,6 +2,7 @@ import React from 'react';
 import '../style.css';
 import axios from "axios";
 import {getCSRFToken} from '../csrftoken'
+import { Button, InputLabel, Input } from "@material-ui/core";
 
 //Komponenet odpowiedzialny za formularz eksperymentu
 class ExternalFactor extends React.Component{
@@ -26,9 +27,9 @@ class ExternalFactor extends React.Component{
 Line = (props) => {
     return(<div>
         {props.obj['id']+":"+" type:"+props.obj['metric']+" number of repeats:"+props.obj['numberOfRepeat']}
-        <button type="button" onClick={(e) => props.onButton(props.obj)}>
+        <Button type="button" onClick={(e) => props.onButton(props.obj)}>
             Usuń
-        </button>
+        </Button>
     </div>)
 } 
 
@@ -77,29 +78,25 @@ Line = (props) => {
 
     render(){
     return(
-        <form className="box" id="externalFactorForm">
-                <button variant="contained"  type="button" onClick={this.props.closeProc}>X</button>
-				<label className="line3">
-                    Dodawanie czynnika zewnetrznego:
-                </label>
-                <label className="line2">
+        <form id="externalFactorForm">
+                <InputLabel className="line">
                     Nazwa:
-                    <input className="line" type="text" value={this.state.name} onChange={this.handleChangeName} />
-                </label>
-                <label className="line2">
+                    <Input className="line" type="text" value={this.state.name} onChange={this.handleChangeName} />
+                </InputLabel>
+                <InputLabel className="line2">
                     Liczba Wartosci:
-                    <input className="line" type="text" value={this.state.numberOfVal} onChange={this.handleChangeNumOfVal} />
-                </label>
-                <label className="line2">
+                    <Input className="line" type="text" value={this.state.numberOfVal} onChange={this.handleChangeNumOfVal} />
+                </InputLabel>
+                <InputLabel className="line2">
                     Jednostka:
-                    <input className="line" type="text" value={this.state.unit} onChange={this.handleChangeUnit} />
-                </label>
-                <label className="line2">
+                    <Input className="line" type="text" value={this.state.unit} onChange={this.handleChangeUnit} />
+                </InputLabel>
+                <InputLabel className="line2">
                     Wartosci:
-                    <input className="line" type="text" value={this.state.values} onChange={this.handleChangeValues}/>
-                </label>
+                    <Input className="line" type="text" value={this.state.values} onChange={this.handleChangeValues}/>
+                </InputLabel>
                 <div>
-                    <button type="button" onClick={this.handleInsert}>Dodaj</button>
+                    <Button className="line"  type="button" onClick={this.handleInsert}>Dodaj</Button>
                 </div>
                 
         </form>

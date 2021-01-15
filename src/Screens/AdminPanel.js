@@ -1,4 +1,3 @@
-import Supplement from './Supplement'
 import '../style.css';
 import React from 'react';
 import CategoryAdminForm from "./CategoryAdminForm";
@@ -13,26 +12,6 @@ class AdminPanel extends React.Component{
         }
     }
 
-    selectSection = (f) => {
-        var arr = this.state.sections
-        switch(f){
-            case 0:
-                arr[f]= <SupplementBase index={f} closeProc={this.closeWindow}/>
-                break;
-            case 1://"SupplementAdminForm":
-                arr[f]= <Supplement index={f} closeProc={this.closeWindow}/>
-                break;
-            case 2://"CategoryAdminForm"
-                arr[f] = <CategoryAdminForm index={f} closeProc={this.closeWindow}/>
-                break;
-            case 3:
-                arr[f] = <BasicIngredientBase index={f} closeProc={this.closeWindow}/>
-                break;
-
-        }
-        this.setState({sections:arr})
-    }
-
     render = ()=>{
         let f = 0
         return(<div>
@@ -42,14 +21,6 @@ class AdminPanel extends React.Component{
                 </AccordionSummary>
                 <AccordionDetails>
                     <SupplementBase/>
-                </AccordionDetails>
-            </Accordion>
-            <Accordion>
-                <AccordionSummary>
-                    Dodatki
-                </AccordionSummary>
-                <AccordionDetails>
-                    <Supplement/>
                 </AccordionDetails>
             </Accordion>
             <Accordion>

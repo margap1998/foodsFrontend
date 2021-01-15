@@ -42,40 +42,21 @@ class BasicIngredientBase extends React.Component{
             this.refreshDB()
         }).catch((e)=>{alert("Nie usunięto")})
     }
-    handleUpdate = ()=>{
-        let token = getCSRFToken()
-        let headers = {"X-CSRFTOKEN": token, name:this.state.category}
-        let data = {
-            "name": this.state.newName
-            }
-        let a = this.state.categories.find((v)=>{return v[0]==this.state.newName})
-        if( a==undefined){
-            Axios.put("/api/experiment/BasicIngredientBase/"+this.state.category+"/",data,{headers:headers, withCredentials:true}).then((e)=>{
-                this.refreshDB()
-            }).catch((e)=>{alert("Nie zmieniono")})
-        }else{alert("Nie zmieniono")}
-    }
     render = ()=>{
         return(
         <div>
-            <FormLabel className="line2">
+            <FormLabel className="line">
+                <div className="line">
                 Nowy składnik:
-                <div className="line2">
-                    Nazwa
                     <Input className="line" value={this.state.name} onChange={(e) =>{this.setState({name:e.target.value})}}/>
-                    <Button className="line2" onClick={this.handleSubmit}>Dodaj składnik</Button>
+                    <Button className="line" variant="contained" color="primary" onClick={this.handleSubmit}>Dodaj składnik</Button>
                 </div>
             </FormLabel>
 
-            <FormLabel className="line2">
-                Zmiana dodatku: 
-                <SelectArrayElement array={this.state.categories} onChange={(v)=>{this.setState({category:v})}}/>
-                <span className="line2">
-                    Nowa nazwa składniku:
-                    <Input value={this.state.newName} onChange={(e) =>{this.setState({newName:e.target.value})}}/>
-                    <Button onClick={this.handleUpdate}>Zmień składnik</Button>
-                </span>
-                <Button className="line2" onClick={this.handleDelete}>Usuń składnik</Button>
+            <FormLabel className="line">
+                Składnik do usunięcia: 
+                <SelectArrayElement className="line" array={this.state.categories} onChange={(v)=>{this.setState({category:v})}}/>
+                <Button className="line" variant="contained" color="secondary" onClick={this.handleDelete}>Usuń składnik</Button>
             </FormLabel>
         </div>
         )

@@ -42,41 +42,22 @@ class SupplementBase extends React.Component{
             this.refreshDB()
         }).catch((e)=>{alert("Nie usunięto")})
     }
-    handleUpdate = ()=>{
-        let token = getCSRFToken()
-        let headers = {"X-CSRFTOKEN": token, name:this.state.category}
-        let data = {
-            "name": this.state.newName
-            }
-        let a = this.state.categories.find((v)=>{return v[0]==this.state.newName})
-        if( a==undefined){
-            Axios.put("/api/experiment/SupplementBase/"+this.state.category+"/",data,{headers:headers, withCredentials:true}).then((e)=>{
-                this.refreshDB()
-            }).catch((e)=>{alert("Nie zmieniono")})
-        }else{alert("Nie zmieniono")}
-    }
     render = ()=>{
         let q = this.state.categories
         return(
         <div>
-            <FormLabel className="line2">
+            <FormLabel className="line">
                 Nowy dodatek:
-                <div className="line2">
-                    Nazwa
+                <div className="line">
                     <Input className="line" value={this.state.name} onChange={(e) =>{this.setState({name:e.target.value})}}/>
-                    <Button className="line2" onClick={this.handleSubmit}>Dodaj dodatek</Button>
+                    <Button variant="contained" color="primary" className="line" onClick={this.handleSubmit}>Dodaj dodatek</Button>
                 </div>
             </FormLabel>
 
-            <FormLabel className="line2">
-                Zmiana dodatku: 
-                <SelectArrayElement array={this.state.categories} onChange={(v)=>{this.setState({category:v})}}/>
-                <span className="line2">
-                    Nowa nazwa dodatku:
-                    <Input value={this.state.newName} onChange={(e) =>{this.setState({newName:e.target.value})}}/>
-                    <Button onClick={this.handleUpdate}>Zmień dodatek</Button>
-                </span>
-                <Button className="line2" onClick={this.handleDelete}>Usuń dodatek</Button>
+            <FormLabel className="line">
+                Dodatek do usunięcia: 
+                <SelectArrayElement className="line" array={this.state.categories} onChange={(v)=>{this.setState({category:v})}}/>
+                <Button variant="contained" color="secondary" className="line" onClick={this.handleDelete}>Usuń dodatek</Button>
             </FormLabel>
         </div>
         )

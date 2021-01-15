@@ -23,7 +23,7 @@ class MainScreen extends React.Component{
         axios.get("/api/experiment/Experiment/").then((res)=>{
             var arr = [];
             //wyłuskanie nazw kategorii
-            res.data.forEach((obj)=>{arr.push([obj.name,obj.name]);});
+            res.data.forEach((obj)=>{arr.push([obj.id,obj.name]);});
 
             this.setState({experimentsBase:res.data, experiments:arr});
         }).catch(console.log("Experiments failure \n"));
@@ -31,11 +31,11 @@ class MainScreen extends React.Component{
 
 // /api/experiment/Experiment/
     handleChangeExp = (v) => {
-        this.setState({experiment:this.state.experimentsBase.find((obj)=>{return (obj.name == v)}),expName:v})
+        this.setState({experiment:this.state.experimentsBase.find((obj)=>{return (obj.id === v)}),expName:v})
     }
     
     handleChangeExpPublic = (v)=>{{
-        this.setState({experiment:this.state.experimentsBase.find((obj)=>{return (obj.name == v)})})
+        this.setState({experiment:this.state.experimentsBase.find((obj)=>{return (obj.id === v)})})
     }}
     render = ()=>{
         let backToMS = ()=>{this.setState({screen:0}); this.refresh()}
@@ -48,16 +48,16 @@ class MainScreen extends React.Component{
                         <Select onChange={this.handleChangeExp} value={this.state.expName} array={this.state.experiments}/>
                     </FormLabel>
                     <div className="line2">
-                        <Button variant="contained" color="primary" type="button" >Usuń</Button>
-                        <Button variant="contained" color="primary" type="button" onClick={(e)=>{this.setState({screen:4})}}>Edytuj eksperyment</Button>
-                        <Button variant="contained" color="primary" type="button" onClick={(e)=>{this.setState({screen:5})}}>Przeglądaj eksperyment</Button>
+                        <Button variant="contained" type="button" >Usuń</Button>
+                        <Button variant="contained" type="button" onClick={(e)=>{this.setState({screen:4})}}>Edytuj eksperyment</Button>
+                        <Button variant="contained" type="button" onClick={(e)=>{this.setState({screen:5})}}>Przeglądaj eksperyment</Button>
                     </div>
                     <FormLabel className="line2">
                         Udostępnione dla mnie:
                         <Select onChange={this.handleChangeExpPublic} array={this.state.prodBase}/>
-                        <Button variant="contained" color="primary" type="button" onClick={(e)=>{this.setState({screen:6})}}>Przeglądaj eksperyment</Button>
+                        <Button variant="contained" type="button" onClick={(e)=>{this.setState({screen:6})}}>Przeglądaj eksperyment</Button>
                     </FormLabel>
-                <Button className="line2" variant="contained" color="primary" type="button" onClick={(e)=>{this.setState({screen:1})}}>Nowy eksperyment</Button>
+                <Button className="line2" variant="contained" type="button" onClick={(e)=>{this.setState({screen:1})}}>Nowy eksperyment</Button>
                     
             </div>
         );
