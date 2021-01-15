@@ -3,7 +3,7 @@ import React from 'react';
 import CategoryAdminForm from "./CategoryAdminForm";
 import SupplementBase from "./SupplementBase"
 import BasicIngredientBase from "./BasicIngredientBase"
-import { Accordion, AccordionSummary, AccordionDetails, Button} from "@material-ui/core";
+import { Accordion, AccordionSummary, AccordionDetails } from "@material-ui/core";
 class AdminPanel extends React.Component{
     constructor(props){
         super(props)

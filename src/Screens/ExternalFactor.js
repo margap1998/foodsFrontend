@@ -11,13 +11,7 @@ class ExternalFactor extends React.Component{
     //inicjalizacja stanu komponentu
     //TODO: przerobić tak by wykorzystać jeszcze do edycji istniejącego eksperymentu
     //if (props.obj === undefined || props.obj === null){
-    this.state = {name:null, numberOfVal:1, unit:null, values:null, desc:null, 
-        num_repeats:"", num_features:0, sample:1, metricID:"",
-        paper:"", private:false, product:"", metric:"", filename:"",
-        metricGeneral:"", generated:false, file:"", loaded:false,
-        categories:[], ingredients:[], metrics:[],
-        prodBase:[], prodObj:[], metricsGeneral:[], metricsGeneralBase:[], metricsDetailedBase:[],
-        metricsDetailed:[], sampleBase:[],recipeBase:[]
+    this.state = {name:null, numberOfVal:1, unit:null, values:null, nameOld:props.name
     }
     
 }
@@ -32,7 +26,18 @@ Line = (props) => {
         </Button>
     </div>)
 } 
-
+componentDidUpdate = ()=>{
+    if (this.props.name!==this.state.nameOld){
+        axios.get("/api/experiment/ExternalFactor/"+this.props.name+"/").then((res)=>{
+            this.setState({
+                nameOld:this.props.name,
+                numberOfVal:res.data.numberOfValues,
+                unit:res.data.unit,
+                values:res.data.values
+            })
+        })
+        }
+    }
 // /api/experiment/Experiment/
 //name:null, numberOfVal:1, unit:null, values:null,
     handleChangeName = (event) => {    this.setState({name: event.target.value});}
@@ -80,8 +85,8 @@ Line = (props) => {
     return(
         <form id="externalFactorForm">
                 <InputLabel className="line">
-                    Nazwa:
-                    <Input className="line" type="text" value={this.state.name} onChange={this.handleChangeName} />
+                    Stara nazwa:
+                    <Input className="line" type="text" value={this.state.nameOld} readOnly />
                 </InputLabel>
                 <InputLabel className="line2">
                     Liczba Wartosci:
@@ -95,8 +100,15 @@ Line = (props) => {
                     Wartosci:
                     <Input className="line" type="text" value={this.state.values} onChange={this.handleChangeValues}/>
                 </InputLabel>
+                    <Button className="line"  type="button" onClick={this.handleUpdate}>Zmień</Button>
+                    <span className="line"></span>
+                    <Button className="line"  type="button" onClick={this.handleDelete}>Usuń</Button>
                 <div>
+                <InputLabel className="line">
+                    Nazwa nowego czynnika:
+                    <Input className="line" type="text" value={this.state.name} onChange={this.handleChangeName} />
                     <Button className="line"  type="button" onClick={this.handleInsert}>Dodaj</Button>
+                </InputLabel>
                 </div>
                 
         </form>

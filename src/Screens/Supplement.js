@@ -113,9 +113,9 @@ refresh = ()=> {
                     Dodatek:
                     <Select className="line" value={this.state.s_b} onChange={this.handleChangeSupBase} array={this.state.supplement_base}/>
                 </InputLabel>
-                    <Button className="line" type="button" onClick={this.handleInsert}>Zmodyfikuj dodatek pod starą nazwą</Button>
+                    <Button className="line" type="button" onClick={this.handleUpdate}>Zmodyfikuj dodatek</Button>
                     <span className="line"/>
-                    <Button className="line" type="button" onClick={this.handleInsert}>Usuń dodatek</Button>
+                    <Button className="line" type="button" onClick={this.handleDelete}>Usuń dodatek</Button>
 
                 <div>
                     <InputLabel className="line2">
