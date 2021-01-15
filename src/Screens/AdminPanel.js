@@ -39,6 +39,13 @@ class AdminPanel extends React.Component{
                     <BasicIngredientBase/>
                 </AccordionDetails>
             </Accordion>
+            <Accordion>
+                <AccordionSummary>
+                    Użytkownicy
+                </AccordionSummary>
+                <AccordionDetails>
+                </AccordionDetails>
+            </Accordion>
             </div>
         )
         

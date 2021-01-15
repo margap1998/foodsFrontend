@@ -18,14 +18,14 @@ class SampleForm extends React.Component{
         this.refresh()
     }
     componentDidUpdate = () => {
-        if (this.state.sampleID !== this.props.sampleID){
+        if (this.state.sampleID != this.props.sampleID){
             axios.get("/api/experiment/Sample/"+this.props.sampleID+"/").then(res=>{
                 this.setState({
                     externalFactor:res.data.externalFactor,
                     supplements: res.data.supplement,
                     sampleID:res.data.id
                 })
-            })
+            }).catch(()=>{})
         }
     }
     refresh = ()=> {
@@ -98,11 +98,17 @@ class SampleForm extends React.Component{
         return <this.Line text={t} value={v} onButton={this.handleDelDM}/>
     }
 
-    newExternalFactor = (e)=>{
-        let closeProc = ()=>{
-            this.setState({window:undefined})
-        }
-        this.setState({window:<ExternalFactor closeProc={closeProc}/>})
+    addEF = (v)=>{
+        var arr = this.state.externalFactors
+        arr.push([v.name, v.name+" ["+v.values+"]"+" "+v.unit])
+        this.setState({externalFactors:arr, externalFactor:v.name})
+    }
+    addSupl = (v)=>{
+        var arr = this.state.supplementsBase;
+        //wyłuskanie nazw metryk
+        arr.push([v.name,v.name+" - "+v.percentage+"%"])
+        this.setState({supplementsBase:arr, supplement:v.name});
+        
     }
     render(){
         
@@ -120,7 +126,7 @@ class SampleForm extends React.Component{
                         Edytuj czynnik zewnętrzny
                     </AccordionSummary>
                     <AccordionDetails className="line">
-                        <ExternalFactor name={this.state.externalFactor}/>
+                        <ExternalFactor name={this.state.externalFactor} afterCreate={this.addEF} refresh={this.refresh}/>
                     </AccordionDetails>
             </Accordion>
             <InputLabel className="line2">
@@ -141,7 +147,7 @@ class SampleForm extends React.Component{
                     Edytuj dodatek
                 </AccordionSummary>
                 <AccordionDetails>
-                    <Supplement name={this.state.supplement}/>
+                    <Supplement name={this.state.supplement} afterCreate={this.addSupl}/>
                 </AccordionDetails>
             </Accordion>
             {this.state.supplements.map((v,n,a)=>{ return this.makeLine(this.state.supplementsBase,v)})}

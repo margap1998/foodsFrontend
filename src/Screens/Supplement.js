@@ -12,10 +12,10 @@ class Supplement extends React.Component{
     //inicjalizacja stanu komponentu
     //TODO: przerobić tak by wykorzystać jeszcze do edycji istniejącego eksperymentu
     //if (props.obj === undefined || props.obj === null){
-    this.state = {name:props.name, perecent_val:null,
+    this.state = {name:props.name, perecent_val:0,
         b_i_b:"",s_b:"",
         metricGeneral:"", generated:false, file:"", loaded:false,
-        metrics:[],basic_ingredient_base:[], supplement_base:[],
+        metrics:[],basic_ingredient_base:[], supplement_base:[],nameOld:""
     }
     
 }
@@ -85,7 +85,8 @@ refresh = ()=> {
 				"supplementBase": this.state.s_b
 			}
 			axios.post("/api/experiment/Supplement/",exp_head,{ headers:headers }).then((res)=>{
-				alert(res.statusText);
+                alert(res.statusText);
+                this.props.afterCreate()
 			}).catch((e)=>{console.log("Something's wrong with inserting experiment");})
 		
 		}else{

@@ -11,7 +11,7 @@ class ExternalFactor extends React.Component{
     //inicjalizacja stanu komponentu
     //TODO: przerobić tak by wykorzystać jeszcze do edycji istniejącego eksperymentu
     //if (props.obj === undefined || props.obj === null){
-    this.state = {name:null, numberOfVal:1, unit:null, values:null, nameOld:props.name
+    this.state = {name:null, numberOfVal:1, unit:null, values:null, nameOld:props.name, metrics:[]
     }
     
 }
@@ -72,7 +72,8 @@ componentDidUpdate = ()=>{
 				}
 
 				axios.post("/api/experiment/ExternalFactor/",exp_head,{ headers:headers }).then((res)=>{
-					alert(res.statusText);
+                    alert(res.statusText);
+                    this.props.afterCreate(res.data)
 				}).catch((e)=>{console.log("Something's wrong with inserting experiment");})
 			}
 		}else{

@@ -18,7 +18,7 @@ class DataForm extends React.Component{
         this.state = {name:null, desc:null, window:null, metricID:"",
             paper:"", private:false, product:"", metric:"", filename:"",
             metricGeneral:"", generated:false, file:"", loaded:false,
-            samples:[], ingredients:[], metrics:[],
+            samples:[], ingredients:[], metrics:[],exp:props.obj,
             prodBase:[], prodObj:[], metricsGeneral:[], metricsGeneralBase:[], metricsDetailedBase:[],
             metricsDetailed:[], sampleBase:[], idExp:undefined,
             productWindow:undefined, new:true, openDialog:false
@@ -30,7 +30,7 @@ class DataForm extends React.Component{
                 filename:"",metricGeneral:"", generated:false, file:"", loaded:false,
                 samples:[], ingredients:[], metrics:[], openDialog:false,
                 prodBase:[], prodObj:[], metricsGeneral:[], metricsGeneralBase:[], metricsDetailedBase:[],
-                metricsDetailed:[], sampleBase:[],
+                metricsDetailed:[], sampleBase:[],exp:props.obj,
                 productWindow:null, new:false, idExp:props.obj.id
                 }        
             axios.get("api/experiment/Result/").then((res)=>{
@@ -45,6 +45,7 @@ class DataForm extends React.Component{
  //props.obj - metryka szczegółowa do obskoczenia
  // props.onButton - funkcja do wywołania dla przycisku usuń
  Line = (props) => {
+     if(this.state.sampleBase.length>0){
      let lv = props.obj
      let s = this.state.sampleBase.find((samp)=>{return samp.id === lv.sample})
      return(<div className="line">
@@ -53,7 +54,10 @@ class DataForm extends React.Component{
              Usuń
          </Button>
      </div>)
- } 
+    } else{
+        return null
+    }
+    }
  componentDidMount = () => {
      this.refresh()
  }
@@ -174,7 +178,7 @@ class DataForm extends React.Component{
  
              axios.post("/api/experiment/Experiment/",exp_head,{ headers:headers }).then((res)=>{
                  alert("Wstawiono");
-                 this.setState({idExp:res.data.id})
+                 this.setState({idExp:res.data.id, exp:res.data})
              }).catch((e)=>{console.log("Something's wrong with inserting experiment"); alert("Nie wstawiono")})
          }else{
              alert("Uzupełnij")
@@ -237,7 +241,7 @@ class DataForm extends React.Component{
             </DialogActions>
           </Dialog>
           var test = true
-          this.props.obj.detailedMetrics.forEach(v =>{test=test&&arr.includes(v)})
+          this.state.exp.detailedMetrics.forEach(v =>{test=test&&arr.includes(v)})
             if (test){
                 put()
             }else{
