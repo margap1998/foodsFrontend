@@ -81,16 +81,17 @@ class RecipeForm extends React.Component{
             if(e.target.value>-1 && e.target.value<101){
                 this.setState({
                     ingredient:{
-                        "name": this.state.ingredient.basicIngredientBase+" "+e.target.value.toString()+"%",
-                        "percentage": e.target.value,
+                        "name": this.state.ingredient.basicIngredientBase+" "+parseInt(e.target.value).toString()+"%",
+                        "percentage": parseInt(e.target.value).toString(),
                         "basicIngredientBase": this.state.ingredient.basicIngredientBase
                     }
                 })
             }
     }
     handleWeight = (e)=>{
+        if(parseInt(e.target.value) > 0){
             let rec = {
-                "basicWeight": e.target.value,
+                "basicWeight": parseInt(e.target.value).toString(),
                 "ingredients": this.state.recipe.ingredients
             }
             if(e.target.value>-1){
@@ -99,6 +100,7 @@ class RecipeForm extends React.Component{
                 })
                 this.props.changeRecipe(rec)
             }
+        }
     }
     Line = (props)=>{
         let onClick = (name)=>{
@@ -158,7 +160,7 @@ class ProductForm extends React.Component{
             categories:[], categoriesBase:[],
             recipe:{
                 id:"-1",
-                "basicWeight": null,
+                "basicWeight": 1,
                 "ingredients": []
             },
             rf:undefined
@@ -184,11 +186,7 @@ class ProductForm extends React.Component{
                 this.setState({recipe:rec, rf:<RecipeForm recipe={rec} changeRecipe={this.changeRecipe} className="line"/>})
             }).catch(console.log("Categories failure \n"));
         }else{
-            this.setState({rf:<RecipeForm recipe={{
-                id:"-1",
-                "basicWeight": null,
-                "ingredients": []
-            }} changeRecipe={this.changeRecipe} className="line"/>})
+            this.setState({rf:<RecipeForm recipe={this.state.recipe} changeRecipe={this.changeRecipe} className="line"/>})
         }
         }).catch(console.log("Product failure \n"));
         //żądania typu get do API

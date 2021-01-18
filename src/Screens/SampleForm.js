@@ -49,17 +49,14 @@ class SampleForm extends React.Component{
             "externalFactor": this.state.externalFactor,
             "supplement": this.state.supplements
         }
-        
-        axios.post("/api/experiment/Sample/",data,{ headers:headers })
-            .then((res)=>{
-                this.componentWillUnmount();
-                this.props.refreshDB()
-                alert("Wstawiono");
-            })
-            .catch((e)=>{
+        alert(JSON.stringify(data))
+        axios.post("/api/experiment/Sample/",data,{ headers:headers, withCredentials:true }).then((res)=>{
+            this.props.afterCreate(res.data)
+            alert("Wstawiono");
+        }).catch((e)=>{
                 console.log("Something's wrong with inserting detailed metric");
                 alert("Nie wstawiono")
-            })
+        })
     }
     componentWillUnmount = ()=>{
         this.props.closeProc()

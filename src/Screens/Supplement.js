@@ -86,7 +86,7 @@ refresh = ()=> {
 			}
 			axios.post("/api/experiment/Supplement/",exp_head,{ headers:headers }).then((res)=>{
                 alert(res.statusText);
-                this.props.afterCreate()
+                this.props.afterCreate(res.data)
 			}).catch((e)=>{console.log("Something's wrong with inserting experiment");})
 		
 		}else{

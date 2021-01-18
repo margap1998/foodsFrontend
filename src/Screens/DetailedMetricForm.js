@@ -67,7 +67,7 @@ class DetailedMetricForm extends React.Component{
         
         axios.post("/api/experiment/DetailedMetrics/",data,{ headers:headers })
             .then((res)=>{
-                this.props.refreshDB()
+                this.props.refreshDB(res.data)
                 this.setState({id:res.id})
                 alert("Wstawiono");
             })
@@ -97,8 +97,11 @@ class DetailedMetricForm extends React.Component{
         }
         axios.put("/api/experiment/DetailedMetrics/"+this.state.id+"/",data,{headers:headers, withCredentials:true}).then(_=>{
             alert("zmieniono")
-            this.props.refreshDB()
         }).catch((e)=>{alert("Nie zmieniono")})
+    }
+    addSampl = (v)=>{
+        this.props.addSampl(v)
+        this.setState({sample:v.id})
     }
     render = ()=>{
         return <div className="line">
@@ -120,16 +123,16 @@ class DetailedMetricForm extends React.Component{
                     Edycja próbki
                 </AccordionSummary>
                 <AccordionDetails className="line">
-                    <SampleForm refreshDB={this.refreshBase} sampleID={this.state.sample} closeProc={()=>{this.setState({window:undefined})}}/>
+                    <SampleForm afterCreate={this.addSampl} sampleID={this.state.sample} closeProc={()=>{this.setState({window:undefined})}}/>
                 </AccordionDetails>
             </Accordion>
             <InputLabel className="line2">
-                Liczba powtórzeń:
-                <Input className="line" type="text" value={this.state.num_repeats} onChange={this.handleChangeRepeats} />
-            </InputLabel>
-            <InputLabel className="line2">
                 Liczba serii:
                 <Input className="line" type="text" value={this.state.num_series} onChange={this.handleChangeSeries} />
+            </InputLabel>
+            <InputLabel className="line2">
+                Liczba powtórzeń:
+                <Input className="line" type="text" value={this.state.num_repeats} onChange={this.handleChangeRepeats} />
             </InputLabel>
             <Button className="line2" type="button" onClick={this.handleInsert}>Dodaj nową metrykę szczegółową</Button>
             <span className="line2"></span>

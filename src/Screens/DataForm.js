@@ -280,11 +280,19 @@ class DataForm extends React.Component{
          alert("Uzupełnij")
          }
      }
-     refDM = ()=>{       
-        axios.get("/api/experiment/DetailedMetrics/").then((res)=>{
-            this.setState({metricsDetailedBase:res.data});
-            this.handleChangeMetric(this.state.metricGeneral)
-        }).catch(console.log("Metric failure \n"));
+     refDM = (lv)=>{
+        var arr = this.state.metricsDetailed
+        let s = this.state.sampleBase.find((samp)=>{return samp.id === lv.sample})
+        arr.push([lv.id,
+                "(serii:  "+lv.numberOfSeries+"; powtórzeń:  "+lv.numberOfRepeat+")",
+                " Dodatki: "+ JSON.stringify(s.supplement)+" Czynnik:"+s.externalFactor
+            ])
+        var arr2 = this.state.metricsDetailedBase
+        arr2.push(lv)
+        this.setState({metricsDetailed : arr, metricsDetailedBase:arr2, metric:lv, metricID:lv.id});
+     }
+     addSampl = (s)=>{
+         this.refresh()
      }
 
      closeWindow =()=>{ this.setState({window:null}) }
@@ -309,7 +317,7 @@ class DataForm extends React.Component{
                      <Input className="line" readonly value={this.state.product}/>
                      <Accordion>
                          <AccordionSummary>
-                             Zdefiniuj produkt
+                             Edytuj produkt
                          </AccordionSummary>
                          <AccordionDetails>
                             <ProductForm changeProductName={(v)=>{this.setState({product:v})}} 
@@ -342,10 +350,10 @@ class DataForm extends React.Component{
                  {this.state.dialog}
                  <Accordion className="line">
                      <AccordionSummary>
-                        Właściwości metryki szczegółowej
+                        Edytuj metrykę szczegółową
                      </AccordionSummary>
                      <AccordionDetails>
-                         <DetailedMetricForm metricObj={this.state.metric} metric={this.state.metricGeneral} sampleBase={this.state.samples}/>
+                         <DetailedMetricForm metricObj={this.state.metric} refreshDB={this.refDM} addSampl={this.addSampl} metric={this.state.metricGeneral} sampleBase={this.state.samples}/>
                      </AccordionDetails>
                  </Accordion>
                  <Accordion className="line">

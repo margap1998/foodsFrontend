@@ -43,21 +43,23 @@ class MainScreen extends React.Component{
             <div className="box0" id="dataform" >
                     <FormLabel ><h3>Ekran Startowy:</h3>
                     </FormLabel>
-                    <FormLabel className="line2">
+                    <FormLabel className="line">
                         Moje eksperymenty:
                         <Select onChange={this.handleChangeExp} value={this.state.expName} array={this.state.experiments}/>
                     </FormLabel>
-                    <div className="line2">
-                        <Button variant="contained" type="button" >Usuń</Button>
-                        <Button variant="contained" type="button" onClick={(e)=>{this.setState({screen:4})}}>Edytuj eksperyment</Button>
-                        <Button variant="contained" type="button" onClick={(e)=>{this.setState({screen:5})}}>Przeglądaj eksperyment</Button>
-                    </div>
-                    <FormLabel className="line2">
+                        <Button className="line" variant="contained" type="button" >Usuń</Button>
+                        <span className="line"/>
+                        <Button className="line"  variant="contained" type="button" onClick={(e)=>{this.setState({screen:4})}}>Edytuj eksperyment</Button>
+                        <span className="line"/>
+                        <Button className="line"  variant="contained" type="button" onClick={(e)=>{this.setState({screen:5})}}>Przeglądaj eksperyment</Button>
+                        <span className="line"/>
+                        <Button className="line2" variant="contained" type="button" onClick={(e)=>{this.setState({screen:1})}}>Nowy eksperyment</Button>
+                        <span className="line"/>
+                    <FormLabel className="line">
                         Udostępnione dla mnie:
                         <Select onChange={this.handleChangeExpPublic} array={this.state.prodBase}/>
-                        <Button variant="contained" type="button" onClick={(e)=>{this.setState({screen:6})}}>Przeglądaj eksperyment</Button>
+                        <Button className="line" variant="contained" type="button" onClick={(e)=>{this.setState({screen:6})}}>Przeglądaj udostępniony eksperyment</Button>
                     </FormLabel>
-                <Button className="line2" variant="contained" type="button" onClick={(e)=>{this.setState({screen:1})}}>Nowy eksperyment</Button>
                     
             </div>
         );

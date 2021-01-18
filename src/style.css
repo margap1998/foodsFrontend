@@ -30,10 +30,10 @@
 	width:100%;
 }
 .line{
-	margin-left: 0.5%;
-	margin-top: 0.5%;
-	margin-bottom: 0.5%;
-	margin-right: 0.5%;
+	padding-left: 0.5%;
+	padding-right: 0.5%;
+	padding-bottom: 5px;
+	padding-top: 5px;
 	flex-wrap:wrap;
 	display:flex;
 	align-items:stretch;
@@ -42,12 +42,12 @@
 	width:99%;
 }
 .line2{
+	padding-left: 0.5%;
+	padding-right: 0.5%;
+	padding-bottom: 0.5%;
+	padding-top: 0.5%;
 	display:flex;
 	justify-content: space-between;
-	margin-left: 0.5%;
-	margin-top: 0.5%;
-	margin-bottom: 0.5%;
-	margin-right: 0.5%;
 	width:99%;
 }
 .margin{
