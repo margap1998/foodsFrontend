@@ -212,7 +212,6 @@ class ProductForm extends React.Component{
             }
             axios.post("/api/experiment/Product/",product,{headers:headers, withCredentials:true}).then(res2=>{
                 this.props.changeProductName(product.name)
-                this.props.closeProc()
             }).catch(e => alert("Nie dodano produktu, skontaktuj się z administratorem w celu usunięcia receptury"))
         }).catch(e => alert("Nie dodano"))
     }

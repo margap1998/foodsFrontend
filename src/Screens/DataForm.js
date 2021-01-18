@@ -48,7 +48,7 @@ class DataForm extends React.Component{
      if(this.state.sampleBase.length>0){
      let lv = props.obj
      let s = this.state.sampleBase.find((samp)=>{return samp.id === lv.sample})
-     return(<div className="line">
+     return(<div>
          {"(serii:  "+lv.numberOfSeries+"; powtórzeń:  "+lv.numberOfRepeat+")"+" Dodatki: "+ JSON.stringify(s.supplement)+" Czynnik:"+s.externalFactor}
          <Button type="button" onClick={(e) => props.onButton(props.obj)}>
              Usuń
