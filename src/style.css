@@ -32,8 +32,8 @@
 .line{
 	padding-left: 0.5%;
 	padding-right: 0.5%;
-	padding-bottom: 5px;
-	padding-top: 5px;
+	margin-bottom: 5px;
+	margin-top: 5px;
 	flex-wrap:wrap;
 	display:flex;
 	align-items:stretch;
@@ -44,8 +44,8 @@
 .line2{
 	padding-left: 0.5%;
 	padding-right: 0.5%;
-	padding-bottom: 0.5%;
-	padding-top: 0.5%;
+	margin-bottom: 5px;
+	margin-top: 5px;
 	display:flex;
 	justify-content: space-between;
 	width:99%;

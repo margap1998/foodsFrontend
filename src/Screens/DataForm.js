@@ -179,7 +179,7 @@ class DataForm extends React.Component{
              axios.post("/api/experiment/Experiment/",exp_head,{ headers:headers }).then((res)=>{
                  alert("Wstawiono");
                  this.setState({idExp:res.data.id, exp:res.data})
-             }).catch((e)=>{console.log("Something's wrong with inserting experiment"); alert("Nie wstawiono")})
+             }).catch(()=>{console.log("Something's wrong with inserting experiment"); alert("Nie wstawiono")})
          }else{
              alert("Uzupełnij")
              }
@@ -204,17 +204,17 @@ class DataForm extends React.Component{
                  "detailedMetrics": arr,
              }
             let put = ()=>{
-                 axios.put("/api/experiment/Experiment/"+this.state.idExp+"/",exp_head,{ headers:headers }).then((res)=>{
+                 axios.put("/api/experiment/Experiment/"+this.state.idExp+"/",exp_head,{ headers:headers }).then(()=>{
                  alert("Zmieniono");
-                }).catch((e)=>{console.log("Something's wrong with changing experiment"); alert("Nie dokonano zmian!")})
+                }).catch(()=>{console.log("Something's wrong with changing experiment"); alert("Nie dokonano zmian!")})
             }
             let post = ()=>{
-                     axios.delete("/api/experiment/Experiment/"+this.state.idExp+"/",{ headers:headers }).then((res)=>{
-                        axios.post("/api/experiment/Experiment/",exp_head,{ headers:headers }).then((res)=>{
+                     axios.delete("/api/experiment/Experiment/"+this.state.idExp+"/",{ headers:headers }).then(()=>{
+                        axios.post("/api/experiment/Experiment/",exp_head,{ headers:headers }).then((res2)=>{
                             alert("Dokonano zmiany");
-                            this.setState({idExp:res.data.id, new:true})
-                        }).catch((e)=>{console.log("Something's wrong with inserting experiment"); alert("Usunięto, lecz nie wstawiono")})
-                    }).catch((e)=>{console.log("Something's wrong with changing experiment"); alert("Nie dokonano zmian!")})    
+                            this.setState({idExp:res2.data.id, new:true})
+                        }).catch(()=>{console.log("Something's wrong with inserting experiment"); alert("Usunięto, lecz nie wstawiono")})
+                    }).catch(()=>{console.log("Something's wrong with changing experiment"); alert("Nie dokonano zmian!")})    
                 }
                 let open = ()=>{this.setState({openDialog:true})}
                 let close = ()=>{this.setState({openDialog:false,dialog:undefined})}

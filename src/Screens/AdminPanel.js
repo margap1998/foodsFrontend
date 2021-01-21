@@ -4,16 +4,15 @@ import CategoryAdminForm from "./CategoryAdminForm";
 import SupplementBase from "./SupplementBase"
 import BasicIngredientBase from "./BasicIngredientBase"
 import { Accordion, AccordionSummary, AccordionDetails } from "@material-ui/core";
+import UserPanel from './UserPanel';
 class AdminPanel extends React.Component{
     constructor(props){
         super(props)
         this.state = {
-            sections:[null,null,null,null]
         }
     }
 
     render = ()=>{
-        let f = 0
         return(<div>
             <Accordion>
                 <AccordionSummary>
@@ -44,6 +43,7 @@ class AdminPanel extends React.Component{
                     Użytkownicy
                 </AccordionSummary>
                 <AccordionDetails>
+                    <UserPanel/>
                 </AccordionDetails>
             </Accordion>
             </div>
