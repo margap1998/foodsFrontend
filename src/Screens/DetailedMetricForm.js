@@ -22,6 +22,7 @@ class DetailedMetricForm extends React.Component{
     componentDidMount = () => {
     }
     componentDidUpdate = ()=>{
+        if(this.props.metricObj !== undefined){
         if (this.state.id != this.props.metricObj.id){
             this.setState({
                 sample :        this.props.metricObj.sample,
@@ -32,6 +33,7 @@ class DetailedMetricForm extends React.Component{
             })
         }
     }
+}
     handleChangeRepeats = (event)=>{    
         const regExp = /^[0-9]*$/;
         const a = event.target.value;
@@ -128,7 +130,11 @@ class DetailedMetricForm extends React.Component{
             </Accordion>
             <Accordion className="line">
                 <AccordionSummary className="line">
+<<<<<<< Updated upstream
                     Edycja próbki
+=======
+                    Edycja wybranej próbki
+>>>>>>> Stashed changes
                 </AccordionSummary>
                 <AccordionDetails className="line">
                     <SampleForm afterCreate={this.addSampl} sampleID={this.state.sample} closeProc={()=>{this.setState({window:undefined})}}/>
@@ -143,10 +149,12 @@ class DetailedMetricForm extends React.Component{
                 <Input className="line" type="text" value={this.state.num_repeats} onChange={this.handleChangeRepeats} />
             </InputLabel>
             <Button className="line2" type="button" onClick={this.handleInsert}>Dodaj nową metrykę szczegółową</Button>
+            {(this.props.metricObj !=undefined)?(<div>
             <span className="line2"></span>
             <Button className="line2" type="button" onClick={this.handleDelete}>Usuń metrykę szczegółową</Button>
             <span className="line2"></span>
             <Button className="line2" type="button" onClick={this.handleUpdate}>Zmień dane metryki szczegółowej</Button>
+            </div>):null}
         </div>
     }
 

@@ -124,10 +124,6 @@ class RecipeForm extends React.Component{
     render = ()=>{
         return <div className="box0" className="line2"><Paper>
             <FormLabel className="line2">
-                Waga w gramach:
-                <Input type="number" value={this.state.recipe.basicWeight} onChange={this.handleWeight}/>
-            </FormLabel>
-            <FormLabel className="line2">
                 Składnik:
                 <SelectArrayElement array={this.state.ingredientsTypeBase} onChange={this.handleIngredientBase}/>
             </FormLabel>    
@@ -140,6 +136,11 @@ class RecipeForm extends React.Component{
                 <Input type="text" readOnly value={this.state.ingredient.name}/>
             </FormLabel>
                 <Button variant="contained" className="line" onClick={this.handleIngredient}> Dodaj składnik</Button>
+                
+            <FormLabel className="line2">
+                Waga gotowego produktu w gramach:
+                <Input type="number" value={this.state.recipe.basicWeight} onChange={this.handleWeight}/>
+            </FormLabel>
             <FormLabel className="line2">
                 <div className="line">Pozostało {100-this.state.percent}% składników</div>
             </FormLabel>
@@ -220,6 +221,7 @@ class ProductForm extends React.Component{
         const headers = {"X-CSRFTOKEN": token}
         //obiekt z danymi do bazy
         axios.delete("/api/experiment/Recipe/"+this.state.recipe.id+"/",{headers:headers, withCredentials:true}).then(res1=>{
+            alert("Usunięto "+this.state.nameProduct)
             this.setState({
                 "nameProduct": "",
                 "descriptionProduct": "",

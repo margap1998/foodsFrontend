@@ -8,8 +8,12 @@ import { Button, Input, FormLabel, Radio, RadioGroup, FormControl,
 class UserPanel extends React.Component{
     constructor(props){
         super(props)
+<<<<<<< Updated upstream
         this.state = {level:"false", user:"", users:[], usersDB:[],userObj:undefined,
                         pass:"", email:""}
+=======
+        this.state = {level:"administrator", user:undefined, users:[[1,"Michał"],[2,"Kasia"]]}
+>>>>>>> Stashed changes
     }
     componentDidMount = ()=>{
         this.refreshDB()
@@ -94,13 +98,25 @@ class UserPanel extends React.Component{
     }
     render = ()=>{
         return <div>
-            <FormLabel className="line">
+            <FormLabel>
                 Użytkownik 
                 <SelectArrayElement value={this.state.user} className="line" array={this.state.users} onChange={this.selectUser}/>
             </FormLabel>
+<<<<<<< Updated upstream
             <FormLabel className="line">
                 E-mail
                 <Input type="email" className="line" value={this.state.email} onChange={(e)=>{this.setState({email:e.target.value})}}/>
+=======
+            <FormLabel>
+                Nowa nazwa 
+                <Input className="line"/>
+            </FormLabel>
+            <FormLabel>
+                Nowy e-mail
+                <span className="line">
+                    <Input type="email"/>
+                </span>      
+>>>>>>> Stashed changes
             </FormLabel>
             <Button className="line" variant="contained" onClick={this.changeData}>Zmień e-mail użytkownika</Button>
             <span className="line"/>
@@ -122,8 +138,15 @@ class UserPanel extends React.Component{
                 </RadioGroup>
                 <Button variant="contained" onClick={this.setLevel}>Nadaj uprawnienia użytkownika</Button>
             </FormControl>
+<<<<<<< Updated upstream
             <span className="line"/>
             <Button className="line" variant="contained" color="secondary" onClick={this.deleteUser}>Usuń użytkownika</Button>
+=======
+            <div className="line">
+                <span className="margin"><Button className="line" variant="contained"> Usuń użytkownika</Button></span>
+                <span className="margin"><Button className="line" variant="contained"> Zmień dane użytkownika</Button></span>
+            </div>
+>>>>>>> Stashed changes
         </div>
     }
 }

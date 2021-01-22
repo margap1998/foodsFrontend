@@ -16,7 +16,7 @@ class DataForm extends React.Component{
      //TODO: przerobić tak by wykorzystać jeszcze do edycji istniejącego eksperymentu
      if (props.obj === undefined || props.obj === null){
         this.state = {name:null, desc:null, window:null, metricID:"",
-            paper:"", private:false, product:"", metric:"", filename:"",
+            paper:"", private:false, product:undefined, metric:"", filename:"",
             metricGeneral:"", generated:false, file:"", loaded:false,
             samples:[], ingredients:[], metrics:[],exp:props.obj,
             prodBase:[], prodObj:[], metricsGeneral:[], metricsGeneralBase:[], metricsDetailedBase:[],
@@ -224,7 +224,7 @@ class DataForm extends React.Component{
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
           >
-            <DialogTitle id="alert-dialog-title">{"Use Google's location service?"}</DialogTitle>
+            <DialogTitle id="alert-dialog-title">{"Czy chcesz zresetować eksperyment?"}</DialogTitle>
             <DialogContent>
               <DialogContentText id="alert-dialog-description">
                 Zmiana metryk w eksperymencie powoduje usunięcie dotychczasowych wyników. 
@@ -317,7 +317,7 @@ class DataForm extends React.Component{
                      <Input className="line" readonly value={this.state.product}/>
                      <Accordion>
                          <AccordionSummary>
-                             Edytuj produkt
+                             {(this.state.product===undefined)? "Nowy produkt":"Edytuj produkt"}
                          </AccordionSummary>
                          <AccordionDetails>
                             <ProductForm changeProductName={(v)=>{this.setState({product:v})}} 
@@ -348,6 +348,14 @@ class DataForm extends React.Component{
                      </span>
                  </InputLabel>
                  {this.state.dialog}
+                 <Accordion className="line">
+                     <AccordionSummary>
+                        Nowa metryka szczegółowa
+                     </AccordionSummary>
+                     <AccordionDetails>
+                         <DetailedMetricForm refreshDB={this.refDM} addSampl={this.addSampl} sampleBase={this.state.samples}/>
+                     </AccordionDetails>
+                 </Accordion>
                  <Accordion className="line">
                      <AccordionSummary>
                         Edytuj metrykę szczegółową
