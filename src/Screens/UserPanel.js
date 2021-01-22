@@ -18,11 +18,12 @@ class UserPanel extends React.Component{
         Axios.get("/api2/authentication/get_users/").then(res=>{
             let arr = res.data.map(v=>{ return [v.username,v.username,v.email]})
             this.setState({users:arr, usersDB:res.data})
-        })
+        }).catch(()=>{console.log("Problem with downloading datas")})
     }
     selectUser = (v)=>{
         let user = this.state.usersDB.find((o)=>{ return o.username==v})
-        this.setState({user:v,userObj:user, email:user.email, level:user.is_superuser.toString()})
+        alert(JSON.stringify(user))
+        this.setState({user:v,userObj:user, email:user.email})
     }
     changeUser = (v)=>{
         this.setState({user:v})
@@ -73,6 +74,24 @@ class UserPanel extends React.Component{
             alert("Zmieniono hasło użytkownika "+ this.state.user)
         }).catch( ()=>{ alert("Zmiana hasła użytkownika "+ this.state.user +" się nie powiodła")})
     }
+    setLevel = ()=>{
+        let token = getCSRFToken()
+        const headers = {"X-CSRFTOKEN": token}
+        let su = this.state.level
+        
+        su = su.charAt(0).toUpperCase().concat(su.slice(1))
+        //obiekt z danymi do bazy
+        alert(su)
+        let data = {
+            "username": this.state.user,
+            "is_superuser": su
+        }
+            
+        Axios.post("/api2/authentication/change_super_power/",data,{headers:headers, withCredentials:true}).then(r=>{
+            alert("Usunięcie użytkownika "+ this.state.user)
+            this.refreshDB()
+        }).catch( ()=>{ alert("Usunięcie użytkownika "+ this.state.user +" się nie powiodło")})
+    }
     render = ()=>{
         return <div>
             <FormLabel className="line">
@@ -83,9 +102,7 @@ class UserPanel extends React.Component{
                 E-mail
                 <Input type="email" className="line" value={this.state.email} onChange={(e)=>{this.setState({email:e.target.value})}}/>
             </FormLabel>
-            <Button className="line" variant="contained" color="primary" onClick={this.changeData}>Zmień e-mail użytkownika</Button>
-            <span className="line"/>
-            <Button className="line" variant="contained" color="secondary" onClick={this.deleteUser}>Usuń użytkownika</Button>
+            <Button className="line" variant="contained" onClick={this.changeData}>Zmień e-mail użytkownika</Button>
             <span className="line"/>
             <Accordion>
                 <AccordionSummary>
@@ -103,8 +120,10 @@ class UserPanel extends React.Component{
                     <FormControlLabel value="true" control={<Radio />} label="Administrator" />
                     <FormControlLabel value="false" control={<Radio />} label="Zwykły" />
                 </RadioGroup>
-                <Button variant="contained">Zmień uprawnienia użytkownika</Button>
+                <Button variant="contained" onClick={this.setLevel}>Nadaj uprawnienia użytkownika</Button>
             </FormControl>
+            <span className="line"/>
+            <Button className="line" variant="contained" color="secondary" onClick={this.deleteUser}>Usuń użytkownika</Button>
         </div>
     }
 }
