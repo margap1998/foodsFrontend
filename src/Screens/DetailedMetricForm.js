@@ -69,7 +69,7 @@ class DetailedMetricForm extends React.Component{
             .then((res)=>{
                 this.props.refreshDB(res.data)
                 this.setState({id:res.id})
-                alert("Wstawiono");
+                alert("Wstawiono metrykę "+data.metric+" ("+data.numberOfSeries+","+data.numberOfRepeat+")");
             })
             .catch((e)=>{
                 console.log("Something's wrong with inserting detailed metric");
@@ -118,6 +118,14 @@ class DetailedMetricForm extends React.Component{
                     ></Select>
                 </div>
             </InputLabel>
+            <Accordion className="line">
+                <AccordionSummary className="line">
+                    Nowa próbka
+                </AccordionSummary>
+                <AccordionDetails className="line">
+                    <SampleForm afterCreate={this.addSampl} closeProc={()=>{this.setState({window:undefined})}}/>
+                </AccordionDetails>
+            </Accordion>
             <Accordion className="line">
                 <AccordionSummary className="line">
                     Edycja próbki

@@ -16,10 +16,10 @@ class AdminPanel extends React.Component{
         return(<div>
             <Accordion>
                 <AccordionSummary>
-                    Dodatki bazowe
+                    Użytkownicy
                 </AccordionSummary>
                 <AccordionDetails>
-                    <SupplementBase/>
+                    <UserPanel/>
                 </AccordionDetails>
             </Accordion>
             <Accordion>
@@ -40,10 +40,10 @@ class AdminPanel extends React.Component{
             </Accordion>
             <Accordion>
                 <AccordionSummary>
-                    Użytkownicy
+                    Dodatki bazowe
                 </AccordionSummary>
                 <AccordionDetails>
-                    <UserPanel/>
+                    <SupplementBase/>
                 </AccordionDetails>
             </Accordion>
             </div>

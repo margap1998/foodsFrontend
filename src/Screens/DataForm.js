@@ -305,7 +305,7 @@ class DataForm extends React.Component{
                      <Input className="line" type="text" value={this.state.name} onChange={this.handleChangeName} />
                  </InputLabel>
                  <InputLabel className="line">
-                     Opis:
+                     Opis eksperymentu:
                      <TextareaAutosize className="line" type="text" value={this.state.desc} onChange={this.handleChangeDesc} />
                  </InputLabel>
                  <InputLabel className="line">

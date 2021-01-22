@@ -245,7 +245,7 @@ class ProductForm extends React.Component{
                 />
             </FormLabel>
             <FormLabel className="line">
-                Opis:
+                Opis produktu:
                 <Input className="line" type="text" value={this.state.descriptionProduct} 
                         onChange={(e)=>{ this.setState({descriptionProduct:e.target.value})}}
                 />

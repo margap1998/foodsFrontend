@@ -85,10 +85,14 @@ componentDidUpdate = ()=>{
     render(){
     return(
         <form id="externalFactorForm">
+            {(this.props.name!==undefined)?
                 <InputLabel className="line">
                     Stara nazwa:
                     <Input className="line" type="text" value={this.state.nameOld} readOnly />
-                </InputLabel>
+                </InputLabel>:<InputLabel className="line">
+                Nazwa nowego czynnika:
+                <Input className="line" type="text" value={this.state.name} onChange={this.handleChangeName} />
+            </InputLabel>}
                 <InputLabel className="line2">
                     Liczba Wartosci:
                     <Input className="line" type="text" value={this.state.numberOfVal} onChange={this.handleChangeNumOfVal} />
@@ -104,14 +108,8 @@ componentDidUpdate = ()=>{
                     <Button className="line"  type="button" onClick={this.handleUpdate}>Zmień</Button>
                     <span className="line"></span>
                     <Button className="line"  type="button" onClick={this.handleDelete}>Usuń</Button>
-                <div>
-                <InputLabel className="line">
-                    Nazwa nowego czynnika:
-                    <Input className="line" type="text" value={this.state.name} onChange={this.handleChangeName} />
-                    <Button className="line"  type="button" onClick={this.handleInsert}>Dodaj</Button>
-                </InputLabel>
-                </div>
-                
+                    <span className="line"></span>
+                <Button className="line"  type="button" onClick={this.handleInsert}>Dodaj</Button>
         </form>
         )
     }

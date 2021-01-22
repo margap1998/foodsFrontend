@@ -19,17 +19,18 @@ class Supplement extends React.Component{
     }
     
 }
-componentDidUpdate = ()=>{
+componentDidUpdate = ()=> {if(this.props.name!==undefined){
     if(this.props.name !== this.state.nameOld){
         axios.get("/api/experiment/Supplement/"+this.props.name+"/").then((res)=>{
             this.setState({nameOld:this.props.name,name:res.data.name,
             perecent_val:res.data.percentage,
             b_i_b:res.data.basicIngredientBase,
             s_b: res.data.supplementBase
-        });
+            });
         }).catch(console.log("SupplementBase \n"));
+        }
     }
-}
+    }
 
 
 componentDidMount = () => {
@@ -85,7 +86,7 @@ refresh = ()=> {
 				"supplementBase": this.state.s_b
 			}
 			axios.post("/api/experiment/Supplement/",exp_head,{ headers:headers }).then((res)=>{
-                alert(res.statusText);
+                alert("Wstawiono "+JSON.stringify(res.data.name));
                 this.props.afterCreate(res.data)
 			}).catch((e)=>{console.log("Something's wrong with inserting experiment");})
 		
@@ -97,11 +98,16 @@ refresh = ()=> {
     
     render(){
     return(
-        <div>
+        <div>{(this.props.name!==undefined)?
                 <InputLabel className="line2">
                     Nazwa starego dodatku:
                     <Input className="line" type="text" value={this.state.nameOld} readonly />
                 </InputLabel>
+                :<InputLabel className="line2">
+                        Nazwa nowego dodatku:
+                        <Input className="line" type="text" value={this.state.name} readonly />
+                    </InputLabel>
+                    }
                 <InputLabel className="line2">
                     Zawartość procentowa:
                     <Input className="line" type="text" value={this.state.perecent_val} onChange={this.handleChangePercentVal} />
@@ -114,17 +120,13 @@ refresh = ()=> {
                     Dodatek:
                     <Select className="line" value={this.state.s_b} onChange={this.handleChangeSupBase} array={this.state.supplement_base}/>
                 </InputLabel>
+                {(this.props.name!==undefined)?<div>
                     <Button className="line" type="button" onClick={this.handleUpdate}>Zmodyfikuj dodatek</Button>
                     <span className="line"/>
                     <Button className="line" type="button" onClick={this.handleDelete}>Usuń dodatek</Button>
-
-                <div>
-                    <InputLabel className="line2">
-                        Nazwa nowego dodatku:
-                        <Input className="line" type="text" value={this.state.name} readonly />
-                    </InputLabel>
-                    <Button className="line" type="button" onClick={this.handleInsert}>Dodaj nowy dodatek</Button>
-                </div>
+                    <span className="line"/>
+                </div>:undefined} 
+                <Button className="line" type="button" onClick={this.handleInsert}>Dodaj nowy dodatek</Button>
                 
         </div>
     )

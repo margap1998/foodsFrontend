@@ -49,10 +49,9 @@ class SampleForm extends React.Component{
             "externalFactor": this.state.externalFactor,
             "supplement": this.state.supplements
         }
-        alert(JSON.stringify(data))
         axios.post("/api/experiment/Sample/",data,{ headers:headers, withCredentials:true }).then((res)=>{
             this.props.afterCreate(res.data)
-            alert("Wstawiono");
+            alert("Wstawiono "+JSON.stringify(res.data.supplement));
         }).catch((e)=>{
                 console.log("Something's wrong with inserting detailed metric");
                 alert("Nie wstawiono")
@@ -120,6 +119,14 @@ class SampleForm extends React.Component{
             </InputLabel>
             <Accordion className="line">
                     <AccordionSummary className="line">
+                        Nowy czynnik zewnętrzny
+                    </AccordionSummary>
+                    <AccordionDetails className="line">
+                        <ExternalFactor  afterCreate={this.addEF} refresh={this.refresh}/>
+                    </AccordionDetails>
+            </Accordion>
+            <Accordion className="line">
+                    <AccordionSummary className="line">
                         Edytuj czynnik zewnętrzny
                     </AccordionSummary>
                     <AccordionDetails className="line">
@@ -139,6 +146,14 @@ class SampleForm extends React.Component{
                         Dodaj dodatek
                 </Button>
             </InputLabel>
+            <Accordion className="line">
+                <AccordionSummary className="line">
+                    Nowy dodatek
+                </AccordionSummary>
+                <AccordionDetails>
+                    <Supplement afterCreate={this.addSupl}/>
+                </AccordionDetails>
+            </Accordion>
             <Accordion className="line">
                 <AccordionSummary className="line">
                     Edytuj dodatek
