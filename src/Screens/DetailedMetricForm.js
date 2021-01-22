@@ -130,11 +130,7 @@ class DetailedMetricForm extends React.Component{
             </Accordion>
             <Accordion className="line">
                 <AccordionSummary className="line">
-<<<<<<< Updated upstream
                     Edycja próbki
-=======
-                    Edycja wybranej próbki
->>>>>>> Stashed changes
                 </AccordionSummary>
                 <AccordionDetails className="line">
                     <SampleForm afterCreate={this.addSampl} sampleID={this.state.sample} closeProc={()=>{this.setState({window:undefined})}}/>

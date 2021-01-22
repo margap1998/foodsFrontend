@@ -51,11 +51,7 @@ class SampleForm extends React.Component{
         }
         axios.post("/api/experiment/Sample/",data,{ headers:headers, withCredentials:true }).then((res)=>{
             this.props.afterCreate(res.data)
-<<<<<<< Updated upstream
-            alert("Wstawiono "+JSON.stringify(res.data.supplement));
-=======
             alert("Wstawiono próbkę z dodatkami "+JSON.stringify(res.data.supplement));
->>>>>>> Stashed changes
         }).catch((e)=>{
                 console.log("Something's wrong with inserting detailed metric");
                 alert("Nie wstawiono")
@@ -126,11 +122,7 @@ class SampleForm extends React.Component{
                         Nowy czynnik zewnętrzny
                     </AccordionSummary>
                     <AccordionDetails className="line">
-<<<<<<< Updated upstream
-                        <ExternalFactor  afterCreate={this.addEF} refresh={this.refresh}/>
-=======
                         <ExternalFactor afterCreate={this.addEF} refresh={this.refresh}/>
->>>>>>> Stashed changes
                     </AccordionDetails>
             </Accordion>
             <Accordion className="line">
