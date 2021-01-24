@@ -301,20 +301,21 @@ class DataForm extends React.Component{
          <div id="dataform">
                 <Button variant="contained" className="line" type="button" onClick={this.props.closeProc}>X</Button>
                  <InputLabel className="line">
-                     Nazwa:
+                     Nazwa *:
                      <Input className="line" type="text" value={this.state.name} onChange={this.handleChangeName} />
                  </InputLabel>
                  <InputLabel className="line">
-                     Opis eksperymentu:
+                     Opis eksperymentu *:
                      <TextareaAutosize className="line" type="text" value={this.state.desc} onChange={this.handleChangeDesc} />
                  </InputLabel>
                  <InputLabel className="line">
-                     URL pracy:
+                     URL pracy *:
                      <Input className="line" type="text" value={this.state.paper} onChange={this.handleChangePaper} />
                  </InputLabel>
                  <InputLabel className="line">
-                     Produkt:
-                     <Input className="line" readonly value={this.state.product}/>
+                     Produkt *:
+                     <InputLabel className="line" >{this.state.product}</InputLabel>
+                     <span className="line"/>
                      <Accordion>
                          <AccordionSummary>
                              {(this.state.product===undefined)? "Nowy produkt":"Edytuj produkt"}

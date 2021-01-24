@@ -5,6 +5,7 @@ import SupplementBase from "./SupplementBase"
 import BasicIngredientBase from "./BasicIngredientBase"
 import { Accordion, AccordionSummary, AccordionDetails } from "@material-ui/core";
 import UserPanel from './UserPanel';
+import MetricForm from './MetricForm';
 class AdminPanel extends React.Component{
     constructor(props){
         super(props)
@@ -36,6 +37,14 @@ class AdminPanel extends React.Component{
                 </AccordionSummary>
                 <AccordionDetails>
                     <BasicIngredientBase/>
+                </AccordionDetails>
+            </Accordion>
+            <Accordion>
+                <AccordionSummary>
+                    Metryki
+                </AccordionSummary>
+                <AccordionDetails>
+                    <MetricForm/>
                 </AccordionDetails>
             </Accordion>
             <Accordion>

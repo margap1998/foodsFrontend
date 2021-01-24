@@ -32,18 +32,18 @@ class SupplementBase extends React.Component{
             }
         Axios.post("/api/experiment/SupplementBase/",data,{headers:headers, withCredentials:true}).then((e)=>{ alert("Wstawiono");
             this.refreshDB()
-        }).catch((e)=>{alert("Nie wstawiono")})
+            alert(`Wstawiono kategorię "${data.name}"`)
+        }).catch((e)=>{alert(`Nie wstawiono kategorii "${data.name}"`)})
     }
     handleDelete = ()=>{
         let token = getCSRFToken()
         let headers = {"X-CSRFTOKEN": token}
-        Axios.delete("/api/experiment/SupplementBase/"+this.state.category,{headers:headers, withCredentials:true}).then((e)=>{
-            alert("Usunięto");
+        Axios.delete(`/api/experiment/SupplementBase/${this.state.category}`,{headers:headers, withCredentials:true}).then((e)=>{
+            alert(`Usunięto składnik "${this.state.category}"`);
             this.refreshDB()
-        }).catch((e)=>{alert("Nie usunięto")})
+        }).catch((e)=>{alert(`Nie usunięto kategorii "${this.state.category}"`)})
     }
     render = ()=>{
-        let q = this.state.categories
         return(
         <div>
             <FormLabel className="line">

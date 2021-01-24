@@ -7,11 +7,11 @@ class TestPanel extends React.Component{
         super(props)
         this.state = {images:[]}
     }
-    plotHandle= ()=>{
+    plotHandle= (type)=>{
         let p = {
             experiment_id:25,
             samples:[1],
-            plot_types:["radar"]
+            plot_types:[type]
         }
         Axios.post("/api/experiment/generatePlots/",p).then( res =>{
             let images = res.data.plots.map(pl=>{return "data:image/jpeg;base64,"+pl})
@@ -26,7 +26,8 @@ class TestPanel extends React.Component{
     }
     render = ()=>{
         return <div>
-            <Button className="line" onClick={this.plotHandle}>Test plot</Button>
+            <Button className="line" onClick={() =>{this.plotHandle("radar")}}>Test radar plot</Button>
+            <Button className="line" onClick={() =>{this.plotHandle("bar")}}>Test bar plot</Button>
             {this.state.images.map((v,i)=>{return <img src={v} onClick={()=>{this.clickIMG(i)}}/>})}
         </div>
     }
