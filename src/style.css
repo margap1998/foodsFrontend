@@ -30,8 +30,8 @@
 	width:100%;
 }
 .line{
-	padding-left: 0.5%;
-	padding-right: 0.5%;
+	padding-left: 5px;
+	padding-right: 5px;
 	margin-bottom: 5px;
 	margin-top: 5px;
 	flex-wrap:wrap;
@@ -51,17 +51,10 @@
 	width:99%;
 }
 .margin{
-<<<<<<< Updated upstream
-	margin-left: 0.5%;
-	margin-top: 5px;
-	margin-bottom: 5px;
-	margin-right: 0.5%;
-=======
 	margin-left: 5px;
 	margin-top: 5px;
 	margin-bottom: 5px;
 	margin-right: 5px;
->>>>>>> Stashed changes
 }
 .com{
 	display:flex;

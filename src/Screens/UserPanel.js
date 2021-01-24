@@ -8,12 +8,8 @@ import { Button, Input, FormLabel, Radio, RadioGroup, FormControl,
 class UserPanel extends React.Component{
     constructor(props){
         super(props)
-<<<<<<< Updated upstream
-        this.state = {level:"false", user:"", users:[], usersDB:[],userObj:undefined,
+                this.state = {level:"false", user:"", users:[], usersDB:[],userObj:undefined,
                         pass:"", email:""}
-=======
-        this.state = {level:"administrator", user:undefined, users:[[1,"Michał"],[2,"Kasia"]]}
->>>>>>> Stashed changes
     }
     componentDidMount = ()=>{
         this.refreshDB()

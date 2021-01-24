@@ -294,6 +294,11 @@ class DataForm extends React.Component{
      addSampl = (s)=>{
          this.refresh()
      }
+	 generate_pdf= ()=>{
+		    axios.get("/api/experiment/generatePDF/").then((res)=>{
+            alert("Generuje?");
+        }).catch(console.log("Chyba nie dziala? \n"));
+	 }
 
      closeWindow =()=>{ this.setState({window:null}) }
      render(){
@@ -383,6 +388,7 @@ class DataForm extends React.Component{
                              accept=".xlsx" onChange ={this.handleLoadXLSX}/>
                          <Button variant="contained" color="primary" className={"visible"+this.state.loaded.toString()} onClick={this.handleSubmitXLSX} type="button" >Załaduj</Button>
                  </div></div>
+				 <Button className="line" variant="contained" onClick={this.generate_pdf}>Generuj PDF</Button>
          </div>
      )
      //return <Line obj={obj} onButton={this.handleDelDM}></Line>})}
