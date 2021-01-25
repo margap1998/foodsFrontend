@@ -40,7 +40,7 @@ class BasicIngredientBase extends React.Component{
         Axios.delete("/api/experiment/BasicIngredientBase/"+this.state.basicIngredient,{headers:headers, withCredentials:true}).then((e)=>{
             alert(`Usunięto składnik "${this.state.basicIngredient}"`);
             this.refreshDB()
-        }).catch((e)=>{alert(`Nie usunięto składniku "${this.state.basicIngredient}"`)})
+        }).catch((e)=>{alert(`Nie usunięto składnika "${this.state.basicIngredient}"`)})
     }
     render = ()=>{
         return(

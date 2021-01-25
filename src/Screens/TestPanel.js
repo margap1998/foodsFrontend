@@ -14,15 +14,16 @@ class TestPanel extends React.Component{
             plot_types:[type]
         }
         Axios.post("/api/experiment/generatePlots/",p).then( res =>{
-            let images = res.data.plots.map(pl=>{return "data:image/jpeg;base64,"+pl})
+            let images = res.data.plots.map(pl=>{return "data:image/png;base64,"+pl})
             this.setState({images:images})
         }).catch( e =>{
             alert("Something is no yes "+JSON.stringify(e))
         })
     }
     clickIMG = (ind) => {
-        var arr = this.state.images.filter((v,i)=>{return i!==ind})
-        this.setState({image:arr})
+        let a = this.state.images
+        a[ind] = undefined
+        this.setState({image:a})
     }
     render = ()=>{
         return <div>
