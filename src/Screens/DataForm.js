@@ -142,7 +142,7 @@ class DataForm extends React.Component{
          }
      handleSubmitXLSX = (e)=>{
          if (this.state.file !=null){
- 
+            this.setState({new:false})
              let token = getCSRFToken()
              var formData = new FormData();
              formData.append("file", this.state.file);
@@ -153,8 +153,9 @@ class DataForm extends React.Component{
                  "X-CSRFTOKEN": token
                  }
              })
-             .then((res)=>{alert("Udało się załodować"); this.setState({new:false})})
-             .catch((a)=>{console.log("Something's wrong with file uploading");})
+             .then((res)=>{alert("Udało się załodować eksperyment "+this.state.name); })
+             .catch((a)=>{console.log("Something's wrong with file uploading");alert("Nie udało się załodować eksperymentu "+this.state.name);
+             this.setState({new:true})})
              this.setState({file:null,filename:"", loaded:false})
          }
      }
