@@ -154,7 +154,7 @@ class SampleForm extends React.Component{
                     <Supplement afterCreate={this.addSupl}/>
                 </AccordionDetails>
             </Accordion>
-            <Accordion>
+            <Accordion className="line">
                 <AccordionSummary className="line">
                     Edytuj dodatek
                 </AccordionSummary>

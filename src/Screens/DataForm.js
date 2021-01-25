@@ -295,9 +295,19 @@ class DataForm extends React.Component{
          this.refresh()
      }
 	 generate_pdf= ()=>{
-		    axios.get("/api/experiment/generatePDF/").then((res)=>{
-            alert("Generuje?");
-        }).catch(console.log("Chyba nie dziala? \n"));
+		//pobranie znacznika CSRF z ciasteczka 
+        let token = getCSRFToken()
+        //stworzenie odpowiedniego nagłówka zapytania
+        const headers = {"X-CSRFTOKEN": token}
+		let data = 
+				{
+					"idExp": this.state.idExp,
+				}
+		    axios.post("/api/experiment/generatePDF/",data,{ headers:headers }).then((response)=>{
+            alert("Generuję plik Pdf");
+        }).catch(function (error) {    
+				if (error.response) {alert("Nie można wygenerować pliku Pdf")}
+		});
 	 }
 
      closeWindow =()=>{ this.setState({window:null}) }
