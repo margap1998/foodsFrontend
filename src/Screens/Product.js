@@ -180,7 +180,8 @@ class ProductForm extends React.Component{
         }
     }
     componentDidUpdate = () =>{
-        if(this.props.name!=this.state.nameProduct){
+
+        if((this.props.name!==undefined) && this.props.name!=this.state.nameProduct){
             axios.get("/api/experiment/Product/").then((res1)=>{
                 let pr = res1.data.find(v=>{return v.name == this.props.name})
                 if (pr != undefined){
@@ -246,6 +247,19 @@ class ProductForm extends React.Component{
             }
             axios.post("/api/experiment/Product/",product,{headers:headers, withCredentials:true}).then(res2=>{
                 this.props.changeProductName(product.name)
+                if(this.props.name===undefined){
+                    this.setState({
+                        "nameProduct": this.props.name,
+                        "descriptionProduct": "",
+                        "categoryProduct": null,
+                        "recipeProduct": null,
+                        recipe:{
+                            id:"-1",
+                            "basicWeight": 1,
+                            "ingredients": []
+                        }
+                    })
+                }
             }).catch(e => alert("Nie dodano produktu, skontaktuj się z administratorem w celu usunięcia receptury"))
         }).catch(e => alert("Nie dodano"))
     }

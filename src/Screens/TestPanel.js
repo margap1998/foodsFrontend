@@ -9,14 +9,21 @@ class TestPanel extends React.Component{
     }
     plotHandle= (type)=>{
         let p = {
-            experiment_id:3,
-            samples:[1],
-            plot_types:[type],
+            experiment_id:8,
+            samples:[3,2],
+            series_metric:[[1,7],[1,6]],
             metrics:['Smak','Siła cięcia']
         }
-        Axios.post("/api/experiment/generatePlots/",p).then( res =>{
+        Axios.post(`/api/experiment/generate${type}Plots/`,p).then( res =>{
             let images = this.state.images.concat(res.data.plots.map(pl=>{return "data:image/png;base64,"+pl}))
             this.setState({images:images})
+        }).catch( e =>{
+            alert("Something is no yes "+JSON.stringify(e))
+        })
+    }
+    statsHandle = ()=>{
+        Axios.post("/api/experiment/generateStats/",{experiment_id:8}).then( res =>{
+            alert(JSON.stringify(res.data))
         }).catch( e =>{
             alert("Something is no yes "+JSON.stringify(e))
         })
@@ -26,10 +33,11 @@ class TestPanel extends React.Component{
     }
     render = ()=>{
         return <div>
-            <Button className="line" onClick={() =>{this.plotHandle("radar")}}>Test radar plot</Button>
-            <Button className="line" onClick={() =>{this.plotHandle("bar")}}>Test bar plot</Button>
-            <Button className="line" onClick={() =>{this.plotHandle("linear")}}>Test linear plot</Button>
-            {this.state.images.map((v,i)=>{return <img src={v} className="line" onClick={()=>{this.clickIMG(i)}}/>})}
+            <Button className="line" onClick={() =>{this.plotHandle("Radar")}}>Test radar plot</Button>
+            <Button className="line" onClick={() =>{this.plotHandle("Bar")}}>Test bar plot</Button>
+            <Button className="line" onClick={() =>{this.plotHandle("Linear")}}>Test linear plot</Button>
+            <Button className="line" onClick={() =>{this.statsHandle()}}>Test statistics</Button>
+            {this.state.images.map((v,i)=>{return <img src={v} onClick={()=>{this.clickIMG(i)}}/>})}
         </div>
     }
 }

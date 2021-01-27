@@ -76,7 +76,7 @@ class DataForm extends React.Component{
                 return [s.id,"Dodatki: "+ JSON.stringify(s.supplement)+" Czynnik:"+s.externalFactor]
             })
             this.setState({sampleBase:resS.data, samples:arr})
-        })
+        }).catch(()=>{console.log("Sample failure <DataForm/>")})
     }).catch(console.log("Metric failure \n"));
     axios.get("/api/experiment/Metrics/").then((res)=>{
         var arr = [];
@@ -310,7 +310,7 @@ class DataForm extends React.Component{
          <div id="dataform">
                 <Button variant="contained" className="line" type="button" onClick={this.props.closeProc}>X</Button>
                  <InputLabel className="line">
-                     Nazwa *:
+                     Nazwa eksperymentu*:
                      <Input className="line" type="text" value={this.state.name} onChange={this.handleChangeName} />
                  </InputLabel>
                  <InputLabel className="line">
@@ -323,7 +323,7 @@ class DataForm extends React.Component{
                  </InputLabel>
                  <InputLabel className="line">
                      Produkt *:
-                     <Select array={this.state.prodBase} value={this.state.product} onChange={this.changeProductName}/>
+                     <Select  className="line" array={this.state.prodBase} value={this.state.product} onChange={this.changeProductName}/>
                      <span className="line"/>
                      <Accordion>
                          <AccordionSummary>
@@ -347,9 +347,8 @@ class DataForm extends React.Component{
                      </Accordion>
                  </InputLabel>
                  <InputLabel className="line">
-                     Prywatny
-                     <Checkbox className="line"  checked={this.state.private}  onChange={this.handlePrivate}/>
-                     
+                     <Checkbox checked={this.state.private}  onChange={this.handlePrivate}/>
+                     Eksperyment {(this.state.private)?"prywatny":"publiczny"}
                  </InputLabel>
                  <InputLabel className="line">
                      <span className="line">
@@ -373,7 +372,7 @@ class DataForm extends React.Component{
                         Nowa metryka szczegółowa
                      </AccordionSummary>
                      <AccordionDetails>
-                         <DetailedMetricForm refreshDB={this.refDM} addSampl={this.addSampl} metric={this.state.metricGeneral} sampleBase={this.state.samples}/>
+                         <DetailedMetricForm refreshDB={this.refDM} addSampl={this.addSampl} metric={this.state.metricGeneral} />
                      </AccordionDetails>
                  </Accordion>
                  <Accordion className="line">
@@ -381,7 +380,7 @@ class DataForm extends React.Component{
                         Edytuj metrykę szczegółową
                      </AccordionSummary>
                      <AccordionDetails>
-                         <DetailedMetricForm metricObj={this.state.metric} refreshDB={this.refDM} addSampl={this.addSampl} metric={this.state.metricGeneral} sampleBase={this.state.samples}/>
+                         <DetailedMetricForm metricObj={this.state.metric} refreshDB={this.refDM} addSampl={this.addSampl} metric={this.state.metricGeneral}/>
                      </AccordionDetails>
                  </Accordion>
                  <Accordion className="line">

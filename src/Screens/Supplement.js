@@ -108,25 +108,27 @@ refresh = ()=> {
                         <Input className="line" type="text" value={this.state.name} readonly />
                     </InputLabel>
                     }
-                <InputLabel className="line2">
+               {(this.props.name===undefined)? <InputLabel className="line2">
                     Zawartość procentowa:
                     <Input className="line" type="text" value={this.state.perecent_val} onChange={this.handleChangePercentVal} />
-                </InputLabel>
+                </InputLabel>:undefined}
                 <InputLabel className="line2">
                     Bazowy składnik zmniejszany na rzecz dodatku:
                     <Select className="line" value={this.state.b_i_b} onChange={this.handleChangeBIB} array={this.state.basic_ingredient_base}/>
                 </InputLabel>
+                {(this.props.name===undefined)?<div>
                 <InputLabel className="line2">
                     Dodatek:
                     <Select className="line" value={this.state.s_b} onChange={this.handleChangeSupBase} array={this.state.supplement_base}/>
                 </InputLabel>
-                {(this.props.name!==undefined)?<div>
+                <Button className="line" type="button" onClick={this.handleInsert}>Dodaj nowy dodatek</Button>
+                </div>:
+                <div>    
                     <Button className="line" type="button" onClick={this.handleUpdate}>Zmodyfikuj dodatek</Button>
                     <span className="line"/>
                     <Button className="line" type="button" onClick={this.handleDelete}>Usuń dodatek</Button>
                     <span className="line"/>
-                </div>:undefined} 
-                <Button className="line" type="button" onClick={this.handleInsert}>Dodaj nowy dodatek</Button>
+                </div>} 
                 
         </div>
     )
