@@ -4,23 +4,23 @@ import CategoryAdminForm from "./CategoryAdminForm";
 import SupplementBase from "./SupplementBase"
 import BasicIngredientBase from "./BasicIngredientBase"
 import { Accordion, AccordionSummary, AccordionDetails } from "@material-ui/core";
+import UserPanel from './UserPanel';
+import MetricForm from './MetricForm';
 class AdminPanel extends React.Component{
     constructor(props){
         super(props)
         this.state = {
-            sections:[null,null,null,null]
         }
     }
 
     render = ()=>{
-        let f = 0
         return(<div>
             <Accordion>
                 <AccordionSummary>
-                    Dodatki bazowe
+                    Użytkownicy
                 </AccordionSummary>
                 <AccordionDetails>
-                    <SupplementBase/>
+                    <UserPanel/>
                 </AccordionDetails>
             </Accordion>
             <Accordion>
@@ -41,9 +41,18 @@ class AdminPanel extends React.Component{
             </Accordion>
             <Accordion>
                 <AccordionSummary>
-                    Użytkownicy
+                    Metryki
                 </AccordionSummary>
                 <AccordionDetails>
+                    <MetricForm/>
+                </AccordionDetails>
+            </Accordion>
+            <Accordion>
+                <AccordionSummary>
+                    Dodatki bazowe
+                </AccordionSummary>
+                <AccordionDetails>
+                    <SupplementBase/>
                 </AccordionDetails>
             </Accordion>
             </div>

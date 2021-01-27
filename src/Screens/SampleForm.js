@@ -18,7 +18,7 @@ class SampleForm extends React.Component{
         this.refresh()
     }
     componentDidUpdate = () => {
-        if (this.state.sampleID != this.props.sampleID){
+        if (this.state.sampleID !== this.props.sampleID && this.props.sampleID !== undefined){
             axios.get("/api/experiment/Sample/"+this.props.sampleID+"/").then(res=>{
                 this.setState({
                     externalFactor:res.data.externalFactor,
@@ -49,10 +49,9 @@ class SampleForm extends React.Component{
             "externalFactor": this.state.externalFactor,
             "supplement": this.state.supplements
         }
-        alert(JSON.stringify(data))
         axios.post("/api/experiment/Sample/",data,{ headers:headers, withCredentials:true }).then((res)=>{
             this.props.afterCreate(res.data)
-            alert("Wstawiono");
+            alert("Wstawiono próbkę z dodatkami "+JSON.stringify(res.data.supplement));
         }).catch((e)=>{
                 console.log("Something's wrong with inserting detailed metric");
                 alert("Nie wstawiono")
@@ -91,8 +90,8 @@ class SampleForm extends React.Component{
         </div>)
     } 
     makeLine = (arr,v)=>{
-        let t = arr.filter((pair)=>{return v===pair[0]})[0][1]
-        return <this.Line text={t} value={v} onButton={this.handleDelDM}/>
+        let t = arr.find((pair)=>{return v===pair[0]})
+        return <this.Line text={t[0]} value={v} onButton={this.handleDelDM}/>
     }
 
     addEF = (v)=>{
@@ -120,6 +119,14 @@ class SampleForm extends React.Component{
             </InputLabel>
             <Accordion className="line">
                     <AccordionSummary className="line">
+                        Nowy czynnik zewnętrzny
+                    </AccordionSummary>
+                    <AccordionDetails className="line">
+                        <ExternalFactor afterCreate={this.addEF} refresh={this.refresh}/>
+                    </AccordionDetails>
+            </Accordion>
+            <Accordion className="line">
+                    <AccordionSummary className="line">
                         Edytuj czynnik zewnętrzny
                     </AccordionSummary>
                     <AccordionDetails className="line">
@@ -141,6 +148,15 @@ class SampleForm extends React.Component{
             </InputLabel>
             <Accordion className="line">
                 <AccordionSummary className="line">
+                    Nowy dodatek
+                </AccordionSummary>
+                <AccordionDetails>
+                    <Supplement afterCreate={this.addSupl}/>
+                </AccordionDetails>
+            </Accordion>
+            <Accordion className="line">
+
+                <AccordionSummary className="line">
                     Edytuj dodatek
                 </AccordionSummary>
                 <AccordionDetails>
@@ -149,6 +165,8 @@ class SampleForm extends React.Component{
             </Accordion>
             {this.state.supplements.map((v,n,a)=>{ return this.makeLine(this.state.supplementsBase,v)})}
             <Button color="primary" className="line2" type="button" onClick={this.handleInsert}>Dodaj próbkę</Button>
+            <Button color="primary" className="line2" type="button" onClick={this.handleUpdate}>Zmień próbkę</Button>
+            <Button color="primary" className="line2" type="button" onClick={this.handleDelete}>Usuń próbkę</Button>
         </div>
     }
 }

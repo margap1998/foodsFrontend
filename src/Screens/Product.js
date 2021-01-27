@@ -16,7 +16,20 @@ class RecipeForm extends React.Component{
             recipe:props.recipe
         }
     }
-
+    componentDidUpdate = ()=>{
+        if(this.props.recipe!==undefined){
+            if(this.props.recipe.id!==this.state.recipe.id){
+                this.setState({recipe:this.props.recipe, percent:0})
+                axios.get("/api/experiment/BasicIngredient/").then( res =>{
+                    this.setState({ingredientsBase:res.data})
+                    let ing = res.data.filter((v)=>{return this.props.recipe.ingredients.includes(v.name)})
+                    let p = this.state.percent
+                    ing.forEach((v)=>{ p+= parseInt(v.percentage)})
+                    this.setState({ingredients:ing, percent:p})
+                })
+            }
+        }
+    }
     componentDidMount = ()=>{
         this.downloadDB()
     }
@@ -124,10 +137,6 @@ class RecipeForm extends React.Component{
     render = ()=>{
         return <div className="box0" className="line2"><Paper>
             <FormLabel className="line2">
-                Waga w gramach:
-                <Input type="number" value={this.state.recipe.basicWeight} onChange={this.handleWeight}/>
-            </FormLabel>
-            <FormLabel className="line2">
                 Składnik:
                 <SelectArrayElement array={this.state.ingredientsTypeBase} onChange={this.handleIngredientBase}/>
             </FormLabel>    
@@ -140,6 +149,11 @@ class RecipeForm extends React.Component{
                 <Input type="text" readOnly value={this.state.ingredient.name}/>
             </FormLabel>
                 <Button variant="contained" className="line" onClick={this.handleIngredient}> Dodaj składnik</Button>
+                
+            <FormLabel className="line2">
+                Waga gotowego produktu w gramach:
+                <Input type="number" value={this.state.recipe.basicWeight} onChange={this.handleWeight}/>
+            </FormLabel>
             <FormLabel className="line2">
                 <div className="line">Pozostało {100-this.state.percent}% składników</div>
             </FormLabel>
@@ -152,7 +166,6 @@ class ProductForm extends React.Component{
     constructor(props){
         super(props);
         this.state = {
-            prodObj:[],
             "nameProduct": props.name,
             "descriptionProduct": "",
             "categoryProduct": null,
@@ -166,6 +179,28 @@ class ProductForm extends React.Component{
             rf:undefined
         }
     }
+    componentDidUpdate = () =>{
+
+        if((this.props.name!==undefined) && this.props.name!=this.state.nameProduct){
+            axios.get("/api/experiment/Product/").then((res1)=>{
+                let pr = res1.data.find(v=>{return v.name == this.props.name})
+                if (pr != undefined){
+                this.setState({
+                    nameProduct:this.props.name,
+                    "descriptionProduct": pr.description,
+                    "categoryProduct": pr.category,
+                    "recipeProduct": pr.recipe,
+                });
+                axios.get("/api/experiment/Recipe/").then((res2)=>{
+                    let rec = res2.data.find((v)=>{return v.id===pr.recipe})
+                    this.setState({recipe:rec, rf:<RecipeForm recipe={rec} changeRecipe={this.changeRecipe} className="line"/>})
+                }).catch(console.log("Categories failure \n"));
+            }else{
+                this.setState({rf:<RecipeForm recipe={this.state.recipe} changeRecipe={this.changeRecipe} className="line"/>})
+            }
+            }).catch(console.log("Product failure \n"));
+        }
+    }
     componentDidMount = () => {
         this.refresh()
     }
@@ -176,13 +211,13 @@ class ProductForm extends React.Component{
         axios.get("/api/experiment/Product/").then((res1)=>{
             let pr = res1.data.find(v=>{return v.name == this.props.name})
             if (pr != undefined){
-            this.setState({prodObj:res1.data,
+            this.setState({
                 "descriptionProduct": pr.description,
                 "categoryProduct": pr.category,
                 "recipeProduct": pr.recipe,
             });
-            axios.get("/api/experiment/Recipe/").then((res2)=>{
-                let rec = res2.data.find((v)=>{return v.id===pr.recipe})
+            axios.get("/api/experiment/Recipe/"+pr.recipe+"/").then((res2)=>{
+                let rec = res2.data
                 this.setState({recipe:rec, rf:<RecipeForm recipe={rec} changeRecipe={this.changeRecipe} className="line"/>})
             }).catch(console.log("Categories failure \n"));
         }else{
@@ -212,6 +247,19 @@ class ProductForm extends React.Component{
             }
             axios.post("/api/experiment/Product/",product,{headers:headers, withCredentials:true}).then(res2=>{
                 this.props.changeProductName(product.name)
+                if(this.props.name===undefined){
+                    this.setState({
+                        "nameProduct": this.props.name,
+                        "descriptionProduct": "",
+                        "categoryProduct": null,
+                        "recipeProduct": null,
+                        recipe:{
+                            id:"-1",
+                            "basicWeight": 1,
+                            "ingredients": []
+                        }
+                    })
+                }
             }).catch(e => alert("Nie dodano produktu, skontaktuj się z administratorem w celu usunięcia receptury"))
         }).catch(e => alert("Nie dodano"))
     }
@@ -220,6 +268,7 @@ class ProductForm extends React.Component{
         const headers = {"X-CSRFTOKEN": token}
         //obiekt z danymi do bazy
         axios.delete("/api/experiment/Recipe/"+this.state.recipe.id+"/",{headers:headers, withCredentials:true}).then(res1=>{
+            alert("Usunięto "+this.state.nameProduct)
             this.setState({
                 "nameProduct": "",
                 "descriptionProduct": "",
@@ -228,7 +277,7 @@ class ProductForm extends React.Component{
             })
             this.props.changeProductName("")
         }).catch(e=>{
-            alert("Nie usunięto")
+            alert("Nie usunięto "+this.state.nameProduct)
         })
     }
     handleCategory = (v)=>{
@@ -240,12 +289,12 @@ class ProductForm extends React.Component{
         return(<div>
             <FormLabel className="line">
                 Nazwa:
-                <Input className="line" type="text" value={this.state.nameProduct} 
+                <Input readOnly={this.props.name!==undefined} className="line" type="text" value={this.state.nameProduct} 
                         onChange={(e)=>{ this.setState({nameProduct:e.target.value})}}
                 />
             </FormLabel>
             <FormLabel className="line">
-                Opis:
+                Opis produktu:
                 <Input className="line" type="text" value={this.state.descriptionProduct} 
                         onChange={(e)=>{ this.setState({descriptionProduct:e.target.value})}}
                 />

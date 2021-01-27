@@ -21,7 +21,7 @@ class CategoryAdminForm extends React.Component{
             res.data.forEach((obj)=>{arr.push([obj.name,obj.name]);});
     
             this.setState({categories:arr});
-        }).catch(console.log("Categories failure \n"));
+        }).catch(()=>{console.log("Categories failure \n")});
     }
     handleSubmit = ()=>{
         let token = getCSRFToken()
@@ -29,20 +29,20 @@ class CategoryAdminForm extends React.Component{
         let data = {
             "name": this.state.name 
             }
-        Axios.post("/api/experiment/Category/",data,{headers:headers, withCredentials:true}).then((e)=>{ alert("Wstawiono");
+        Axios.post("/api/experiment/Category/",data,{headers:headers, withCredentials:true}).then(()=>{
             this.refreshDB()
-        }).catch((e)=>{alert("Nie wstawiono")})
+            alert( "Wstawiono kategorię \""+data.name+"\"")
+        }).catch(()=>{alert("Nie wstawiono kategorii \""+data.name+"\"")})
     }
     handleDelete = ()=>{
         let token = getCSRFToken()
         let headers = {"X-CSRFTOKEN": token}
-        Axios.delete("/api/experiment/Category/"+this.state.category,{headers:headers, withCredentials:true}).then((e)=>{
-            alert("Usunięto");
+        Axios.delete("/api/experiment/Category/"+this.state.category,{headers:headers, withCredentials:true}).then(()=>{
+            alert(`Usunięto kategorię "${this.state.category}"`);
             this.refreshDB()
-        }).catch((e)=>{alert("Nie usunięto")})
+        }).catch(()=>{alert(`Nie usunięto kategorii "${this.state.category}"`)})
     }
     render = ()=>{
-        let q = this.state.categories
         return(
         <div>
             <FormLabel className="line">

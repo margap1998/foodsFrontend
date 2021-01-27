@@ -10,7 +10,8 @@ class App extends React.Component{
         this.state = {
             adm:true,
             ms:false,
-            test:true
+            test:true,
+            whoslogged:"User1"
         }
     }
     screenChange(v){
@@ -24,7 +25,7 @@ class App extends React.Component{
         return <Paper id ="App">
             <AppBar position="static">
                 <Toolbar>
-                    <Button color="inherit" onClick={(e)=>{this.screenChange(true)}}>Uzytkownik</Button>
+                    <Button color="inherit" onClick={(e)=>{this.screenChange(true)}}>{this.state.whoslogged}</Button>
                     <Button color="inherit" onClick={(e)=>{this.screenChange(false)}}>Panel administracyjny</Button>
         //<Button color="inherit" onClick={(e)=>{this.setState({adm:true,ms:true,test:false})}}>Testowy</Button>
                 </Toolbar>

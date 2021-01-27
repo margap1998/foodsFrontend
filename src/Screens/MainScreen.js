@@ -3,7 +3,7 @@ import {Select} from "../funcComponents"
 import '../style.css';
 import axios from "axios";
 import DataForm from './DataForm';
-import { Button, FormLabel, AppBar } from "@material-ui/core";
+import { Button, FormLabel} from "@material-ui/core";
 
 class MainScreen extends React.Component{
    constructor(props){
@@ -56,7 +56,7 @@ class MainScreen extends React.Component{
                         <Button className="line2" variant="contained" type="button" onClick={(e)=>{this.setState({screen:1})}}>Nowy eksperyment</Button>
                         <span className="line"/>
                     <FormLabel className="line">
-                        Udostępnione dla mnie:
+                        Publiczne:
                         <Select onChange={this.handleChangeExpPublic} array={this.state.prodBase}/>
                         <Button className="line" variant="contained" type="button" onClick={(e)=>{this.setState({screen:6})}}>Przeglądaj udostępniony eksperyment</Button>
                     </FormLabel>

@@ -1,32 +1,42 @@
 import '../style.css';
 import React from 'react';
 import Axios from "axios";
-import { Button, Accordion, AccordionSummary, AccordionDetails } from "@material-ui/core";
+import { Button } from "@material-ui/core";
 class TestPanel extends React.Component{
     constructor(props){
         super(props)
         this.state = {images:[]}
     }
-    plotHandle= ()=>{
+    plotHandle= (type)=>{
         let p = {
-            experiment_id:25,
-            samples:[1],
-            plot_types:["radar"]
+            experiment_id:8,
+            samples:[3,2],
+            series_metric:[[1,7],[1,6]],
+            metrics:['Smak','Siła cięcia']
         }
-        Axios.post("/api/experiment/generatePlots/",p).then( res =>{
-            let images = res.data.plots.map(pl=>{return "data:image/jpeg;base64,"+pl})
+        Axios.post(`/api/experiment/generate${type}Plots/`,p).then( res =>{
+            let images = this.state.images.concat(res.data.plots.map(pl=>{return "data:image/png;base64,"+pl}))
             this.setState({images:images})
         }).catch( e =>{
             alert("Something is no yes "+JSON.stringify(e))
         })
     }
+    statsHandle = ()=>{
+        Axios.post("/api/experiment/generateStats/",{experiment_id:8}).then( res =>{
+            alert(JSON.stringify(res.data))
+        }).catch( e =>{
+            alert("Something is no yes "+JSON.stringify(e))
+        })
+    }
     clickIMG = (ind) => {
-        var arr = this.state.images.filter((v,i)=>{return i!==ind})
-        this.setState({image:arr})
+        this.setState({images:[]})
     }
     render = ()=>{
         return <div>
-            <Button className="line" onClick={this.plotHandle}>Test plot</Button>
+            <Button className="line" onClick={() =>{this.plotHandle("Radar")}}>Test radar plot</Button>
+            <Button className="line" onClick={() =>{this.plotHandle("Bar")}}>Test bar plot</Button>
+            <Button className="line" onClick={() =>{this.plotHandle("Linear")}}>Test linear plot</Button>
+            <Button className="line" onClick={() =>{this.statsHandle()}}>Test statistics</Button>
             {this.state.images.map((v,i)=>{return <img src={v} onClick={()=>{this.clickIMG(i)}}/>})}
         </div>
     }

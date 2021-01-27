@@ -12,16 +12,28 @@ class DetailedMetricForm extends React.Component{
     constructor(props){
         super(props)
             this.state={
-                num_repeats:0,
-                num_series:0,
+                sampleBase:[],
+                samples:[],
+                num_repeats:"0",
+                num_series:"0",
                 sample:"",
                 id:0,
                 window:undefined
             }
     }
     componentDidMount = () => {
+        this.refresh()
+    }
+    refresh = ()=>{
+        axios.get("/api/experiment/Sample/").then((resS)=>{
+            let arr =resS.data.map((s)=>{
+                return [s.id,"Dodatki: "+ JSON.stringify(s.supplement)+" Czynnik:"+s.externalFactor]
+            })
+            this.setState({sampleBase:resS.data, samples:arr})
+        })
     }
     componentDidUpdate = ()=>{
+        if(this.props.metricObj !== undefined){
         if (this.state.id != this.props.metricObj.id){
             this.setState({
                 sample :        this.props.metricObj.sample,
@@ -32,6 +44,8 @@ class DetailedMetricForm extends React.Component{
             })
         }
     }
+}
+
     handleChangeRepeats = (event)=>{    
         const regExp = /^[0-9]*$/;
         const a = event.target.value;
@@ -69,7 +83,7 @@ class DetailedMetricForm extends React.Component{
             .then((res)=>{
                 this.props.refreshDB(res.data)
                 this.setState({id:res.id})
-                alert("Wstawiono");
+                alert("Wstawiono metrykę "+data.metric+" ("+data.numberOfSeries+","+data.numberOfRepeat+")");
             })
             .catch((e)=>{
                 console.log("Something's wrong with inserting detailed metric");
@@ -101,6 +115,7 @@ class DetailedMetricForm extends React.Component{
     }
     addSampl = (v)=>{
         this.props.addSampl(v)
+        this.refresh()
         this.setState({sample:v.id})
     }
     render = ()=>{
@@ -111,13 +126,21 @@ class DetailedMetricForm extends React.Component{
             <InputLabel className="line2">
                 Próbka:
                 <div className="line2">
-                    <Select array={this.props.sampleBase}
+                <Select array={this.state.samples}
                             onChange={this.handleChangeSample}
                             value={this.state.sample}
                             className="line"
                     ></Select>
                 </div>
             </InputLabel>
+            <Accordion className="line">
+                <AccordionSummary className="line">
+                    Nowa próbka
+                </AccordionSummary>
+                <AccordionDetails className="line">
+                    <SampleForm afterCreate={this.addSampl} closeProc={()=>{this.setState({window:undefined})}}/>
+                </AccordionDetails>
+            </Accordion>
             <Accordion className="line">
                 <AccordionSummary className="line">
                     Edycja próbki
@@ -135,10 +158,12 @@ class DetailedMetricForm extends React.Component{
                 <Input className="line" type="text" value={this.state.num_repeats} onChange={this.handleChangeRepeats} />
             </InputLabel>
             <Button className="line2" type="button" onClick={this.handleInsert}>Dodaj nową metrykę szczegółową</Button>
+            {(this.props.metricObj !=undefined)?(<div>
             <span className="line2"></span>
             <Button className="line2" type="button" onClick={this.handleDelete}>Usuń metrykę szczegółową</Button>
             <span className="line2"></span>
             <Button className="line2" type="button" onClick={this.handleUpdate}>Zmień dane metryki szczegółowej</Button>
+            </div>):null}
         </div>
     }
 
