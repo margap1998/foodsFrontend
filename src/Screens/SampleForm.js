@@ -155,7 +155,6 @@ class SampleForm extends React.Component{
                 </AccordionDetails>
             </Accordion>
             <Accordion className="line">
-
                 <AccordionSummary className="line">
                     Edytuj dodatek
                 </AccordionSummary>

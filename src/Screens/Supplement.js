@@ -128,8 +128,7 @@ refresh = ()=> {
                     <span className="line"/>
                     <Button className="line" type="button" onClick={this.handleDelete}>Usuń dodatek</Button>
                     <span className="line"/>
-                </div>} 
-                
+                </div>}              
         </div>
     )
     //return <Line obj={obj} onButton={this.handleDelDM}></Line>})}

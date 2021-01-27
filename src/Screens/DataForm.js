@@ -300,6 +300,22 @@ class DataForm extends React.Component{
      addSampl = (s)=>{
          this.refresh()
      }
+	 generate_pdf= ()=>{
+		//pobranie znacznika CSRF z ciasteczka 
+        let token = getCSRFToken()
+        //stworzenie odpowiedniego nagłówka zapytania
+        const headers = {"X-CSRFTOKEN": token}
+		let data = 
+				{
+					"idExp": this.state.idExp,
+				}
+		    axios.post("/api/experiment/generatePdf/",data,{ headers:headers }).then((response)=>{
+            alert("Generuję plik Pdf");
+        }).catch(function (error) {    
+				if (error.response) {alert("Nie można wygenerować pliku Pdf")}
+		});
+	 }
+
      changeProductName = (v)=>{
          this.refresh()
          this.setState({product:v})
@@ -337,7 +353,7 @@ class DataForm extends React.Component{
                      </Accordion>
                      <Accordion>
                          <AccordionSummary>
-                             Edytuj produkt
+                             {(this.state.product===undefined)? "Nowy produkt":"Edytuj produkt"}
                          </AccordionSummary>
                          <AccordionDetails>
                             <ProductForm changeProductName={this.changeProductName}
@@ -372,6 +388,7 @@ class DataForm extends React.Component{
                         Nowa metryka szczegółowa
                      </AccordionSummary>
                      <AccordionDetails>
+
                          <DetailedMetricForm refreshDB={this.refDM} addSampl={this.addSampl} metric={this.state.metricGeneral} />
                      </AccordionDetails>
                  </Accordion>
@@ -402,6 +419,7 @@ class DataForm extends React.Component{
                              accept=".xlsx" onChange ={this.handleLoadXLSX}/>
                          <Button variant="contained" color="primary" className={"visible"+this.state.loaded.toString()} onClick={this.handleSubmitXLSX} type="button" >Załaduj</Button>
                  </div></div>
+				 <Button className="line" variant="contained" onClick={this.generate_pdf}>Generuj PDF</Button>
          </div>
      )
      //return <Line obj={obj} onButton={this.handleDelDM}></Line>})}

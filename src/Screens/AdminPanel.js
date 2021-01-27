@@ -4,8 +4,10 @@ import CategoryAdminForm from "./CategoryAdminForm";
 import SupplementBase from "./SupplementBase"
 import BasicIngredientBase from "./BasicIngredientBase"
 import { Accordion, AccordionSummary, AccordionDetails } from "@material-ui/core";
+import { Button} from "@material-ui/core"
 import UserPanel from './UserPanel';
 import MetricForm from './MetricForm';
+
 class AdminPanel extends React.Component{
     constructor(props){
         super(props)
@@ -41,6 +43,7 @@ class AdminPanel extends React.Component{
             </Accordion>
             <Accordion>
                 <AccordionSummary>
+
                     Metryki
                 </AccordionSummary>
                 <AccordionDetails>
@@ -55,8 +58,8 @@ class AdminPanel extends React.Component{
                     <SupplementBase/>
                 </AccordionDetails>
             </Accordion>
-            </div>
-        )
+			</div>
+			 )
         
     }
 }

@@ -22,7 +22,6 @@ class UserPanel extends React.Component{
     }
     selectUser = (v)=>{
         let user = this.state.usersDB.find((o)=>{ return o.username==v})
-        alert(JSON.stringify(user))
         this.setState({user:v,userObj:user, email:user.email, level:user.is_superuser.toString()})
     }
     changeLevel = (e)=>{
