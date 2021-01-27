@@ -77,3 +77,18 @@ text-decoration: line-through
 .visiblefalse{
 	visibility: collapse;
 }
+.spanClass{
+	align-content: center;
+}
+.checkboxStyle{
+	display:flex;
+	width:100%;
+align-items:center;
+	align-content: center;
+}
+.checkboxStyle2{
+	left: 25px;
+align-items:center;
+	align-content: center;
+}
+

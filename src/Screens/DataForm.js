@@ -303,7 +303,7 @@ class DataForm extends React.Component{
 				{
 					"idExp": this.state.idExp,
 				}
-		    axios.post("/api/experiment/generatePDF/",data,{ headers:headers }).then((response)=>{
+		    axios.post("/api/experiment/generatePdf/",data,{ headers:headers }).then((response)=>{
             alert("Generuję plik Pdf");
         }).catch(function (error) {    
 				if (error.response) {alert("Nie można wygenerować pliku Pdf")}

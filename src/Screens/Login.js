@@ -5,11 +5,12 @@ import { SelectArrayElement } from '../funcComponents'
 import { Button, Input, FormLabel, Radio, RadioGroup, FormControl,
      FormControlLabel, AccordionDetails, Accordion, AccordionSummary } from "@material-ui/core"
 
-class Register extends React.Component{
+class Login extends React.Component{
     constructor(props){
         super(props)
                 this.state = {user:"", pass:""}
     }
+
     logUser = ()=>{
 			let token = getCSRFToken()
 			const headers = {"X-CSRFTOKEN": token}
@@ -19,10 +20,17 @@ class Register extends React.Component{
 					"username": this.state.user,
 					"password": this.state.pass,
 				}
-			Axios.post("/api2/authentication/sign_in/",data,{headers:headers, withCredentials:true}).then(r=>{
-				alert("Zalogowano Użytkownika "+ this.state.user)
-			}).catch( ()=>{ alert("Logowanie użytkownika "+ this.state.user +" się nie powiodło")})
-    }
+			Axios.post("/api2/authentication/sign_in/",data,{headers:headers, withCredentials:true}).then((response) => {
+					alert("Zalogowano "+ this.state.user);	
+					this.props.refreshDB(this.state.user)
+				}).catch( function (error) {    
+				if (error.response) {
+					alert(String(error.response.data.message));
+				} else if (error.request) {
+					alert(String(error.request));
+				} 
+			});
+	}
 
     render = ()=>{
         return <div>
@@ -41,4 +49,4 @@ class Register extends React.Component{
     }
 }
 
-export default Register 
+export default Login
