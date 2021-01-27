@@ -9,7 +9,7 @@ class BasicIngredientBase extends React.Component{
     constructor(props){
         super(props)
         this.state = {
-            name:"", newName:"", categories:[], category:""
+            name:"", newName:"", basicIngredients:[], basicIngredient:""
         }
     }
     componentDidMount = ()=>{
@@ -21,7 +21,7 @@ class BasicIngredientBase extends React.Component{
             //wyłuskanie nazw kategorii
             res.data.forEach((obj)=>{arr.push([obj.name,obj.name]);});
     
-            this.setState({categories:arr});
+            this.setState({basicIngredients:arr});
         }).catch(console.log("BasicIngredientBase failure \n"));
     }
     handleSubmit = ()=>{
@@ -30,17 +30,17 @@ class BasicIngredientBase extends React.Component{
         let data = {
             "name": this.state.name 
             }
-        Axios.post("/api/experiment/BasicIngredientBase/",data,{headers:headers, withCredentials:true}).then((e)=>{ alert("Wstawiono");
+        Axios.post("/api/experiment/BasicIngredientBase/",data,{headers:headers, withCredentials:true}).then((e)=>{ alert("Wstawiono składnik o nazwie \""+data.name+"\"");
             this.refreshDB()
-        }).catch((e)=>{alert("Nie wstawiono")})
+        }).catch((e)=>{alert("Nie wstawiono składnika \""+data.name+"\"")})
     }
     handleDelete = ()=>{
         let token = getCSRFToken()
         let headers = {"X-CSRFTOKEN": token}
-        Axios.delete("/api/experiment/BasicIngredientBase/"+this.state.category,{headers:headers, withCredentials:true}).then((e)=>{
-            alert("Usunięto");
+        Axios.delete("/api/experiment/BasicIngredientBase/"+this.state.basicIngredient,{headers:headers, withCredentials:true}).then((e)=>{
+            alert(`Usunięto składnik "${this.state.basicIngredient}"`);
             this.refreshDB()
-        }).catch((e)=>{alert("Nie usunięto")})
+        }).catch((e)=>{alert(`Nie usunięto składnika "${this.state.basicIngredient}"`)})
     }
     render = ()=>{
         return(
@@ -55,7 +55,7 @@ class BasicIngredientBase extends React.Component{
 
             <FormLabel className="line">
                 Składnik do usunięcia: 
-                <SelectArrayElement className="line" array={this.state.categories} onChange={(v)=>{this.setState({category:v})}}/>
+                <SelectArrayElement className="line" array={this.state.basicIngredients} onChange={(v)=>{this.setState({basicIngredient:v})}}/>
                 <Button className="line" variant="contained" color="secondary" onClick={this.handleDelete}>Usuń składnik</Button>
             </FormLabel>
         </div>

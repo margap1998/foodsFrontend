@@ -14,6 +14,7 @@ class App extends React.Component{
 			login:false,
             whoslogged:"Unknown User",
 			is_admin:false,
+
         }
     }
 	
@@ -65,6 +66,7 @@ class App extends React.Component{
 						<Button color="inherit" onClick={(e)=>{this.setState({adm:true,ms:true,login:false}); this.logOutUser()}}>Wyloguj</Button>
 					</span>
 				</Toolbar>
+
             </AppBar>
             <span hidden={this.state.ms}><MainScreen/></span>
             <span hidden={this.state.adm}><AdminPanel/></span>

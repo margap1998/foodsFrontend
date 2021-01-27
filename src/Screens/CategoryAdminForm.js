@@ -29,17 +29,18 @@ class CategoryAdminForm extends React.Component{
         let data = {
             "name": this.state.name 
             }
-        Axios.post("/api/experiment/Category/",data,{headers:headers, withCredentials:true}).then(()=>{ alert("Wstawiono");
+        Axios.post("/api/experiment/Category/",data,{headers:headers, withCredentials:true}).then(()=>{
             this.refreshDB()
-        }).catch(()=>{alert("Nie wstawiono")})
+            alert( "Wstawiono kategorię \""+data.name+"\"")
+        }).catch(()=>{alert("Nie wstawiono kategorii \""+data.name+"\"")})
     }
     handleDelete = ()=>{
         let token = getCSRFToken()
         let headers = {"X-CSRFTOKEN": token}
         Axios.delete("/api/experiment/Category/"+this.state.category,{headers:headers, withCredentials:true}).then(()=>{
-            alert("Usunięto");
+            alert(`Usunięto kategorię "${this.state.category}"`);
             this.refreshDB()
-        }).catch(()=>{alert("Nie usunięto")})
+        }).catch(()=>{alert(`Nie usunięto kategorii "${this.state.category}"`)})
     }
     render = ()=>{
         return(

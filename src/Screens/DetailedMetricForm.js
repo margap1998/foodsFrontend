@@ -12,14 +12,25 @@ class DetailedMetricForm extends React.Component{
     constructor(props){
         super(props)
             this.state={
-                num_repeats:0,
-                num_series:0,
+                sampleBase:[],
+                samples:[],
+                num_repeats:"0",
+                num_series:"0",
                 sample:"",
                 id:0,
                 window:undefined
             }
     }
     componentDidMount = () => {
+        this.refresh()
+    }
+    refresh = ()=>{
+        axios.get("/api/experiment/Sample/").then((resS)=>{
+            let arr =resS.data.map((s)=>{
+                return [s.id,"Dodatki: "+ JSON.stringify(s.supplement)+" Czynnik:"+s.externalFactor]
+            })
+            this.setState({sampleBase:resS.data, samples:arr})
+        })
     }
     componentDidUpdate = ()=>{
         if(this.props.metricObj !== undefined){
@@ -34,6 +45,7 @@ class DetailedMetricForm extends React.Component{
         }
     }
 }
+
     handleChangeRepeats = (event)=>{    
         const regExp = /^[0-9]*$/;
         const a = event.target.value;
@@ -103,6 +115,7 @@ class DetailedMetricForm extends React.Component{
     }
     addSampl = (v)=>{
         this.props.addSampl(v)
+        this.refresh()
         this.setState({sample:v.id})
     }
     render = ()=>{
@@ -113,7 +126,7 @@ class DetailedMetricForm extends React.Component{
             <InputLabel className="line2">
                 Próbka:
                 <div className="line2">
-                    <Select array={this.props.sampleBase}
+                <Select array={this.state.samples}
                             onChange={this.handleChangeSample}
                             value={this.state.sample}
                             className="line"

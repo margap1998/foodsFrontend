@@ -8,7 +8,7 @@ import { Button, Input, FormLabel, Radio, RadioGroup, FormControl,
 class UserPanel extends React.Component{
     constructor(props){
         super(props)
-                this.state = {level:"false", user:"", users:[], usersDB:[],userObj:undefined,
+        this.state = {level:"false", user:"", users:[], usersDB:[],userObj:undefined,
                         pass:"", email:""}
     }
     componentDidMount = ()=>{
@@ -22,11 +22,7 @@ class UserPanel extends React.Component{
     }
     selectUser = (v)=>{
         let user = this.state.usersDB.find((o)=>{ return o.username==v})
-        alert(JSON.stringify(user))
-        this.setState({user:v,userObj:user, email:user.email})
-    }
-    changeUser = (v)=>{
-        this.setState({user:v})
+        this.setState({user:v,userObj:user, email:user.email, level:user.is_superuser.toString()})
     }
     changeLevel = (e)=>{
         this.setState({level:e.target.value})
@@ -88,9 +84,9 @@ class UserPanel extends React.Component{
         }
             
         Axios.post("/api2/authentication/change_super_power/",data,{headers:headers, withCredentials:true}).then(r=>{
-            alert("Usunięcie użytkownika "+ this.state.user)
+            alert("Zmieniono uprawnienia użytkownika "+ this.state.user)
             this.refreshDB()
-        }).catch( ()=>{ alert("Usunięcie użytkownika "+ this.state.user +" się nie powiodło")})
+        }).catch( ()=>{ alert("Zmiana uprawnień użytkownika "+ this.state.user +" się nie powiodło")})
     }
     render = ()=>{
         return <div>

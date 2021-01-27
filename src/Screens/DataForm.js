@@ -20,7 +20,7 @@ class DataForm extends React.Component{
             metricGeneral:"", generated:false, file:"", loaded:false,
             samples:[], ingredients:[], metrics:[],exp:props.obj,
             prodBase:[], prodObj:[], metricsGeneral:[], metricsGeneralBase:[], metricsDetailedBase:[],
-            metricsDetailed:[], sampleBase:[], idExp:undefined,
+            metricsDetailed:[], sampleBase:[], idExp:undefined,externalFactorBase:[],
             productWindow:undefined, new:true, openDialog:false
             }
         }else{
@@ -30,7 +30,7 @@ class DataForm extends React.Component{
                 filename:"",metricGeneral:"", generated:false, file:"", loaded:false,
                 samples:[], ingredients:[], metrics:[], openDialog:false,
                 prodBase:[], prodObj:[], metricsGeneral:[], metricsGeneralBase:[], metricsDetailedBase:[],
-                metricsDetailed:[], sampleBase:[],exp:props.obj,
+                metricsDetailed:[], sampleBase:[],exp:props.obj,externalFactorBase:[],
                 productWindow:null, new:false, idExp:props.obj.id
                 }        
             axios.get("api/experiment/Result/").then((res)=>{
@@ -49,7 +49,7 @@ class DataForm extends React.Component{
      let lv = props.obj
      let s = this.state.sampleBase.find((samp)=>{return samp.id === lv.sample})
      return(<div>
-         {"(serii:  "+lv.numberOfSeries+"; powtórzeń:  "+lv.numberOfRepeat+")"+" Dodatki: "+ JSON.stringify(s.supplement)+" Czynnik:"+s.externalFactor}
+         {lv.metric+": (serii:  "+lv.numberOfSeries+"; powtórzeń:  "+lv.numberOfRepeat+")"+" Dodatki: "+ JSON.stringify(s.supplement)+" Czynnik:"+s.externalFactor}
          <Button type="button" onClick={(e) => props.onButton(props.obj)}>
              Usuń
          </Button>
@@ -76,25 +76,27 @@ class DataForm extends React.Component{
                 return [s.id,"Dodatki: "+ JSON.stringify(s.supplement)+" Czynnik:"+s.externalFactor]
             })
             this.setState({sampleBase:resS.data, samples:arr})
-        })
+        }).catch(()=>{console.log("Sample failure <DataForm/>")})
     }).catch(console.log("Metric failure \n"));
-     axios.get("/api/experiment/Metrics/").then((res)=>{
-         var arr = [];
-         //wyłuskanie nazw metryk
-        res.data.forEach((obj)=>{arr.push([obj.name,obj.name,obj.unit]);});
-         this.setState({metricsGeneral:arr});
-     }).catch(console.log("Metric failure \n"));
+    axios.get("/api/experiment/Metrics/").then((res)=>{
+        var arr = [];
+        //wyłuskanie nazw metryk
+       res.data.forEach((obj)=>{arr.push([obj.name,obj.name,obj.unit]);});
+        this.setState({metricsGeneral:arr});
+    }).catch(console.log("Metric failure \n"));
+    axios.get("/api/experiment/Product/").then((res)=>{
+        var arr = [];
+        //wyłuskanie nazw metryk
+       res.data.forEach((obj)=>{arr.push([obj.name, obj.name, obj.category])})
+        this.setState({prodBase:arr});
+    }).catch(console.log("Product failure \n"));
+    axios.get("/api/experiment/ExternalFactor/").then(res=>{this.setState({externalFactorBase:res.data})}).catch(()=>{console.log("external factor problem")})
  }
  
  // /api/experiment/Experiment/
      handleChangeName = (event) => {    this.setState({name: event.target.value});}
      handleChangeDesc = (event) => {    this.setState({desc: event.target.value});}
      handleChangePaper = (event) => {    this.setState({paper: event.target.value});}
-     handleChangeCat = (v) => {    
-         var arr = []
-         this.state.prodObj.forEach((lv,i,a)=>{if(lv.category === v){arr.push([lv.name,lv.name+" - "+lv.description])}})
-         this.setState({prodBase:arr, category: v, product:""})
-     }
      handlePrivate = (e) => {
          this.setState({private:!this.state.private})
      }
@@ -140,7 +142,7 @@ class DataForm extends React.Component{
          }
      handleSubmitXLSX = (e)=>{
          if (this.state.file !=null){
- 
+            this.setState({new:false})
              let token = getCSRFToken()
              var formData = new FormData();
              formData.append("file", this.state.file);
@@ -151,8 +153,9 @@ class DataForm extends React.Component{
                  "X-CSRFTOKEN": token
                  }
              })
-             .then((res)=>{alert("Udało się załodować"); this.setState({new:false})})
-             .catch((a)=>{console.log("Something's wrong with file uploading");})
+             .then((res)=>{alert("Udało się załodować eksperyment "+this.state.name); })
+             .catch((a)=>{console.log("Something's wrong with file uploading");alert("Nie udało się załodować eksperymentu "+this.state.name);
+             this.setState({new:true})})
              this.setState({file:null,filename:"", loaded:false})
          }
      }
@@ -256,9 +259,12 @@ class DataForm extends React.Component{
          var now = new Date();//Pobranie daty .getMonth() zwraca int<0,11>, zatem trzeba dodać 1 XD
          var metrics = [];
          //zmapowanie metryk z bazy na metryki do wygenerowania excela w nieładny sposób
+
          this.state.metrics.forEach((obj)=>{
+             let s = this.state.sampleBase.find((v)=>{return v.id === obj.sample})
+             let ef = this.state.externalFactorBase.find((v)=>{return v.name === s.externalFactor})
              metrics.push(
-                 [obj.metric, obj.numberOfSeries, obj.numberOfRepeat, obj.sample, "3", ["120","140","150"],obj.id])
+                 [obj.metric, obj.numberOfSeries, obj.numberOfRepeat, obj.sample,ef.numberOfValues, ef.values.split(','),obj.id])
          })
          //wyłuskanie wartości id
          //nagłówek eksperymentu
@@ -310,41 +316,55 @@ class DataForm extends React.Component{
 		});
 	 }
 
+     changeProductName = (v)=>{
+         this.refresh()
+         this.setState({product:v})
+     }
      closeWindow =()=>{ this.setState({window:null}) }
      render(){
      return(
          <div id="dataform">
                 <Button variant="contained" className="line" type="button" onClick={this.props.closeProc}>X</Button>
                  <InputLabel className="line">
-                     Nazwa:
+                     Nazwa eksperymentu*:
                      <Input className="line" type="text" value={this.state.name} onChange={this.handleChangeName} />
                  </InputLabel>
                  <InputLabel className="line">
-                     Opis eksperymentu:
+                     Opis eksperymentu *:
                      <TextareaAutosize className="line" type="text" value={this.state.desc} onChange={this.handleChangeDesc} />
                  </InputLabel>
                  <InputLabel className="line">
-                     URL pracy:
+                     URL pracy *:
                      <Input className="line" type="text" value={this.state.paper} onChange={this.handleChangePaper} />
                  </InputLabel>
                  <InputLabel className="line">
-                     Produkt:
-                     <Input className="line" readonly value={this.state.product}/>
+                     Produkt *:
+                     <Select  className="line" array={this.state.prodBase} value={this.state.product} onChange={this.changeProductName}/>
+                     <span className="line"/>
+                     <Accordion>
+                         <AccordionSummary>
+                             Nowy produkt
+                         </AccordionSummary>
+                         <AccordionDetails>
+                            <ProductForm changeProductName={this.changeProductName} 
+                                name={undefined}
+                                closeProc={()=>{this.setState({productWindow:undefined})}}/>
+                         </AccordionDetails>
+                     </Accordion>
                      <Accordion>
                          <AccordionSummary>
                              {(this.state.product===undefined)? "Nowy produkt":"Edytuj produkt"}
                          </AccordionSummary>
                          <AccordionDetails>
-                            <ProductForm changeProductName={(v)=>{this.setState({product:v})}} 
-                                name={(this.props.obj=== undefined)? "":this.props.obj.product} 
+                            <ProductForm changeProductName={this.changeProductName}
+                                name={(this.props.obj!==undefined)?this.props.obj.product:this.state.product} 
                                 closeProc={()=>{this.setState({productWindow:undefined})}}/>
                          </AccordionDetails>
                      </Accordion>
                  </InputLabel>
                  <InputLabel className="line">
-                     Prywatny
-                     <Checkbox className="line"  checked={this.state.private}  onChange={this.handlePrivate}/>
-                     
+                     <Checkbox checked={this.state.private}  onChange={this.handlePrivate}/>
+                     Eksperyment {(this.state.private)?"prywatny":"publiczny"}
                  </InputLabel>
                  <InputLabel className="line">
                      <span className="line">
@@ -368,7 +388,8 @@ class DataForm extends React.Component{
                         Nowa metryka szczegółowa
                      </AccordionSummary>
                      <AccordionDetails>
-                         <DetailedMetricForm refreshDB={this.refDM} addSampl={this.addSampl} sampleBase={this.state.samples}/>
+
+                         <DetailedMetricForm refreshDB={this.refDM} addSampl={this.addSampl} metric={this.state.metricGeneral} />
                      </AccordionDetails>
                  </Accordion>
                  <Accordion className="line">
@@ -376,7 +397,7 @@ class DataForm extends React.Component{
                         Edytuj metrykę szczegółową
                      </AccordionSummary>
                      <AccordionDetails>
-                         <DetailedMetricForm metricObj={this.state.metric} refreshDB={this.refDM} addSampl={this.addSampl} metric={this.state.metricGeneral} sampleBase={this.state.samples}/>
+                         <DetailedMetricForm metricObj={this.state.metric} refreshDB={this.refDM} addSampl={this.addSampl} metric={this.state.metricGeneral}/>
                      </AccordionDetails>
                  </Accordion>
                  <Accordion className="line">
