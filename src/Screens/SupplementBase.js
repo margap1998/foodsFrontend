@@ -30,7 +30,7 @@ class SupplementBase extends React.Component{
         let data = {
             "name": this.state.name 
             }
-        Axios.post("/api/experiment/SupplementBase/",data,{headers:headers, withCredentials:true}).then((e)=>{ alert("Wstawiono");
+        Axios.post("/api/experiment/SupplementBase/",data,{headers:headers, withCredentials:true}).then((e)=>{ 
             this.refreshDB()
             alert(`Wstawiono kategorię "${data.name}"`)
         }).catch((e)=>{alert(`Nie wstawiono kategorii "${data.name}"`)})

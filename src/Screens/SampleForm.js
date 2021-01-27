@@ -91,7 +91,7 @@ class SampleForm extends React.Component{
     } 
     makeLine = (arr,v)=>{
         let t = arr.find((pair)=>{return v===pair[0]})
-        return <this.Line text={t[0]} value={v} onButton={this.handleDelDM}/>
+        if (t===undefined) {return undefined} else {return <this.Line text={t[0]} value={v} onButton={this.handleDelDM}/>}
     }
 
     addEF = (v)=>{

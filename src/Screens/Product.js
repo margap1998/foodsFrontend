@@ -1,4 +1,4 @@
-import {Button, Toolbar, FormLabel, Input, Paper} from "@material-ui/core"
+import {Button,  FormLabel, Input, Paper} from "@material-ui/core"
 import React from 'react';
 import axios from "axios";
 import { getCSRFToken } from '../csrftoken.js'
@@ -17,7 +17,7 @@ class RecipeForm extends React.Component{
         }
     }
     componentDidUpdate = ()=>{
-        if(this.props.recipe!==undefined){
+        if(this.props.recipe!==undefined && this.props.recipe.id !== this.state.recipe.id){
             if(this.props.recipe.id!==this.state.recipe.id){
                 this.setState({recipe:this.props.recipe, percent:0})
                 axios.get("/api/experiment/BasicIngredient/").then( res =>{
@@ -88,6 +88,8 @@ class RecipeForm extends React.Component{
                     "basicIngredientBase": this.state.ingredient.basicIngredientBase
                 }
             })
+        }else{
+            if(diffPer > 100){ alert("Wybrany składnik powoduje przekroczenie 100% receptury")}else{alert("Wybrano składnik dodający 0%")}
         }
     }
     handleIngredientPercent = (e)=>{
@@ -102,17 +104,16 @@ class RecipeForm extends React.Component{
             }
     }
     handleWeight = (e)=>{
-        if(parseInt(e.target.value) > 0){
+        let a = parseInt(e.target.value)
+        if(a > 0){
             let rec = {
-                "basicWeight": parseInt(e.target.value).toString(),
+                "basicWeight": a.toString(),
                 "ingredients": this.state.recipe.ingredients
             }
-            if(e.target.value>-1){
                 this.setState({
                         recipe: rec
                 })
                 this.props.changeRecipe(rec)
-            }
         }
     }
     Line = (props)=>{
@@ -218,10 +219,8 @@ class ProductForm extends React.Component{
             });
             axios.get("/api/experiment/Recipe/"+pr.recipe+"/").then((res2)=>{
                 let rec = res2.data
-                this.setState({recipe:rec, rf:<RecipeForm recipe={rec} changeRecipe={this.changeRecipe} className="line"/>})
+                this.setState({recipe:rec})
             }).catch(console.log("Categories failure \n"));
-        }else{
-            this.setState({rf:<RecipeForm recipe={this.state.recipe} changeRecipe={this.changeRecipe} className="line"/>})
         }
         }).catch(console.log("Product failure \n"));
         //żądania typu get do API
@@ -259,15 +258,22 @@ class ProductForm extends React.Component{
                             "ingredients": []
                         }
                     })
+                    alert("Dodano produkt "+ this.state.nameProduct)
                 }
-            }).catch(e => alert("Nie dodano produktu, skontaktuj się z administratorem w celu usunięcia receptury"))
+            }).catch(e => {
+                axios.delete(`/api/experiment/Recipe/${res1.data.id}/`,{headers:headers, withCredentials:true})
+                .then(()=>{alert("Nie dodano produkt "+ this.state.nameProduct)})
+                .catch(e1=>{
+                    alert("Nie dodano produktu, skontaktuj się z administratorem w celu usunięcia receptury")
+                })
+            })
         }).catch(e => alert("Nie dodano"))
     }
     handleDelete = ()=>{
         let token = getCSRFToken()
         const headers = {"X-CSRFTOKEN": token}
         //obiekt z danymi do bazy
-        axios.delete("/api/experiment/Recipe/"+this.state.recipe.id+"/",{headers:headers, withCredentials:true}).then(res1=>{
+        axios.delete("/api/experiment/Product/"+this.state.nameProduct+"/",{headers:headers, withCredentials:true}).then(res1=>{
             alert("Usunięto "+this.state.nameProduct)
             this.setState({
                 "nameProduct": "",
@@ -305,7 +311,7 @@ class ProductForm extends React.Component{
             </FormLabel>
             <FormLabel className="line">
                 Receptura:
-                {this.state.rf}
+                <RecipeForm recipe={this.state.recipe} changeRecipe={this.changeRecipe} className="line"/>
             </FormLabel>
             <Button variant="contained" color="primary"  className={["line2","margin"]} type="button"  onClick={this.handleSubmit}>Dodaj</Button>
             <span className="line2"></span>

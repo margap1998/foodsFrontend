@@ -81,7 +81,7 @@ class DetailedMetricForm extends React.Component{
         
         axios.post("/api/experiment/DetailedMetrics/",data,{ headers:headers })
             .then((res)=>{
-                this.props.refreshDB(res.data)
+                this.props.refreshDB(res.data.id)
                 this.setState({id:res.id})
                 alert("Wstawiono metrykę "+data.metric+" ("+data.numberOfSeries+","+data.numberOfRepeat+")");
             })

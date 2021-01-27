@@ -268,7 +268,7 @@ class DataForm extends React.Component{
          })
          //wyłuskanie wartości id
          //nagłówek eksperymentu
-         var experiment_data = [this.state.name, this.state.desc,this.state.paper, this.props.user, now.getDate()+"."+(now.getMonth()+1)+"."+now.getFullYear()]
+         var experiment_data = [this.state.name, this.state.desc,this.state.paper, 1, now.getDate()+"."+(now.getMonth()+1)+"."+now.getFullYear()]
          //obiekt z żądaniem
          var req = {
              experiment_data : experiment_data,
@@ -286,16 +286,22 @@ class DataForm extends React.Component{
          alert("Uzupełnij")
          }
      }
-     refDM = (lv)=>{
-        var arr = this.state.metricsDetailed
-        let s = this.state.sampleBase.find((samp)=>{return samp.id === lv.sample})
-        arr.push([lv.id,
-                "(serii:  "+lv.numberOfSeries+"; powtórzeń:  "+lv.numberOfRepeat+")",
-                " Dodatki: "+ JSON.stringify(s.supplement)+" Czynnik:"+s.externalFactor
-            ])
-        var arr2 = this.state.metricsDetailedBase
-        arr2.push(lv)
-        this.setState({metricsDetailed : arr, metricsDetailedBase:arr2, metric:lv, metricID:lv.id});
+     refDM = (inv)=>{
+        let arr= []
+        axios.get("/api/experiment/DetailedMetrics/").then((res)=>{
+            this.setState({metricsDetailedBase:res.data});
+            let obj = undefined
+            res.data.forEach((lv,i,a)=>{ if(this.state.metricGeneral===lv.metric){
+                if(lv.id===inv){obj = lv}
+                let s = this.state.sampleBase.find((samp)=>{return samp.id === lv.sample})
+                arr.push([lv.id,"(serii:  "+lv.numberOfSeries+"; powtórzeń:  "+lv.numberOfRepeat+")",
+                " Dodatki: "+ JSON.stringify(s.supplement)+" Czynnik:"+s.externalFactor])}})
+            this.setState({
+                metricsDetailed : arr,
+                metricObj:obj,
+                metricID:inv
+            })
+        }).catch(console.log("Metric failure \n"));
      }
      addSampl = (s)=>{
          this.refresh()
@@ -309,7 +315,8 @@ class DataForm extends React.Component{
 				{
 					"idExp": this.state.idExp,
 				}
-		    axios.post("/api/experiment/generatePdf/",data,{ headers:headers }).then((response)=>{
+		    axios.post("/api/experiment/generatePDF/",data,{ headers:headers }).then((response)=>{
+                download(response.data,"pdf.pdf")
             alert("Generuję plik Pdf");
         }).catch(function (error) {    
 				if (error.response) {alert("Nie można wygenerować pliku Pdf")}
@@ -353,11 +360,11 @@ class DataForm extends React.Component{
                      </Accordion>
                      <Accordion>
                          <AccordionSummary>
-                             {(this.state.product===undefined)? "Nowy produkt":"Edytuj produkt"}
+                             Edytuj produkt
                          </AccordionSummary>
                          <AccordionDetails>
                             <ProductForm changeProductName={this.changeProductName}
-                                name={(this.props.obj!==undefined)?this.props.obj.product:this.state.product} 
+                                name={this.state.product} 
                                 closeProc={()=>{this.setState({productWindow:undefined})}}/>
                          </AccordionDetails>
                      </Accordion>

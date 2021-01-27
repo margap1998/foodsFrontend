@@ -11,7 +11,7 @@ class ExternalFactor extends React.Component{
     //inicjalizacja stanu komponentu
     //TODO: przerobić tak by wykorzystać jeszcze do edycji istniejącego eksperymentu
     //if (props.obj === undefined || props.obj === null){
-    this.state = {name:null, numberOfVal:1, unit:null, values:null, nameOld:props.name, metrics:[]
+    this.state = {name:"", numberOfVal:1, unit:"", values:"", nameOld:props.name, metrics:[]
     }
     
 }
@@ -45,7 +45,7 @@ componentDidUpdate = ()=>{
     handleChangeUnit = (event) => {    this.setState({unit: event.target.value});}
 	handleChangeValues = (event) => {    this.setState({values: event.target.value});}
 	
-    handleInsert =(e) =>{if (! ( this.state.numberOfVal<1 && this.state.name == "" && this.state.unit == "" && this.state.values == "")){
+    handleInsert =(e) =>{if (! ( this.state.numberOfVal<1 || this.state.name == "" || this.state.unit == "" || this.state.values == "")){
             var split_str = this.state.values.split(",");
 			let result = true;
 			if(split_str.length != this.state.numberOfVal){
@@ -105,9 +105,6 @@ componentDidUpdate = ()=>{
                     Wartosci:
                     <Input className="line" type="text" value={this.state.values} onChange={this.handleChangeValues}/>
                 </InputLabel>
-                    <Button className="line"  type="button" onClick={this.handleUpdate}>Zmień</Button>
-                    <span className="line"></span>
-                    <Button className="line"  type="button" onClick={this.handleDelete}>Usuń</Button>
                     <span className="line"></span>
                 <Button className="line"  type="button" onClick={this.handleInsert}>Dodaj</Button>
         </form>
