@@ -65,10 +65,10 @@ class MainScreen extends React.Component{
         );
         switch (this.state.screen) {
             case 1:
-                res = <DataForm closeProc={backToMS}/>
+                res = <DataForm closeProc={backToMS} user={this.props.user}/>
                 break;
             case 4:
-                res = <DataForm obj={this.state.experiment} closeProc={backToMS}/>
+                res = <DataForm obj={this.state.experiment} closeProc={backToMS} user={this.props.user}/>
                 break;
             default:
                 break;

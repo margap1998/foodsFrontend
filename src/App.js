@@ -68,7 +68,7 @@ class App extends React.Component{
 				</Toolbar>
 
             </AppBar>
-            <span hidden={this.state.ms}><MainScreen/></span>
+            <span hidden={this.state.ms}><MainScreen user={this.state.whoslogged}/></span>
             <span hidden={this.state.adm}><AdminPanel/></span>
             <span hidden={this.state.login}><LoginPanel refreshDB={this.refDM} /></span>
 

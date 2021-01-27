@@ -268,7 +268,7 @@ class DataForm extends React.Component{
          })
          //wyłuskanie wartości id
          //nagłówek eksperymentu
-         var experiment_data = [this.state.name, this.state.desc,this.state.paper, 1, now.getDate()+"."+(now.getMonth()+1)+"."+now.getFullYear()]
+         var experiment_data = [this.state.name, this.state.desc,this.state.paper, this.props.user, now.getDate()+"."+(now.getMonth()+1)+"."+now.getFullYear()]
          //obiekt z żądaniem
          var req = {
              experiment_data : experiment_data,
