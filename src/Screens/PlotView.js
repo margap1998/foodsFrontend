@@ -39,15 +39,18 @@ class BarLinearPanel extends React.Component{
     onChangeSeries = (v)=>{this.setState({series:v})}
     render = ()=>{
         return <div className="line">
-            <div className="line">(?) Pamiętaj, aby metryki szczegółowe byłyby tego samego typu metryki!</div>
+            <div className="box">
+            <div className="line">Pamiętaj, aby metryki szczegółowe byłyby tego samego typu metryki</div>
+            <div className="line"> i dotyczyły próbek z tego samego czynnika zewnętrznego!</div>
+            </div>
             <FormLabel>Metryka szczegółowa<SelectArrayElement onChange={this.onChangeDM} value={this.state.dm} array={this.props.base.metricsDetailed}/></FormLabel>
             <FormLabel>Seria<SelectArrayElement onChange={this.onChangeSeries} array={this.state.seriesArr} value={this.state.series}/></FormLabel> 
             <Button onClick={this.addButton}>Dodaj</Button>
             <Button onClick={()=>{this.setState({sm:[]})}}>Wyczyść tablicę</Button>
             <Button onClick={()=>{this.setState({images:[]})}}>Wyczyść obrazy</Button>
             <Button className="line" onClick={() =>{this.plotHandle("")}}>Wykres</Button>
-            <div className="line">{JSON.stringify(this.state.sm)}</div>
-            {this.state.images.map((v)=>{return <img src={v}/>})}
+            <div className="line">Seria z metryki do pokazania: {JSON.stringify(this.state.sm)}</div>
+           <FormLabel><div className="line">Wykresy:</div>{this.state.images.map((v)=>{return <img width="100%" src={v}/>})}</FormLabel> 
 
         </div>
     }
@@ -93,9 +96,9 @@ class RadarPanel extends React.Component{
             <Button onClick={()=>{this.setState({samples:[]})}}>Wyczyść tablicę próbek</Button>
             <Button onClick={()=>{this.setState({images:[]})}}>Wyczyść obrazy</Button>
             <Button className="line" onClick={() =>{this.plotHandle("")}}>Wykres</Button>
-            <div className="line">{JSON.stringify(this.state.metrics)}</div>
-            <div className="line">{JSON.stringify(this.state.samples)}</div>
-            {this.state.images.map((v)=>{return <img src={v}/>})}
+            <div className="line">Metryki do pokazania: {JSON.stringify(this.state.metrics)}</div>
+            <div className="line">Próbki do pokazania: {JSON.stringify(this.state.samples)}</div>
+            <FormLabel><div className="line">Wykresy:</div>{this.state.images.map((v)=>{return <img width="100%" src={v}/>})}</FormLabel> 
         </div>
     }
 }
