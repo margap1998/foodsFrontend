@@ -72,7 +72,7 @@ class MainScreen extends React.Component{
                 res = <DataForm obj={this.state.experiment} closeProc={backToMS} user={this.props.user}/>
                 break;
             case 5:
-                res = <PlotView experiment={this.state.experiment} closeProc={backToMS} user={this.props.user}/>
+                if (this.state.experiment!==undefined){res = <PlotView experiment={this.state.experiment} closeProc={backToMS} user={this.props.user}/>}
                 break;
             default:
                 break;
