@@ -77,7 +77,6 @@ refresh = ()=> {
 			//obiekt z danymi do bazy
 			
 			
-			let arr = []
 			this.state.metrics.forEach((v)=>{arr.push(v.id)})
 			var exp_head = {
 				"name": this.state.name,
@@ -88,7 +87,8 @@ refresh = ()=> {
 			axios.post("/api/experiment/Supplement/",exp_head,{ headers:headers }).then((res)=>{
                 alert("Wstawiono "+JSON.stringify(res.data.name));
                 this.props.afterCreate(res.data)
-			}).catch((e)=>{console.log("Something's wrong with inserting experiment"); alert("Nie wstawiono "+this.state.name)})
+			}).catch(()=>{console.log("Something's wrong with inserting experiment"); alert("Nie wstawiono "+this.state.name)})
+
 		
 		}else{
             alert("Uzupełnij")

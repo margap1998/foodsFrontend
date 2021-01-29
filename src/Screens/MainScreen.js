@@ -4,6 +4,7 @@ import '../style.css';
 import axios from "axios";
 import DataForm from './DataForm';
 import { Button, FormLabel} from "@material-ui/core";
+import PlotView from './PlotView';
 
 class MainScreen extends React.Component{
    constructor(props){
@@ -51,7 +52,7 @@ class MainScreen extends React.Component{
                         <span className="line"/>
                         <Button className="line"  variant="contained" type="button" onClick={(e)=>{this.setState({screen:4})}}>Edytuj eksperyment</Button>
                         <span className="line"/>
-                        <Button className="line"  variant="contained" type="button" onClick={(e)=>{this.setState({screen:5})}}>Przeglądaj eksperyment</Button>
+                        <Button className="line"  variant="contained" type="button" onClick={(e)=>{this.setState({screen:5})}}>Przeglądaj wykresy eksperymentu</Button>
                         <span className="line"/>
                         <Button className="line2" variant="contained" type="button" onClick={(e)=>{this.setState({screen:1})}}>Nowy eksperyment</Button>
                         <span className="line"/>
@@ -69,6 +70,9 @@ class MainScreen extends React.Component{
                 break;
             case 4:
                 res = <DataForm obj={this.state.experiment} closeProc={backToMS} user={this.props.user}/>
+                break;
+            case 5:
+                res = <PlotView experiment={this.state.experiment} closeProc={backToMS} user={this.props.user}/>
                 break;
             default:
                 break;
