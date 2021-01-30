@@ -62,8 +62,6 @@ componentDidUpdate = ()=>{
 				//obiekt z danymi do bazy
 				
 				
-				let arr = []
-				this.state.metrics.forEach((v)=>{arr.push(v.id)})
 				var exp_head = {
 					"name": this.state.name,
 					"numberOfValues": this.state.numberOfVal,
@@ -74,7 +72,7 @@ componentDidUpdate = ()=>{
 				axios.post("/api/experiment/ExternalFactor/",exp_head,{ headers:headers }).then((res)=>{
                     alert(res.statusText);
                     this.props.afterCreate(res.data)
-				}).catch((e)=>{console.log("Something's wrong with inserting experiment");})
+				}).catch(()=>{console.log("Something's wrong with inserting experiment");})
 			}
 		}else{
             alert("Uzupełnij")

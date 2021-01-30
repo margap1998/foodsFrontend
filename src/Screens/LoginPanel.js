@@ -2,7 +2,7 @@ import '../style.css';
 import React from 'react';
 import Register from "./Register"
 import Login from "./Login"
-import { Accordion, AccordionSummary, AccordionDetails } from "@material-ui/core";
+import { Paper, AppBar, Toolbar, Accordion, AccordionSummary, AccordionDetails } from "@material-ui/core";
 import { Button} from "@material-ui/core"
 class AdminPanel extends React.Component{
     constructor(props){
@@ -16,7 +16,18 @@ class AdminPanel extends React.Component{
 		}
 
     render = ()=>{
-        return(<div>
+        return(
+			<div>
+			<Paper id ="App">
+				<AppBar position="static">
+					<Toolbar>
+						<span id={'s1_id'}>
+							<Button color="inherit">Wyloguj</Button>
+						</span>
+					</Toolbar>
+
+				</AppBar>
+			</Paper>
 			<Accordion defaultExpanded={true}>
                 <AccordionSummary>
                     Login

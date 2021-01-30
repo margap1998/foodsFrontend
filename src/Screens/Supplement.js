@@ -76,8 +76,6 @@ refresh = ()=> {
 			const headers = {"X-CSRFTOKEN": token}
 			//obiekt z danymi do bazy
 			
-			
-			this.state.metrics.forEach((v)=>{arr.push(v.id)})
 			var exp_head = {
 				"name": this.state.name,
 				"percentage": this.state.perecent_val,
@@ -88,7 +86,6 @@ refresh = ()=> {
                 alert("Wstawiono "+JSON.stringify(res.data.name));
                 this.props.afterCreate(res.data)
 			}).catch(()=>{console.log("Something's wrong with inserting experiment"); alert("Nie wstawiono "+this.state.name)})
-
 		
 		}else{
             alert("Uzupełnij")

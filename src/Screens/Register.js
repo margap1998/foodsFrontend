@@ -25,7 +25,7 @@ class Register extends React.Component{
 				}
 				Axios.post("/api2/authentication/register/",data,{headers:headers, withCredentials:true}).then(function (response){
 					alert("Dodanie Użytkownika "+ this.state.user);
-					console.log(response);
+					this.setState({user:"",email:"", pass:"", pass_check:""});
 				}).catch( function (error) {    
 				if (error.response) {
 					alert(String(error.response.data.message));
