@@ -14,6 +14,7 @@ class DataForm extends React.Component{
      super(props);
      //inicjalizacja stanu komponentu
      //TODO: przerobić tak by wykorzystać jeszcze do edycji istniejącego eksperymentu
+	 
      if (props.obj === undefined || props.obj === null){
         this.state = {name:null, desc:null, window:null, metricID:"",
             paper:"", private:false, product:undefined, metric:"", filename:"",
@@ -21,7 +22,7 @@ class DataForm extends React.Component{
             samples:[], ingredients:[], metrics:[],exp:props.obj,
             prodBase:[], prodObj:[], metricsGeneral:[], metricsGeneralBase:[], metricsDetailedBase:[],
             metricsDetailed:[], sampleBase:[], idExp:undefined,externalFactorBase:[],
-            productWindow:undefined, new:true, openDialog:false
+            productWindow:undefined, new:true, openDialog:false, user:props.user
             }
         }else{
             this.state = {
@@ -31,7 +32,7 @@ class DataForm extends React.Component{
                 samples:[], ingredients:[], metrics:[], openDialog:false,
                 prodBase:[], prodObj:[], metricsGeneral:[], metricsGeneralBase:[], metricsDetailedBase:[],
                 metricsDetailed:[], sampleBase:[],exp:props.obj,externalFactorBase:[],
-                productWindow:null, new:false, idExp:props.obj.id
+                productWindow:null, new:false, idExp:props.obj.id, user:props.user
                 }        
             axios.get("api/experiment/Result/").then((res)=>{
                 if(res.data.find((v)=>{return v.experiment == this.props.obj.id})===undefined){
@@ -168,24 +169,41 @@ class DataForm extends React.Component{
         
              let arr = []
              this.state.metrics.forEach((v)=>{arr.push(v.id)})
-             var exp_head = {
-                 "name": this.state.name,
-                 "description": this.state.desc,
-                 "link": this.state.paper,
-                 "numberOfMeasuredProperties": arr.length,
-                 "publicView": this.state.private,
-                 "author": 1,
-                 "product": this.state.product,
-                 "detailedMetrics": arr
-             }
- 
-             axios.post("/api/experiment/Experiment/",exp_head,{ headers:headers }).then((res)=>{
-                 alert("Wstawiono");
-                 this.setState({idExp:res.data.id, exp:res.data})
-             }).catch(()=>{console.log("Something's wrong with inserting experiment"); alert("Nie wstawiono")})
-         }else{
-             alert("Uzupełnij")
-             }
+			 
+			 var userName = {"username":this.state.user}
+			 
+			 axios.post('/api/experiment/getUserNumber/',userName,{
+                 headers: {
+                 'Content-Type': 'multipart/form-data',
+                 "X-CSRFTOKEN": token
+                 }
+             })
+             .then((res)=>{ 
+				 var exp_head = {
+					 "name": this.state.name,
+					 "description": this.state.desc,
+					 "link": this.state.paper,
+					 "numberOfMeasuredProperties": arr.length,
+					 "publicView": this.state.private,
+					 "author": res.data.user_number,
+					 "product": this.state.product,
+					 "detailedMetrics": arr
+				 }
+	 
+				 axios.post("/api/experiment/Experiment/",exp_head,{ headers:headers }).then((res)=>{
+					 alert("Wstawiono");
+					 this.setState({idExp:res.data.id, exp:res.data})
+				 }).catch(()=>{console.log("Something's wrong with inserting experiment"); alert("Nie wstawiono")})
+				
+			 
+			 })
+             .catch((a)=>{alert("Nie można pobrać Id użytkownika");})
+			 
+			 }else{
+				 alert("Uzupełnij")
+				 }
+			 
+             
      }
      
      handleChange =(e) =>{
