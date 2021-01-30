@@ -190,9 +190,9 @@ class DataForm extends React.Component{
 					 "detailedMetrics": arr
 				 }
 	 
-				 axios.post("/api/experiment/Experiment/",exp_head,{ headers:headers }).then((res)=>{
+				 axios.post("/api/experiment/Experiment/",exp_head,{ headers:headers }).then((res1)=>{
 					 alert("Wstawiono");
-					 this.setState({idExp:res.data.id, exp:res.data})
+					 this.setState({idExp:res1.data.id, exp:res1.data})
 				 }).catch(()=>{console.log("Something's wrong with inserting experiment"); alert("Nie wstawiono")})
 				
 			 
@@ -333,7 +333,7 @@ class DataForm extends React.Component{
 				{
 					"idExp": this.state.idExp,
 				}
-		    axios.post("/api/experiment/generatePDF/",data,{ headers:headers }).then((response)=>{
+		    axios.post("/api/experiment/generatePdf/",data,{ headers:headers }).then((response)=>{
                 download(response.data,"pdf.pdf")
             alert("Generuję plik Pdf");
         }).catch(function (error) {    
