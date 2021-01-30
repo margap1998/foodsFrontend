@@ -73,6 +73,7 @@ class DataForm extends React.Component{
         }
         this.setState({metricsDetailedBase:res.data});
         axios.get("/api/experiment/Sample/").then((resS)=>{
+
             let arr =resS.data.map((s)=>{
                 return [s.id,"Dodatki: "+ JSON.stringify(s.supplement)+" Czynnik:"+s.externalFactor]
             })
@@ -269,7 +270,7 @@ class DataForm extends React.Component{
                 this.setState({dialog:dial})
             }
     }
-     handleSubmit = (event) => { if (! ( this.state.metrics.length<1 && this.state.name == "" && this.state.desc == "" && this.state.paper=="" && this.state.product=="")){
+     handleSubmit = (event) => { if (! ( this.state.metrics.length<1 || this.state.name == "" || this.state.desc || "" && this.state.paper=="" || this.state.product=="")){
          //pobranie znacznika CSRF z ciasteczka 
          let token = getCSRFToken()
          //stworzenie odpowiedniego nagłówka zapytania
@@ -297,7 +298,9 @@ class DataForm extends React.Component{
              //sprytna funkcja do pobrania danych wzięta z repozytorium npm
              download(res.data,experiment_data[0]+"_"+experiment_data[3]+'.xlsx')
              this.setState({generated:true});
-         }).catch((e)=>{console.log("Something's wrong with file download")})
+         }).catch((e)=>{console.log("Something's wrong with file download"); alert("Problem z wygenerowaniem pliku")})
+         alert("Generowanie pliku")
+
  
      }
      else{
@@ -324,22 +327,6 @@ class DataForm extends React.Component{
      addSampl = (s)=>{
          this.refresh()
      }
-	 generate_pdf= ()=>{
-		//pobranie znacznika CSRF z ciasteczka 
-        let token = getCSRFToken()
-        //stworzenie odpowiedniego nagłówka zapytania
-        const headers = {"X-CSRFTOKEN": token}
-		let data = 
-				{
-					"idExp": this.state.idExp,
-				}
-		    axios.post("/api/experiment/generatePdf/",data,{ headers:headers }).then((response)=>{
-                download(response.data,"pdf.pdf")
-            alert("Generuję plik Pdf");
-        }).catch(function (error) {    
-				if (error.response) {alert("Nie można wygenerować pliku Pdf")}
-		});
-	 }
 
      changeProductName = (v)=>{
          this.refresh()
@@ -444,7 +431,6 @@ class DataForm extends React.Component{
                              accept=".xlsx" onChange ={this.handleLoadXLSX}/>
                          <Button variant="contained" color="primary" className={"visible"+this.state.loaded.toString()} onClick={this.handleSubmitXLSX} type="button" >Załaduj</Button>
                  </div></div>
-				 <Button className="line" variant="contained" onClick={this.generate_pdf}>Generuj PDF</Button>
          </div>
      )
      //return <Line obj={obj} onButton={this.handleDelDM}></Line>})}

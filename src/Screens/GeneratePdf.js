@@ -2,6 +2,7 @@ import '../style.css';
 import React from 'react';
 import axios from "axios";
 import { getCSRFToken } from '../csrftoken.js'
+import download from 'downloadjs';
 import { SelectArrayElement } from '../funcComponents'
 import { Checkbox, Button, Input, Radio, RadioGroup, FormLabel, FormGroup, FormControl,
      FormControlLabel } from "@material-ui/core"
@@ -150,11 +151,12 @@ class GeneratePdf extends React.Component{
 					"ex_factors":this.state.external_factor_names_chosen,
 					"supplements":this.state.supplements_names_chosen
 				}
-		    axios.post("/api/experiment/generatePdf/",data,{ headers:headers }).then((response)=>{
-            alert("Generuję plik Pdf");
+		    axios.post("/api/experiment/generatePdf/",data,{ headers:headers, withCredentials:true,responseType:"blob"}).then((response)=>{
+				download(response.data,`Eksperyment${data.idExp}.pdf`)
         }).catch(function (error) {
 				if (error.response) {alert("Nie można wygenerować pliku Pdf")}
 		});
+		alert("Generowanie pliku PDF")
 	 }
 
     render = ()=>{

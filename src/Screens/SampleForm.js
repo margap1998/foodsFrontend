@@ -33,7 +33,7 @@ class SampleForm extends React.Component{
      axios.get("/api/experiment/Supplement/").then((res)=>{
         var arr = [];
         //wyłuskanie nazw metryk
-        res.data.forEach((obj)=>{arr.push([obj.name,obj.name+" - "+obj.percentage+"%"]);});
+        res.data.forEach((obj)=>{arr.push([obj.name,obj.name+" - "+obj.percentage+"%",`Zastępuje - ${obj.basicIngredientBase}`]);});
         this.setState({supplementsBase:arr});
     }).catch(console.log("Metric failure \n"));
         axios.get("/api/experiment/ExternalFactor/").then((res)=>{

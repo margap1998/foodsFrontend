@@ -152,7 +152,6 @@ class PlotView extends React.Component{
     }
     render = ()=>{
         return <div>
-            <Button className="line" onClick={this.props.closeProc}>Powróć</Button>
             <Accordion>
                 <AccordionSummary className="line">
                     Wykres liniowy
