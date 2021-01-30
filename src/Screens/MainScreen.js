@@ -6,7 +6,6 @@ import axios from "axios";
 import DataForm from './DataForm';
 import ExperimentOverview from './ExperimentOverview.js';
 import { Button, FormLabel} from "@material-ui/core";
-import PlotView from './PlotView';
 
 class MainScreen extends React.Component{
    constructor(props){
@@ -73,7 +72,7 @@ class MainScreen extends React.Component{
                         <span className="line"/>
                         <Button className="line"  variant="contained" type="button" onClick={(e)=>{this.setState({screen:4})}}>Edytuj eksperyment</Button>
                         <span className="line"/>
-                        <Button className="line"  variant="contained" type="button" onClick={(e)=>{this.setState({screen:5})}}>Przeglądaj wykresy eksperymentu</Button>
+                        <Button className="line"  variant="contained" type="button" onClick={(e)=>{this.setState({screen:5})}}>Przeglądaj eksperyment</Button>
                         <span className="line"/>
                         <Button className="line2" variant="contained" type="button" onClick={(e)=>{this.setState({screen:1})}}>Nowy eksperyment</Button>
                         <span className="line"/>

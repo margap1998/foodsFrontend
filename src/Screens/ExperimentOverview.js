@@ -5,7 +5,7 @@ import { getCSRFToken } from '../csrftoken.js'
 import { Select } from "../funcComponents.js";
 import DetailedMetricForm from './DetailedMetricForm.js';
 import GeneratePdf from "./GeneratePdf.js"
-import TestPanel from "./TestPanel.js"
+import PlotView from "./PlotView.js"
 import { Button, InputLabel, Input, TextareaAutosize, Checkbox,
         Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, ButtonGroup,
         Accordion, AccordionDetails, AccordionSummary } from "@material-ui/core";
@@ -40,7 +40,7 @@ class ExperimentOverview extends React.Component{
                         Wykresy
                     </AccordionSummary>
                     <AccordionDetails>
-                        <TestPanel />
+                        <PlotView experiment={this.props.obj} />
                     </AccordionDetails>
                 </Accordion>
          </div>
